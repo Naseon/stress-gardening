@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fake Goods Company Prototype</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="stage" id="garden">
+        <nav class="site-nav" aria-label="주요 섹션">
+          <a href="#garden">Garden</a>
+          <a href="#collection">Collection</a>
+          <a href="#archive">Archive</a>
+          <a href="#tools">Tools</a>
+          <a href="#process">Process</a>
+        </nav>
+
+        <div class="brand">
+          <p class="eyebrow">Brand-Based Design Studio II</p>
+          <h1>Stress Gardening</h1>
+          <p class="description">
+            HRV 스트레스 데이터로 자라나는 금속성 가시덤불을 직접 심고, 만지고, 다듬는 데이터 기반 인터랙션 굿즈
+          </p>
+        </div>
+
+        <canvas id="thornCanvas" width="1280" height="720" aria-label="가시덤불 성장 및 정리 모션"></canvas>
+
+        <section class="toolbox" aria-label="도구 선택">
+          <button class="tool-button active" type="button" data-tool="cut">Cut</button>
+          <button class="tool-button" type="button" data-tool="comb">Comb</button>
+          <button class="tool-button" type="button" data-tool="pluck">Pluck</button>
+          <button class="tool-button utility" id="undoButton" type="button">Undo</button>
+          <button class="tool-button utility" id="resetViewButton" type="button">View</button>
+        </section>
+
+        <section class="panel" aria-label="인터랙션 패널">
+          <label class="control">
+            <span>Stress Level</span>
+            <input id="stressSlider" type="range" min="0" max="100" value="62" />
+          </label>
+          <output id="statusText">Cut: click or drag tangled branches.</output>
+          <button id="regrowButton" type="button">Regrow</button>
+          <button id="saveButton" type="button">Save</button>
+        </section>
+      </section>
+
+      <div class="ticker" aria-hidden="true">
+        <span>HRV MONITOR</span>
+        <span>GENERATIVE VINE</span>
+        <span>CHROME SPECIMEN</span>
+        <span>PRECISION PRUNING</span>
+        <span>FAKE GOODS COMPANY</span>
+        <span>STRESS PRESERVATION</span>
+        <span>HRV MONITOR</span>
+        <span>GENERATIVE VINE</span>
+        <span>CHROME SPECIMEN</span>
+        <span>PRECISION PRUNING</span>
+        <span>FAKE GOODS COMPANY</span>
+        <span>STRESS PRESERVATION</span>
+      </div>
+
+      <section class="collection" id="collection">
+        <div class="section-heading">
+          <p>Collection</p>
+          <h2>Objects for preserving temporary relief.</h2>
+        </div>
+        <div class="product-grid">
+          <article class="product-card">
+            <div class="specimen-visual vine-specimen" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+              <p>METALLO-THORN</p>
+              <h3>Vine Species</h3>
+              <span>HRV SAMPLE / 062</span>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="specimen-visual tool-specimen" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <div>
+              <p>PRECISION KIT</p>
+              <h3>Pruning Tools</h3>
+              <span>CUT / COMB / PLUCK</span>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="specimen-visual rule-specimen" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+              <p>VISUAL RULES</p>
+              <h3>Thorn Graphics</h3>
+              <span>DATA-DRIVEN / MODULAR</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="image-band" id="archive">
+        <div class="section-heading">
+          <p>Expectation</p>
+          <h2>Data-driven horizon for stress relief goods.</h2>
+        </div>
+        <div class="mood-board" aria-label="Stress Gardening mood board">
+          <article><span>STRESS</span><span>GARDENING</span></article>
+          <article><span>CHROME NATURE</span><span>METALLIC VEGETATION</span></article>
+          <article><span>THORNY MINIMALISM</span><span>PRECISION PRUNING</span></article>
+          <article><span>HRV_SAMPLE_A1</span><span>DATA-DRIVEN GROWTH</span></article>
+          <article><span>FAKE GOODS</span><span>STRESS PRESERVATION</span></article>
+          <article><span>BRAND_SYSTEM</span><span>VISUAL_RULES</span></article>
+        </div>
+      </section>
+
+      <section class="split-feature">
+        <div class="feature-copy">
+          <p class="eyebrow">CHROME NATURE</p>
+          <h2>Metallic vegetation, future biology.</h2>
+          <p>
+            스트레스는 보이지 않는 압력이지만, 이 웹에서는 덩굴의 밀도와 가시의 방향, 금속성 표면의 긴장감으로 변환됩니다.
+          </p>
+        </div>
+        <div class="lab-scene" aria-hidden="true">
+          <div class="petri petri-a"><span></span></div>
+          <div class="petri petri-b"><span></span></div>
+          <div class="label">METALLO-THORN<br />VINE SPECIES</div>
+        </div>
+      </section>
+
+      <section class="tool-grid" id="tools">
+        <div class="section-heading">
+          <p>Pruning Tools</p>
+          <h2>Touch, cut, preserve.</h2>
+        </div>
+        <div class="tool-layout">
+          <div class="tool-panel thorn-rules" aria-hidden="true"></div>
+          <div class="tool-panel chrome-tools" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section class="process" id="process">
+        <div class="process-title">
+          <p class="eyebrow">SERVICE FLOW</p>
+          <h2>From stress signal to fake goods ritual.</h2>
+        </div>
+        <ol>
+          <li><span>01</span>HRV수치 측정 및 스트레스 강도 분석</li>
+          <li><span>02</span>데이터 기반 덩굴 밀도와 성장 속도 생성</li>
+          <li><span>03</span>사용자가 클릭한 위치에서 금속 덩굴 발아</li>
+          <li><span>04</span>드래그로 덤불을 조형하고 Cut/Pluck으로 정리</li>
+          <li><span>05</span>개인화된 스트레스 표본 굿즈로 보존</li>
+        </ol>
+      </section>
+
+      <section class="preserve">
+        <div>
+          <p class="eyebrow">PRESERVE SAMPLE</p>
+          <h2>Archive the shape of a temporary relief.</h2>
+        </div>
+        <p>
+          사용자가 심고, 밀고, 잘라낸 가시덤불은 하나의 스트레스 표본으로 저장됩니다. 현재 프로토타입에서는 첫 화면의 캔버스 이미지를 캡처해 보존할 수 있습니다.
+        </p>
+      </section>
+
+      <footer class="footer">
+        <p>Fake Goods Company</p>
+        <p>Stress Gardening / Digital-Physical Connection / 2026</p>
+      </footer>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
