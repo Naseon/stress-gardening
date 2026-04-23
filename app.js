@@ -107,10 +107,11 @@ function project(point) {
   const rotated = rotateForCamera(point);
   const depth = cameraDistance + rotated.z;
   const perspective = focalLength / Math.max(120, depth);
+  const vy = width < 720 ? height * 0.42 : height * 0.58;
 
   return {
     x: width * 0.55 + rotated.x * perspective,
-    y: height * 0.58 - rotated.y * perspective,
+    y: vy - rotated.y * perspective,
     z: rotated.z,
     s: perspective,
   };
@@ -141,9 +142,10 @@ function updatePointer(event) {
 
 function screenToWorld(x, y, z = randomBetween(-70, 70)) {
   const perspective = focalLength / Math.max(120, cameraDistance + z);
+  const vy = width < 720 ? height * 0.42 : height * 0.58;
   return v3(
     (x - width * 0.55) / perspective,
-    (height * 0.58 - y) / perspective,
+    (vy - y) / perspective,
     z
   );
 }
@@ -291,7 +293,7 @@ function addRoot3D(x, y, z, yaw, pitch, countOverride = null) {
       pitch + randomBetween(-0.28, 0.28),
       0,
       4 + Math.floor(Math.random() * 2),
-      8.4 + Math.random() * 2.8 + stress * 0.025
+      8.4 + Math.random() * 2.8 + stress * 0.025 + (width < 720 ? 4 : 0)
     );
     roots.push(root);
     created.push(root);
@@ -306,8 +308,9 @@ function seedScene() {
   history = [];
   currentCombChanges = null;
   autoTimer = 0;
-  addRoot3D(-240, -180, 30, 0.4, 0.74, 1);
-  addRoot3D(120, -195, -40, Math.PI - 0.22, 0.78, 1);
+  const mobileCount = width < 720 ? 2 : 1;
+  addRoot3D(-240, -180, 30, 0.4, 0.74, mobileCount);
+  addRoot3D(120, -195, -40, Math.PI - 0.22, 0.78, mobileCount);
   cachedStems = allStems();
   updateStatus("Comb: click to grow, drag to sculpt. Cut to trim.");
 }
@@ -786,8 +789,11 @@ undoButton?.addEventListener("click", undoLastAction);
 resetViewButton?.addEventListener("click", resetView);
 saveButton?.addEventListener("click", saveSpecimen);
 
+let wasMobile = window.innerWidth < 720;
 window.addEventListener("resize", () => {
+  const isMobile = window.innerWidth < 720;
   resizeCanvas();
+  if (isMobile !== wasMobile) { wasMobile = isMobile; seedScene(); }
 });
 
 resizeCanvas();

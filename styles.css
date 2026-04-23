@@ -225,24 +225,42 @@ button:hover {
   }
 
   .panel {
-    align-items: stretch;
-    flex-direction: column;
-    bottom: 18px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    bottom: 12px;
+    padding: 10px 12px;
+    gap: 8px;
+    min-height: auto;
+  }
+
+  .control {
+    flex-basis: 100%;
+  }
+
+  #statusText {
+    flex: 1;
+    min-width: 0;
+    font-size: 10px;
   }
 
   .toolbox {
     left: 16px;
     right: 16px;
     top: auto;
-    bottom: 290px;
+    bottom: 136px;
   }
 
   .tool-button {
     flex: 1;
+    height: 36px;
+    font-size: 11px;
   }
 
   button {
-    width: 100%;
+    min-width: 56px;
+    height: 36px;
+    font-size: 11px;
   }
 }
 
