@@ -61,7 +61,7 @@ function updatePointer(event) {
 }
 
 class Stem2D {
-  constructor(x, y, angle, depth, maxDepth, thickness) {
+  constructor(x, y, angle, depth, maxDepth, thickness, targetLength = null) {
     this.x = x;
     this.y = y;
     this.angle = angle;
@@ -69,9 +69,9 @@ class Stem2D {
     this.maxDepth = maxDepth;
     this.thickness = thickness;
     this.length = 0;
-    this.targetLength = randomBetween(54, 118) - depth * 8;
-    this.speed = randomBetween(0.22, 0.48);
-    this.curve = randomBetween(-0.018, 0.018);
+    this.targetLength = targetLength ?? randomBetween(64, 136) * Math.pow(0.72, depth);
+    this.speed = randomBetween(0.16, 0.34) * (1 + depth * 0.08);
+    this.curve = randomBetween(-0.014, 0.014);
     this.bendX = 0;
     this.bendY = 0;
     this.vx = 0;
@@ -131,10 +131,24 @@ class Stem2D {
 
   spawnChildren() {
     const end = this.endPoint();
-    const childCount = this.depth < 2 ? 2 + Math.floor(Math.random() * 2) : 2;
+    const stress = Number(slider.value);
+    const childCount = this.depth < 2 && stress > 55 ? 3 : 2;
+    const baseAngle = 0.42 + stress * 0.003;
+    const shrink = randomBetween(0.62, 0.76);
+
     for (let i = 0; i < childCount; i += 1) {
-      const side = i % 2 === 0 ? 1 : -1;
-      const child = new Stem2D(end.x, end.y, this.angle + side * randomBetween(0.42, 0.9), this.depth + 1, this.maxDepth, this.thickness * 0.68);
+      const side = childCount === 3 ? i - 1 : (i === 0 ? -1 : 1);
+      const angleOffset = side * randomBetween(baseAngle, baseAngle + 0.42) + randomBetween(-0.12, 0.12);
+      const childLength = Math.max(24, this.targetLength * shrink * randomBetween(0.86, 1.08));
+      const child = new Stem2D(
+        end.x,
+        end.y,
+        this.angle + angleOffset,
+        this.depth + 1,
+        this.maxDepth,
+        this.thickness * 0.68,
+        childLength
+      );
       this.children.push(child);
     }
   }
@@ -154,7 +168,17 @@ function addRoot(x, y, angle = -Math.PI / 2, count = 1) {
   const created = [];
   const stress = Number(slider.value);
   for (let i = 0; i < count; i += 1) {
-    const root = new Stem2D(x + randomBetween(-12, 12), y + randomBetween(-10, 10), angle + randomBetween(-0.7, 0.7), 0, 4 + Math.floor(Math.random() * 2), 4.5 + stress * 0.025);
+    const maxDepth = window.innerWidth < 700 ? 5 : 6;
+    const rootLength = randomBetween(82, 150) * (window.innerWidth < 700 ? 0.86 : 1);
+    const root = new Stem2D(
+      x + randomBetween(-12, 12),
+      y + randomBetween(-10, 10),
+      angle + randomBetween(-0.58, 0.58),
+      0,
+      maxDepth,
+      4.5 + stress * 0.025,
+      rootLength
+    );
     roots.push(root);
     created.push(root);
   }
@@ -166,8 +190,9 @@ function seedScene() {
   particles = [];
   history = [];
   autoTimer = 0;
-  addRoot(width * 0.38, height * 0.78, -Math.PI / 2, 1);
-  addRoot(width * 0.62, height * 0.82, -Math.PI / 2, 1);
+  addRoot(width * 0.34, height * 0.42, randomBetween(-0.35, 0.35), 1);
+  addRoot(width * 0.66, height * 0.48, Math.PI + randomBetween(-0.35, 0.35), 1);
+  addRoot(width * 0.5, height * 0.38, Math.PI / 2 + randomBetween(-0.3, 0.3), 1);
   updateStatus("Comb: click to grow, drag to sculpt.");
 }
 
@@ -179,7 +204,7 @@ function drawBackground() {
   ctx.strokeStyle = "#050605";
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.ellipse(width * 0.56, height * 0.78, Math.min(310, width * 0.24), 48, 0, 0, Math.PI * 2);
+  ctx.ellipse(width * 0.54, height * 0.5, Math.min(260, width * 0.22), 42, 0, 0, Math.PI * 2);
   ctx.stroke();
   ctx.restore();
 }
@@ -241,7 +266,13 @@ function updateScene() {
   const interval = Math.max(180, 380 - stress * 1.3);
   if (autoTimer > interval && roots.length < 70) {
     autoTimer = 0;
-    addRoot(randomBetween(width * 0.18, width * 0.82), height + 8, -Math.PI / 2, 1);
+    const fromLeft = Math.random() < 0.5;
+    addRoot(
+      fromLeft ? -8 : width + 8,
+      randomBetween(height * 0.24, height * 0.62),
+      fromLeft ? randomBetween(-0.28, 0.36) : Math.PI + randomBetween(-0.36, 0.28),
+      1
+    );
   }
   if (roots.length > 90) roots.splice(0, 8);
 }
