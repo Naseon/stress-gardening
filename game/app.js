@@ -161,6 +161,16 @@ class Thorn {
   }
 }
 
+class Leaf {
+  constructor(t, side, roll, size) {
+    this.t = t;
+    this.side = side;
+    this.roll = roll;
+    this.size = size;
+    this.removed = false;
+  }
+}
+
 class Stem3D {
   constructor(start, yaw, pitch, depth, maxDepth, radius) {
     this.start = start;
@@ -170,19 +180,22 @@ class Stem3D {
     this.maxDepth = maxDepth;
     this.radius = radius;
     this.length = 0;
-    this.targetLength = randomBetween(90, 168) - depth * 12;
+    this.targetLength = randomBetween(100, 190) - depth * 10;
     this.speed = randomBetween(0.18, 0.38);
-    this.curve = v3(randomBetween(-42, 42), randomBetween(-18, 34), randomBetween(-58, 58));
+    this.curve = v3(randomBetween(-62, 62), randomBetween(-22, 44), randomBetween(-72, 72));
     this.bend = v3();
     this.velocity = v3();
     this.phase = Math.random() * Math.PI * 2;
     this.children = [];
     this.thorns = [];
+    this.leaves = [];
     this.done = false;
     this.spawned = false;
     this.removed = false;
     this.lastThornAt = 0;
-    this.thornSpacing = randomBetween(20, 34);
+    this.thornSpacing = randomBetween(22, 38);
+    this.lastLeafAt = randomBetween(8, 16);
+    this.leafSpacing = randomBetween(14, 26);
   }
 
   direction() {
@@ -234,9 +247,20 @@ class Stem3D {
           this.length / this.targetLength,
           Math.random() < 0.5 ? -1 : 1,
           randomBetween(-Math.PI, Math.PI),
-          randomBetween(12, 22) - this.depth * 1.4
+          randomBetween(10, 20) - this.depth * 1.2
         ));
         this.lastThornAt = this.length;
+      }
+
+      if (this.length - this.lastLeafAt > this.leafSpacing) {
+        const leafSide = this.leaves.length % 2 === 0 ? 1 : -1;
+        this.leaves.push(new Leaf(
+          this.length / this.targetLength,
+          leafSide,
+          randomBetween(-0.28, 0.28),
+          randomBetween(11, 22) - this.depth * 1.6
+        ));
+        this.lastLeafAt = this.length;
       }
 
       if (this.length >= this.targetLength) {
@@ -294,7 +318,7 @@ function addRoot3D(x, y, z, yaw, pitch, countOverride = null) {
       pitch + randomBetween(-0.28, 0.28),
       0,
       4 + Math.floor(Math.random() * 2),
-      8.4 + Math.random() * 2.8 + stress * 0.025 + (width < 720 ? 4 : 0)
+      10.5 + Math.random() * 3.5 + stress * 0.028 + (width < 720 ? 4 : 0)
     );
     roots.push(root);
     created.push(root);
@@ -337,12 +361,13 @@ function drawBackground() {
   // chrome ring base
   ctx.globalAlpha = 0.72;
   const ringGrad = ctx.createLinearGradient(plate.x - rx, plate.y, plate.x + rx, plate.y);
-  ringGrad.addColorStop(0,    "#0c0e0d");
-  ringGrad.addColorStop(0.22, "#5a6660");
-  ringGrad.addColorStop(0.42, "#d8e4e0");
-  ringGrad.addColorStop(0.58, "#c0ccca");
-  ringGrad.addColorStop(0.78, "#4a5450");
-  ringGrad.addColorStop(1,    "#0c0e0d");
+  ringGrad.addColorStop(0,    "#3a3e3c");
+  ringGrad.addColorStop(0.18, "#7a8280");
+  ringGrad.addColorStop(0.38, "#c8d4d2");
+  ringGrad.addColorStop(0.52, "#e2eae8");
+  ringGrad.addColorStop(0.62, "#c0cac8");
+  ringGrad.addColorStop(0.82, "#6e7876");
+  ringGrad.addColorStop(1,    "#3a3e3c");
   ctx.strokeStyle = ringGrad;
   ctx.lineWidth = 7 * plate.s;
   ctx.beginPath();
@@ -386,28 +411,31 @@ function drawTubeSegment(a, b, radius, alpha) {
     mx - nx * hw, my - ny * hw,
     mx + nx * hw, my + ny * hw
   );
-  grad.addColorStop(0,    "#080a09");
-  grad.addColorStop(0.14, "#252e2c");
-  grad.addColorStop(0.36, "#daeae6");
-  grad.addColorStop(0.52, "#b8ccc8");
-  grad.addColorStop(0.70, "#384440");
-  grad.addColorStop(0.86, "#161c1a");
-  grad.addColorStop(1,    "#060808");
+  // matte silver-aluminum gradient
+  grad.addColorStop(0,    "#4e5452");
+  grad.addColorStop(0.12, "#7a8280");
+  grad.addColorStop(0.28, "#b2bcba");
+  grad.addColorStop(0.44, "#d8e0de");
+  grad.addColorStop(0.52, "#eef2f0");
+  grad.addColorStop(0.60, "#d4dcda");
+  grad.addColorStop(0.76, "#a8b2b0");
+  grad.addColorStop(0.88, "#6e7876");
+  grad.addColorStop(1,    "#4a504e");
 
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
 
-  // 외곽 그림자
-  ctx.strokeStyle = "rgba(4, 6, 5, 0.48)";
-  ctx.lineWidth = lineWidth + 5;
+  // 외곽 그림자 (부드러운 은색 그림자)
+  ctx.strokeStyle = "rgba(40, 48, 46, 0.32)";
+  ctx.lineWidth = lineWidth + 4;
   ctx.beginPath();
   ctx.moveTo(a.screen.x, a.screen.y);
   ctx.lineTo(b.screen.x, b.screen.y);
   ctx.stroke();
 
-  // 메인 크롬 단면 그라디언트
+  // 메인 알루미늄 단면 그라디언트
   ctx.strokeStyle = grad;
   ctx.lineWidth = lineWidth;
   ctx.beginPath();
@@ -415,13 +443,13 @@ function drawTubeSegment(a, b, radius, alpha) {
   ctx.lineTo(b.screen.x, b.screen.y);
   ctx.stroke();
 
-  // 하이라이트 반사선 (빛이 닿는 쪽)
+  // 하이라이트 반사선 (매트 소프트 하이라이트)
   ctx.globalCompositeOperation = "screen";
-  ctx.strokeStyle = "rgba(242, 252, 250, 0.72)";
-  ctx.lineWidth = Math.max(0.6, lineWidth * 0.12);
+  ctx.strokeStyle = "rgba(240, 248, 246, 0.55)";
+  ctx.lineWidth = Math.max(0.5, lineWidth * 0.10);
   ctx.beginPath();
-  ctx.moveTo(a.screen.x + nx * lineWidth * 0.20, a.screen.y + ny * lineWidth * 0.20);
-  ctx.lineTo(b.screen.x + nx * lineWidth * 0.20, b.screen.y + ny * lineWidth * 0.20);
+  ctx.moveTo(a.screen.x + nx * lineWidth * 0.18, a.screen.y + ny * lineWidth * 0.18);
+  ctx.lineTo(b.screen.x + nx * lineWidth * 0.18, b.screen.y + ny * lineWidth * 0.18);
   ctx.stroke();
   ctx.restore();
 }
@@ -442,16 +470,16 @@ function drawThorn(stem, thorn) {
   const side2 = project(add(baseWorld, scale(v3(-normalWorld.z, normalWorld.x, -normalWorld.y), thorn.size * 0.22)));
 
   const thornGrad = ctx.createLinearGradient(base.x, base.y, tip.x, tip.y);
-  thornGrad.addColorStop(0,    "#020202");
-  thornGrad.addColorStop(0.30, "#080808");
-  thornGrad.addColorStop(0.55, "#1e2422");
-  thornGrad.addColorStop(0.72, "#040404");
-  thornGrad.addColorStop(1,    "#000000");
+  thornGrad.addColorStop(0,    "#2a2e2c");
+  thornGrad.addColorStop(0.28, "#1a1e1c");
+  thornGrad.addColorStop(0.52, "#3a4240");
+  thornGrad.addColorStop(0.72, "#141816");
+  thornGrad.addColorStop(1,    "#080a09");
 
   ctx.save();
   ctx.fillStyle = thornGrad;
-  ctx.strokeStyle = "rgba(220, 238, 234, 0.18)";
-  ctx.lineWidth = 0.8;
+  ctx.strokeStyle = "rgba(200, 220, 216, 0.22)";
+  ctx.lineWidth = 0.7;
   ctx.beginPath();
   ctx.moveTo(side.x, side.y);
   ctx.lineTo(tip.x, tip.y);
@@ -461,12 +489,138 @@ function drawThorn(stem, thorn) {
   ctx.stroke();
 
   ctx.globalCompositeOperation = "screen";
-  ctx.strokeStyle = "rgba(240, 252, 248, 0.55)";
+  ctx.strokeStyle = "rgba(220, 240, 236, 0.42)";
+  ctx.lineWidth = 0.6;
+  ctx.beginPath();
+  ctx.moveTo(base.x, base.y);
+  ctx.lineTo(tip.x, tip.y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawLeaf(stem, leaf) {
+  if (leaf.removed || leaf.t > stem.length / stem.targetLength) return;
+  const baseWorld = stem.pointAt(leaf.t);
+  const tangentWorld = normalize(add(
+    stem.pointAt(Math.min(1, leaf.t + 0.06)),
+    scale(baseWorld, -1)
+  ));
+
+  // 잎 법선: 줄기에 수직, side와 roll 적용
+  const perpWorld = normalize(v3(
+    -tangentWorld.z * leaf.side + Math.sin(leaf.roll) * 0.4,
+    0.6 + Math.cos(leaf.roll) * 0.3,
+    tangentWorld.x * leaf.side
+  ));
+
+  const leafSize = leaf.size;
+  const tipWorld = add(baseWorld, scale(perpWorld, leafSize));
+  const ctrl1World = add(baseWorld, add(
+    scale(perpWorld, leafSize * 0.55),
+    scale(tangentWorld, leafSize * 0.32)
+  ));
+  const ctrl2World = add(baseWorld, add(
+    scale(perpWorld, leafSize * 0.55),
+    scale(tangentWorld, -leafSize * 0.32)
+  ));
+
+  const base = project(baseWorld);
+  const tip  = project(tipWorld);
+  const c1   = project(ctrl1World);
+  const c2   = project(ctrl2World);
+
+  // 잎 실버 그라디언트
+  const lg = ctx.createLinearGradient(base.x, base.y, tip.x, tip.y);
+  lg.addColorStop(0,    "#3e4442");
+  lg.addColorStop(0.25, "#6e7876");
+  lg.addColorStop(0.50, "#a8b4b2");
+  lg.addColorStop(0.72, "#7a8482");
+  lg.addColorStop(1,    "#4a5250");
+
+  ctx.save();
+  ctx.globalAlpha = Math.max(0.45, 1 - stem.depth * 0.15);
+  ctx.fillStyle = lg;
+  ctx.strokeStyle = "rgba(180, 200, 196, 0.30)";
+  ctx.lineWidth = 0.6;
+
+  ctx.beginPath();
+  ctx.moveTo(base.x, base.y);
+  ctx.quadraticCurveTo(c1.x, c1.y, tip.x, tip.y);
+  ctx.quadraticCurveTo(c2.x, c2.y, base.x, base.y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // 잎 중앙 맥
+  ctx.globalCompositeOperation = "screen";
+  ctx.strokeStyle = "rgba(220, 240, 236, 0.38)";
   ctx.lineWidth = 0.7;
   ctx.beginPath();
   ctx.moveTo(base.x, base.y);
   ctx.lineTo(tip.x, tip.y);
   ctx.stroke();
+  ctx.restore();
+}
+
+function drawFlower(stem) {
+  if (!stem.done || stem.removed) return;
+  const tipWorld = stem.endPoint();
+  const center = project(tipWorld);
+  const sc = center.s * stem.radius;
+  const r1 = Math.max(3, sc * 2.6);   // 바깥 꽃잎 길이
+  const r2 = Math.max(1.5, sc * 1.2); // 안쪽 꽃잎 길이
+  const spokes = 12;
+
+  ctx.save();
+  ctx.globalAlpha = Math.max(0.5, 1 - stem.depth * 0.12);
+  ctx.translate(center.x, center.y);
+
+  // 크리스탈 광선 (바깥 뾰족한 꽃잎)
+  for (let i = 0; i < spokes; i += 1) {
+    const angle = (i / spokes) * Math.PI * 2;
+    const nextAngle = ((i + 0.5) / spokes) * Math.PI * 2;
+    const tipX = Math.cos(angle) * r1;
+    const tipY = Math.sin(angle) * r1;
+    const mid1X = Math.cos(angle - 0.18) * r2;
+    const mid1Y = Math.sin(angle - 0.18) * r2;
+    const mid2X = Math.cos(nextAngle) * r2;
+    const mid2Y = Math.sin(nextAngle) * r2;
+
+    const petalGrad = ctx.createLinearGradient(0, 0, tipX, tipY);
+    petalGrad.addColorStop(0,    "rgba(200, 220, 216, 0.88)");
+    petalGrad.addColorStop(0.45, "rgba(240, 248, 246, 0.72)");
+    petalGrad.addColorStop(0.75, "rgba(210, 230, 228, 0.55)");
+    petalGrad.addColorStop(1,    "rgba(180, 210, 206, 0.18)");
+
+    ctx.fillStyle = petalGrad;
+    ctx.strokeStyle = "rgba(160, 200, 196, 0.40)";
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(mid1X, mid1Y);
+    ctx.quadraticCurveTo(tipX * 0.7, tipY * 0.7, tipX, tipY);
+    ctx.quadraticCurveTo(mid2X * 0.7, mid2Y * 0.7, mid2X, mid2Y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  // 중앙 크리스탈 코어
+  const coreGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, r2 * 0.7);
+  coreGrad.addColorStop(0,   "rgba(248, 252, 250, 0.92)");
+  coreGrad.addColorStop(0.4, "rgba(220, 238, 234, 0.70)");
+  coreGrad.addColorStop(1,   "rgba(180, 210, 208, 0.25)");
+  ctx.fillStyle = coreGrad;
+  ctx.beginPath();
+  ctx.arc(0, 0, r2 * 0.68, 0, Math.PI * 2);
+  ctx.fill();
+
+  // 중앙 글로우
+  ctx.globalCompositeOperation = "screen";
+  ctx.fillStyle = "rgba(242, 252, 250, 0.55)";
+  ctx.beginPath();
+  ctx.arc(0, 0, r2 * 0.32, 0, Math.PI * 2);
+  ctx.fill();
+
   ctx.restore();
 }
 
@@ -488,8 +642,20 @@ function buildRenderQueue() {
 
     stem.thorns.forEach((thorn) => {
       const p = project(stem.pointAt(thorn.t));
-      items.push({ type: "thorn", depth: p.z + 6, stem, thorn });
+      items.push({ type: "thorn", depth: p.z + 4, stem, thorn });
     });
+
+    stem.leaves.forEach((leaf) => {
+      if (!leaf.removed && leaf.t <= stem.length / stem.targetLength) {
+        const p = project(stem.pointAt(leaf.t));
+        items.push({ type: "leaf", depth: p.z + 2, stem, leaf });
+      }
+    });
+
+    if (stem.done && stem.depth === stem.maxDepth && !stem.removed) {
+      const p = project(stem.endPoint());
+      items.push({ type: "flower", depth: p.z - 2, stem });
+    }
   });
 
   items.sort((a, b) => a.depth - b.depth);
@@ -501,8 +667,12 @@ function drawScene() {
     const alpha = Math.max(0.25, 1 - item.stem.depth * 0.13);
     if (item.type === "tube") {
       drawTubeSegment(item.a, item.b, item.stem.radius, alpha);
-    } else {
+    } else if (item.type === "thorn") {
       drawThorn(item.stem, item.thorn);
+    } else if (item.type === "leaf") {
+      drawLeaf(item.stem, item.leaf);
+    } else if (item.type === "flower") {
+      drawFlower(item.stem);
     }
   });
 }
