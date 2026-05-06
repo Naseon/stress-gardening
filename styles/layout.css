@@ -9,19 +9,20 @@
   position: relative;
   min-height: 100svh;
   overflow: hidden;
-  background:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px),
-    var(--bg);
-  background-size: 120px 120px;
+  /* 스튜디오 포토그래피 비네트 — 중앙 밝고 가장자리 자연스럽게 어두워짐 */
+  background: radial-gradient(ellipse 90% 80% at 50% 46%,
+    #ffffff 0%,
+    #f0ede8 55%,
+    #dedad3 100%);
 }
 
+/* 측정자 스타일 얇은 내부 프레임 — 실험실 계측기 느낌 */
 .stage::before {
   content: "";
   position: absolute;
-  inset: 24px;
-  z-index: 1;
-  border: 0.5px solid var(--line-strong);
+  inset: 20px;
+  z-index: 3;
+  border: 0.5px solid rgba(10,11,9,0.10);
   pointer-events: none;
 }
 
@@ -32,12 +33,12 @@
   min-width: max-content;
   padding: 15px 0;
   border-block: 0.5px solid rgba(13,14,12,0.18);
-  background: #060706;
-  color: #f4f3ef;
-  font-family: var(--sans);
-  font-size: clamp(11px, 1.6vw, 21px);
-  font-weight: 900;
-  letter-spacing: 0.05em;
+  background: #0a0b09;
+  color: #ffffff;
+  font-family: var(--mono);
+  font-size: clamp(10px, 1.3vw, 16px);
+  font-weight: 400;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   animation: ticker 28s linear infinite;
   overflow: hidden;
@@ -103,8 +104,8 @@
   gap: 0.5px;
   min-height: 54vw;
   max-height: 800px;
-  background: #060706;
-  border: 0.5px solid #060706;
+  background: #0a0b09;
+  border: 0.5px solid #0a0b09;
 }
 
 /* ── Split Feature ── */
@@ -118,10 +119,10 @@
 
 /* ── Tool Grid ── */
 .tool-grid {
-  background: #060706;
-  color: #f4f3ef;
+  background: #0a0b09;
+  color: #ffffff;
 }
-.tool-grid .section-heading p { border-left-color: #f4f3ef; }
+.tool-grid .section-heading p { border-left-color: #ffffff; }
 
 .tool-layout {
   display: grid;
@@ -170,7 +171,7 @@
     linear-gradient(var(--line) 1px, transparent 1px),
     linear-gradient(90deg, var(--line) 1px, transparent 1px),
     var(--bg);
-  background-size: 120px 120px;
+  background-size: 96px 96px;
 }
 
 .preserve h2 { max-width: 740px; }
@@ -190,17 +191,17 @@
   justify-content: space-between;
   gap: var(--sp-6);
   padding: var(--sp-6) var(--sp-gutter);
-  background: #060706;
-  color: #f4f3ef;
-  font-size: var(--text-sm);
-  font-weight: 900;
-  letter-spacing: 0.05em;
+  background: #0a0b09;
+  color: rgba(255,255,255,0.72);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
 }
 
 /* ── Responsive 900px ── */
 @media (max-width: 900px) {
-  .site-nav { display: none !important; }
 
   .section-heading,
   .process-title,
@@ -229,33 +230,57 @@
   .brand { top: 26px !important; }
   .description { max-width: 340px; }
 
-  .panel {
-    flex-direction: row !important;
-    flex-wrap: wrap;
-    align-items: center;
-    bottom: 12px !important;
-    padding: 10px 12px !important;
-    gap: var(--sp-2) !important;
-    min-height: auto !important;
+  /* Side panel collapses to horizontal strip at bottom */
+  .side-panel {
+    top: auto;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    flex-direction: row;
+    align-items: stretch;
+    border-left: none;
+    border-top: 0.5px solid var(--line-strong);
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
-  .control { flex-basis: 100%; }
-
-  #statusText {
-    flex: 1;
-    min-width: 0;
-    font-size: var(--text-xs) !important;
+  .site-nav {
+    flex-direction: row;
+    padding: 10px 14px;
+    border-bottom: none;
+    border-right: 0.5px solid var(--line-strong);
+    align-items: center;
+    gap: var(--sp-3);
+    white-space: nowrap;
   }
 
   .toolbox {
-    left: 16px !important;
-    right: 16px !important;
-    top: auto !important;
-    bottom: 136px !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 10px 14px;
+    border-bottom: none;
+    border-right: 0.5px solid var(--line-strong);
+    align-items: center;
   }
 
-  .tool-button { flex: 1; height: 36px !important; font-size: 11px !important; }
-  button { min-width: 56px; height: 36px !important; font-size: 11px !important; }
+  .panel {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .section-label { display: none; }
+
+  .tool-button { width: auto; min-width: 64px; height: 34px; font-size: 11px; }
+  button { width: auto; min-width: 60px; height: 34px; font-size: 11px; }
+
+  .panel-actions { display: flex; gap: 6px; }
+  .panel-actions button { min-width: 56px; }
+
+  .control { min-width: 120px; }
 
   .mood-board {
     grid-template-columns: 1fr;

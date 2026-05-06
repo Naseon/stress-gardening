@@ -27,11 +27,13 @@
   if (toolboxEl) {
     toolboxEl.setAttribute("aria-label", "도구 선택");
     toolboxEl.innerHTML =
+      `<p class="section-label">Tools</p>` +
       S.game.tools.map((t, i) =>
         `<button class="tool-button${i === 0 ? " active" : ""}" type="button" data-tool="${t.id}">${t.label}</button>`
       ).join("") +
+      `<p class="section-label" style="margin-top:14px;">View</p>` +
       `<button class="tool-button utility" id="undoButton"      type="button">Undo</button>` +
-      `<button class="tool-button utility" id="resetViewButton" type="button">View</button>`;
+      `<button class="tool-button utility" id="resetViewButton" type="button">Reset</button>`;
   }
 
   /* ── 4. Panel (game/app.js가 이 요소를 쿼리함) ── */
@@ -39,13 +41,16 @@
   if (panelEl) {
     panelEl.setAttribute("aria-label", "인터랙션 패널");
     panelEl.innerHTML = `
+      <p class="section-label">Controls</p>
       <label class="control">
         <span>Stress Level</span>
         <input id="stressSlider" type="range" min="0" max="100" value="${S.game.stressDefault}" />
       </label>
       <output id="statusText"></output>
-      <button id="regrowButton" type="button">Regrow</button>
-      <button id="saveButton"   type="button">Save</button>
+      <div class="panel-actions">
+        <button id="regrowButton" type="button">Regrow</button>
+        <button id="saveButton"   type="button">Save</button>
+      </div>
     `;
   }
 

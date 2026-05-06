@@ -6,20 +6,21 @@
   color-scheme: light;
 
   /* colour */
-  --bg:          #f4f3ef;
-  --surface:     #edecea;
-  --ink:         #0d0e0c;
-  --ink-2:       #5a5e58;
-  --ink-3:       rgba(13,14,12,0.32);
-  --line:        rgba(13,14,12,0.08);
-  --line-mid:    rgba(13,14,12,0.14);
-  --line-strong: rgba(13,14,12,0.22);
-  --panel:       rgba(244,243,239,0.88);
-  --accent:      #0d0e0c;
+  --bg:          #f6f5f2;          /* gallery white — warm, not stark */
+  --surface:     #eceae5;
+  --ink:         #0a0b09;
+  --ink-2:       #52564f;
+  --ink-3:       rgba(10,11,9,0.30);
+  --line:        rgba(10,11,9,0.06);
+  --line-mid:    rgba(10,11,9,0.11);
+  --line-strong: rgba(10,11,9,0.18);
+  --panel:       rgba(246,245,242,0.92);
+  --accent:      #0a0b09;
 
   /* type */
-  --sans:  "Helvetica Neue", Arial, sans-serif;
-  --serif: Georgia, "Times New Roman", serif;
+  --sans:  "Helvetica Neue", "Arial", sans-serif;
+  --serif: "Georgia", "Times New Roman", serif;
+  --mono:  "SF Mono", "Fira Mono", "Consolas", "Courier New", monospace;
 
   /* scale */
   --text-xs:   10px;
@@ -77,11 +78,12 @@ a  { color: inherit; text-decoration: none; }
   margin: 0 0 18px;
   padding-left: 10px;
   border-left: 1.5px solid var(--ink);
-  font-family: var(--sans);
-  font-size: var(--text-sm);
-  font-weight: 900;
-  letter-spacing: 0.06em;
+  font-family: var(--mono);          /* 표본 라벨 — 모노스페이스 */
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
+  color: var(--ink-2);
 }
 
 .description {

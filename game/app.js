@@ -30,47 +30,73 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf4f3ef);
+/* 스튜디오 배경 — 갤러리 화이트, CSS 비네트와 통일 */
+scene.background = new THREE.Color(0xf6f5f2);
 
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
 camera.position.set(0, 4, 18);
 camera.lookAt(0, 1.0, 0);
 
-/* ── 조명 ── */
-scene.add(new THREE.AmbientLight(0xffffff, 2.5));
-const sunLight = new THREE.DirectionalLight(0xffffff, 3.5);
-sunLight.position.set(3, 10, 5);
-scene.add(sunLight);
-const fillLight = new THREE.DirectionalLight(0xffffff, 1.2);
-fillLight.position.set(-5, 3, -3);
+/* ── 조명 — 스튜디오 소프트박스 세팅 ── */
+/* 전체 베이스 환경광: 균일하고 부드럽게 */
+scene.add(new THREE.AmbientLight(0xfff8f0, 3.2));
+/* 키 라이트: 45도 위쪽 왼쪽 */
+const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
+keyLight.position.set(-4, 12, 6);
+scene.add(keyLight);
+/* 필 라이트: 반대쪽 부드러운 보조 */
+const fillLight = new THREE.DirectionalLight(0xfff4ea, 1.6);
+fillLight.position.set(6, 4, -4);
 scene.add(fillLight);
-const pointLight = new THREE.PointLight(0xffffff, 1.5, 20);
-pointLight.position.set(4, 5, 4);
-scene.add(pointLight);
+/* 림 라이트: 뒤에서 테두리 강조 (금속 질감 살리기) */
+const rimLight = new THREE.DirectionalLight(0xffffff, 1.0);
+rimLight.position.set(0, -2, -8);
+scene.add(rimLight);
+/* 아래쪽 반사광: 바닥 반사 시뮬레이션 */
+const groundBounce = new THREE.DirectionalLight(0xfaf6f0, 0.6);
+groundBounce.position.set(0, -8, 2);
+scene.add(groundBounce);
 
-/* ── 재질 ── */
+/* ── 재질 — 레퍼런스 은빛 금속 표본 ── */
 const stemMat = new THREE.MeshStandardMaterial({
-  color: 0xd0cecc, metalness: 0.92, roughness: 0.18,
+  color: 0xc8c6c3,      /* 레퍼런스의 따뜻한 실버 톤 */
+  metalness: 0.95,
+  roughness: 0.22,
 });
 const leafMat = new THREE.MeshStandardMaterial({
-  color: 0xb8b6b4, metalness: 0.92, roughness: 0.18,
+  color: 0xb0aeac,      /* 잎: 줄기보다 살짝 어둡고 무광 */
+  metalness: 0.88,
+  roughness: 0.30,
   side: THREE.DoubleSide,
 });
 const crystalMat = new THREE.MeshPhongMaterial({
-  color: 0xffffff, specular: 0xffffff, shininess: 200,
-  transparent: true, opacity: 0.78, side: THREE.DoubleSide,
+  color: 0xf0f0ee,      /* 크리스탈: 거의 흰빛, 미묘한 따뜻함 */
+  specular: 0xffffff,
+  shininess: 320,
+  transparent: true,
+  opacity: 0.82,
+  side: THREE.DoubleSide,
 });
 
 /* ── 씬 그룹 (회전용) ── */
 const group = new THREE.Group();
 scene.add(group);
 
-/* ── 베이스 플레이트 (반사 원판) ── */
-const plateGeo  = new THREE.CylinderGeometry(2.0, 2.0, 0.04, 64);
-const plateMat  = new THREE.MeshStandardMaterial({
-  color: 0xd8d6d4, metalness: 0.88, roughness: 0.12,
+/* ── 베이스 플레이트 — 레퍼런스의 유리 페트리 접시 ── */
+/* 유리 디스크 (투명, 반사) */
+const plateGeo = new THREE.CylinderGeometry(2.1, 2.1, 0.06, 64);
+const glassMat = new THREE.MeshPhongMaterial({
+  color: 0xf0f0ee, specular: 0xffffff, shininess: 180,
+  transparent: true, opacity: 0.38,
 });
-group.add(new THREE.Mesh(plateGeo, plateMat));
+group.add(new THREE.Mesh(plateGeo, glassMat));
+/* 유리 테두리 링 */
+const rimGeo = new THREE.TorusGeometry(2.1, 0.045, 16, 64);
+const rimMat = new THREE.MeshStandardMaterial({
+  color: 0xd4d2cf, metalness: 0.6, roughness: 0.28,
+  transparent: true, opacity: 0.72,
+});
+group.add(new THREE.Mesh(rimGeo, rimMat));
 
 /* ─────────────────────────────────────────
    STEM 데이터 & 생성
