@@ -1,972 +1,505 @@
-const canvas = document.querySelector("#thornCanvas");
-const ctx = canvas.getContext("2d");
-const slider = document.querySelector("#stressSlider");
-const regrowButton = document.querySelector("#regrowButton");
-const statusText = document.querySelector("#statusText");
-const toolButtons = document.querySelectorAll(".tool-button[data-tool]");
-const undoButton = document.querySelector("#undoButton");
+/* ─────────────────────────────────────────
+   GAME / app.js  —  Three.js vine engine
+   config.js + render.js가 먼저 실행된 후 로드됨
+   ───────────────────────────────────────── */
+
+/* ── DOM refs ── */
+const canvas        = document.querySelector("#thornCanvas");
+const slider        = document.querySelector("#stressSlider");
+const regrowButton  = document.querySelector("#regrowButton");
+const statusText    = document.querySelector("#statusText");
+const toolButtons   = document.querySelectorAll(".tool-button[data-tool]");
+const undoButton    = document.querySelector("#undoButton");
 const resetViewButton = document.querySelector("#resetViewButton");
-const saveButton = document.querySelector("#saveButton");
+const saveButton    = document.querySelector("#saveButton");
 
-let width = 0;
-let height = 0;
-let pixelRatio = 1;
-let frame = 0;
-let roots = [];
-let particles = [];
-let currentTool = "cut";
-let isPointerDown = false;
-let pointerDownX = 0;
-let pointerDownY = 0;
-let pointerMoved = false;
-let autoTimer = 0;
-let cachedStems = [];
-let history = [];
-let currentCombChanges = null;
-let cameraYaw = -0.22;
-let cameraPitch = 0.08;
-let targetYaw = -0.22;
-let targetPitch = 0.08;
+/* ── State ── */
+let currentTool = "comb";
+let history     = [];
+let autoTimer   = 0;
+const MAX_STEMS = 55;
 
-const cameraDistance = 780;
-const focalLength = 760;
+/* ─────────────────────────────────────────
+   THREE.JS SETUP
+   ───────────────────────────────────────── */
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  preserveDrawingBuffer: true,  /* save 기능에 필요 */
+});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-const pointer = {
-  x: 0,
-  y: 0,
-  lastX: 0,
-  lastY: 0,
-  vx: 0,
-  vy: 0,
-};
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xf4f3ef);
 
-function resizeCanvas() {
-  pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-  const rect = canvas.getBoundingClientRect();
-  width = Math.max(320, Math.floor(rect.width));
-  height = Math.max(420, Math.floor(rect.height));
-  canvas.width = Math.floor(width * pixelRatio);
-  canvas.height = Math.floor(height * pixelRatio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-}
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+camera.position.set(0, 3, 10);
+camera.lookAt(0, 1.5, 0);
 
-function randomBetween(min, max) {
-  return min + Math.random() * (max - min);
-}
+/* ── 조명 ── */
+scene.add(new THREE.AmbientLight(0xffffff, 2.5));
+const sunLight = new THREE.DirectionalLight(0xffffff, 3.5);
+sunLight.position.set(3, 10, 5);
+scene.add(sunLight);
+const fillLight = new THREE.DirectionalLight(0xffffff, 1.2);
+fillLight.position.set(-5, 3, -3);
+scene.add(fillLight);
+const pointLight = new THREE.PointLight(0xffffff, 1.5, 20);
+pointLight.position.set(4, 5, 4);
+scene.add(pointLight);
 
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
-}
+/* ── 재질 ── */
+const stemMat = new THREE.MeshStandardMaterial({
+  color: 0xd0cecc, metalness: 0.92, roughness: 0.18,
+});
+const leafMat = new THREE.MeshStandardMaterial({
+  color: 0xb8b6b4, metalness: 0.92, roughness: 0.18,
+  side: THREE.DoubleSide,
+});
+const crystalMat = new THREE.MeshPhongMaterial({
+  color: 0xffffff, specular: 0xffffff, shininess: 200,
+  transparent: true, opacity: 0.78, side: THREE.DoubleSide,
+});
 
-function remember(action) {
-  history.push(action);
-  if (history.length > 24) history.shift();
-}
+/* ── 씬 그룹 (회전용) ── */
+const group = new THREE.Group();
+scene.add(group);
 
-function v3(x = 0, y = 0, z = 0) {
-  return { x, y, z };
-}
+/* ── 베이스 플레이트 (반사 원판) ── */
+const plateGeo  = new THREE.CylinderGeometry(2.0, 2.0, 0.04, 64);
+const plateMat  = new THREE.MeshStandardMaterial({
+  color: 0xd8d6d4, metalness: 0.88, roughness: 0.12,
+});
+group.add(new THREE.Mesh(plateGeo, plateMat));
 
-function add(a, b) {
-  return v3(a.x + b.x, a.y + b.y, a.z + b.z);
-}
+/* ─────────────────────────────────────────
+   STEM 데이터 & 생성
+   ───────────────────────────────────────── */
+const stems = [];
 
-function scale(a, s) {
-  return v3(a.x * s, a.y * s, a.z * s);
-}
+function rnd(a, b) { return a + Math.random() * (b - a); }
 
-function lerp(a, b, t) {
-  return v3(
-    a.x + (b.x - a.x) * t,
-    a.y + (b.y - a.y) * t,
-    a.z + (b.z - a.z) * t
-  );
-}
-
-function normalize(a) {
-  const length = Math.hypot(a.x, a.y, a.z) || 1;
-  return v3(a.x / length, a.y / length, a.z / length);
-}
-
-function rotateForCamera(point) {
-  const cosY = Math.cos(cameraYaw);
-  const sinY = Math.sin(cameraYaw);
-  const x1 = point.x * cosY - point.z * sinY;
-  const z1 = point.x * sinY + point.z * cosY;
-
-  const cosX = Math.cos(cameraPitch);
-  const sinX = Math.sin(cameraPitch);
-  const y2 = point.y * cosX - z1 * sinX;
-  const z2 = point.y * sinX + z1 * cosX;
-
-  return v3(x1, y2, z2);
-}
-
-function project(point) {
-  const rotated = rotateForCamera(point);
-  const depth = cameraDistance + rotated.z;
-  const perspective = focalLength / Math.max(120, depth);
-  const vy = width < 720 ? height * 0.48 : height * 0.58;
-
-  return {
-    x: width * 0.5 + rotated.x * perspective,
-    y: vy - rotated.y * perspective,
-    z: rotated.z,
-    s: perspective,
-  };
-}
-
-function getPointerPosition(event) {
-  const rect = canvas.getBoundingClientRect();
-  return {
-    x: event.clientX - rect.left,
-    y: event.clientY - rect.top,
-  };
-}
-
-function updatePointer(event) {
-  const position = getPointerPosition(event);
-  pointer.lastX = pointer.x;
-  pointer.lastY = pointer.y;
-  pointer.x = position.x;
-  pointer.y = position.y;
-  pointer.vx = pointer.x - pointer.lastX;
-  pointer.vy = pointer.y - pointer.lastY;
-  if (!isPointerDown) {
-    targetYaw = clamp((pointer.x / width - 0.5) * 0.48, -0.42, 0.42);
-    targetPitch = clamp((pointer.y / height - 0.5) * -0.22, -0.16, 0.16);
-  }
-  return position;
-}
-
-function screenToWorld(x, y, z = randomBetween(-70, 70)) {
-  const perspective = focalLength / Math.max(120, cameraDistance + z);
-  const vy = width < 720 ? height * 0.48 : height * 0.58;
-  return v3(
-    (x - width * 0.5) / perspective,
-    (vy - y) / perspective,
-    z
-  );
-}
-
-class Thorn {
-  constructor(t, side, roll, size) {
-    this.t = t;
-    this.side = side;
-    this.roll = roll;
-    this.size = size;
-    this.removed = false;
-  }
-}
-
-class Leaf {
-  constructor(t, side, roll, size) {
-    this.t = t;
-    this.side = side;
-    this.roll = roll;
-    this.size = size;
-    this.removed = false;
-  }
-}
-
-class Stem3D {
-  constructor(start, yaw, pitch, depth, maxDepth, radius) {
-    this.start = start;
-    this.yaw = yaw;
-    this.pitch = pitch;
-    this.depth = depth;
-    this.maxDepth = maxDepth;
-    this.radius = radius;
-    this.length = 0;
-    this.targetLength = randomBetween(100, 190) - depth * 10;
-    this.speed = randomBetween(0.18, 0.38);
-    this.curve = v3(randomBetween(-62, 62), randomBetween(-22, 44), randomBetween(-72, 72));
-    this.bend = v3();
-    this.velocity = v3();
-    this.phase = Math.random() * Math.PI * 2;
-    this.children = [];
-    this.thorns = [];
-    this.leaves = [];
-    this.done = false;
-    this.spawned = false;
-    this.removed = false;
-    this.lastThornAt = 0;
-    this.thornSpacing = randomBetween(22, 38);
-    this.lastLeafAt = randomBetween(8, 16);
-    this.leafSpacing = randomBetween(14, 26);
-  }
-
-  direction() {
-    const cp = Math.cos(this.pitch);
-    return normalize(v3(
-      Math.cos(this.yaw) * cp,
-      Math.sin(this.pitch),
-      Math.sin(this.yaw) * cp
-    ));
-  }
-
-  endPoint(lengthOverride = this.length) {
-    return add(this.start, add(scale(this.direction(), lengthOverride), this.bend));
-  }
-
-  controlPoint(lengthOverride = this.length) {
-    const halfway = add(this.start, scale(this.direction(), lengthOverride * 0.52));
-    const stress = Number(slider.value);
-    const swayAmp = (10 - this.depth * 1.2) * (1 + stress * 0.016);
-    const living = Math.sin(frame * 0.018 + this.phase) * swayAmp;
-    return add(halfway, add(scale(this.curve, 0.55), v3(0, living, 0)));
-  }
-
-  pointAt(t) {
-    const lengthAtT = this.length * t;
-    const start = this.start;
-    const control = this.controlPoint(lengthAtT);
-    const end = this.endPoint(lengthAtT);
-    const a = lerp(start, control, t);
-    const b = lerp(control, end, t);
-    return lerp(a, b, t);
-  }
-
-  update() {
-    if (this.removed) return;
-
-    this.velocity.x *= 0.82;
-    this.velocity.y *= 0.82;
-    this.velocity.z *= 0.82;
-    this.bend = add(this.bend, this.velocity);
-
-    if (!this.done) {
-      this.yaw += Math.sin(frame * 0.012 + this.phase) * 0.0014;
-      this.pitch += Math.cos(frame * 0.01 + this.phase) * 0.0008;
-      this.length = Math.min(this.length + this.speed, this.targetLength);
-
-      if (this.length - this.lastThornAt > this.thornSpacing && this.depth > 0) {
-        this.thorns.push(new Thorn(
-          this.length / this.targetLength,
-          Math.random() < 0.5 ? -1 : 1,
-          randomBetween(-Math.PI, Math.PI),
-          randomBetween(10, 20) - this.depth * 1.2
-        ));
-        this.lastThornAt = this.length;
-      }
-
-      if (this.length - this.lastLeafAt > this.leafSpacing) {
-        const leafSide = this.leaves.length % 2 === 0 ? 1 : -1;
-        this.leaves.push(new Leaf(
-          this.length / this.targetLength,
-          leafSide,
-          randomBetween(-0.28, 0.28),
-          randomBetween(11, 22) - this.depth * 1.6
-        ));
-        this.lastLeafAt = this.length;
-      }
-
-      if (this.length >= this.targetLength) {
-        this.done = true;
-        if (!this.spawned && this.depth < this.maxDepth) {
-          this.spawned = true;
-          this.spawnChildren();
-        }
-      }
-    }
-
-    this.children.forEach((child) => child.update());
-  }
-
-  spawnChildren() {
-    const end = this.endPoint();
-    const childCount = this.depth < 2 ? 2 + Math.floor(Math.random() * 2) : 2;
-
-    for (let i = 0; i < childCount; i += 1) {
-      const side = i % 2 === 0 ? 1 : -1;
-      const child = new Stem3D(
-        end,
-        this.yaw + side * randomBetween(0.36, 0.82),
-        this.pitch + randomBetween(-0.34, 0.38),
-        this.depth + 1,
-        this.maxDepth,
-        this.radius * 0.68
-      );
-      child.curve.z += side * randomBetween(18, 64);
-      this.children.push(child);
-    }
-  }
-
-  collect(list) {
-    if (!this.removed) list.push(this);
-    this.children.forEach((child) => child.collect(list));
-  }
-}
-
-function allStems() {
-  const stems = [];
-  roots.forEach((root) => root.collect(stems));
-  return stems;
-}
-
-function addRoot3D(x, y, z, yaw, pitch, countOverride = null) {
+function spawnStem(sx, sy, sz) {
   const stress = Number(slider.value);
-  const count = countOverride ?? 2 + Math.floor(Math.random() * 3);
-  const created = [];
 
-  for (let i = 0; i < count; i += 1) {
-    const root = new Stem3D(
-      v3(x + randomBetween(-18, 18), y + randomBetween(-16, 16), z + randomBetween(-20, 20)),
-      yaw + randomBetween(-0.38, 0.38),
-      pitch + randomBetween(-0.28, 0.28),
-      0,
-      4 + Math.floor(Math.random() * 2),
-      10.5 + Math.random() * 3.5 + stress * 0.028 + (width < 720 ? 4 : 0)
+  /* 곡선 경로 생성 */
+  const points = [];
+  let cx = sx, cy = sy + 0.02, cz = sz;
+  let vx = rnd(-0.9, 0.9), vz = rnd(-0.9, 0.9);
+  const segCount = 18 + Math.floor(stress * 0.05);
+  points.push(new THREE.Vector3(cx, cy, cz));
+  for (let i = 1; i <= segCount; i++) {
+    vx += rnd(-0.38, 0.38); vz += rnd(-0.38, 0.38);
+    vx *= 0.78; vz *= 0.78;
+    cx += vx;
+    cy += 0.22 + Math.random() * 0.07;
+    cz += vz;
+    points.push(new THREE.Vector3(cx, cy, cz));
+  }
+
+  const curve    = new THREE.CatmullRomCurve3(points);
+  const tubeR    = 0.055 + stress * 0.00042;
+  const geo      = new THREE.TubeGeometry(curve, 64, tubeR, 8, false);
+  geo.setDrawRange(0, 0);
+  const mesh     = new THREE.Mesh(geo, stemMat.clone());
+  group.add(mesh);
+
+  /* 가시 */
+  const thornMeshes = [];
+  const thornCount  = 8 + Math.floor(stress * 0.07);
+  for (let i = 0; i < thornCount; i++) {
+    const t    = (i + 0.5) / thornCount;
+    const pos  = curve.getPoint(t);
+    const tan  = curve.getTangent(t);
+    const up   = new THREE.Vector3(0, 1, 0);
+    const perp = new THREE.Vector3().crossVectors(tan, up).normalize();
+    const ang  = i * 2.618 * Math.PI;
+    const dir  = new THREE.Vector3(
+      perp.x * Math.cos(ang) + up.x * Math.sin(ang),
+      perp.y * Math.cos(ang) + up.y * Math.sin(ang),
+      perp.z * Math.cos(ang) + up.z * Math.sin(ang)
+    ).normalize();
+    const thorn = new THREE.Mesh(
+      new THREE.ConeGeometry(0.028, 0.22 + stress * 0.001, 5),
+      stemMat.clone()
     );
-    roots.push(root);
-    created.push(root);
+    thorn.position.copy(pos).addScaledVector(dir, 0.06);
+    thorn.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    thorn.visible  = false;
+    thorn._t       = t;
+    thorn._removed = false;
+    group.add(thorn);
+    thornMeshes.push(thorn);
   }
 
-  return created;
-}
-
-function seedScene() {
-  roots = [];
-  particles = [];
-  history = [];
-  currentCombChanges = null;
-  autoTimer = 0;
-  const mobileCount = width < 720 ? 2 : 1;
-  addRoot3D(-240, -180, 30, 0.4, 0.74, mobileCount);
-  addRoot3D(120, -195, -40, Math.PI - 0.22, 0.78, mobileCount);
-  cachedStems = allStems();
-  updateStatus("Comb: click to grow, drag to sculpt. Cut to trim.");
-}
-
-function drawBackground() {
-  ctx.fillStyle = "rgba(253, 253, 252, 0.94)";
-  ctx.fillRect(0, 0, width, height);
-
-  const plate = project(v3(0, -205, 0));
-  const rx = 280 * plate.s;
-  const ry = 60 * plate.s;
-  const angle = -cameraYaw * 0.32;
-  ctx.save();
-
-  // outer chrome ring shadow
-  ctx.globalAlpha = 0.18;
-  ctx.strokeStyle = "#0a0c0b";
-  ctx.lineWidth = 4 * plate.s;
-  ctx.beginPath();
-  ctx.ellipse(plate.x, plate.y + 3 * plate.s, rx, ry, angle, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // chrome ring base
-  ctx.globalAlpha = 0.72;
-  const ringGrad = ctx.createLinearGradient(plate.x - rx, plate.y, plate.x + rx, plate.y);
-  ringGrad.addColorStop(0,    "#3a3e3c");
-  ringGrad.addColorStop(0.18, "#7a8280");
-  ringGrad.addColorStop(0.38, "#c8d4d2");
-  ringGrad.addColorStop(0.52, "#e2eae8");
-  ringGrad.addColorStop(0.62, "#c0cac8");
-  ringGrad.addColorStop(0.82, "#6e7876");
-  ringGrad.addColorStop(1,    "#3a3e3c");
-  ctx.strokeStyle = ringGrad;
-  ctx.lineWidth = 7 * plate.s;
-  ctx.beginPath();
-  ctx.ellipse(plate.x, plate.y, rx, ry, angle, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // inner fill
-  ctx.globalAlpha = 0.08;
-  ctx.fillStyle = "rgba(200, 215, 210, 1)";
-  ctx.beginPath();
-  ctx.ellipse(plate.x, plate.y, rx - 2 * plate.s, ry - 2 * plate.s, angle, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.restore();
-}
-
-function pathSamples(stem, count = 10) {
-  const samples = [];
-  for (let i = 0; i <= count; i += 1) {
-    const world = stem.pointAt(i / count);
-    samples.push({ screen: project(world) });
+  /* 잎 */
+  const leafMeshes = [];
+  const leafCount  = 4 + Math.floor(stress * 0.04);
+  for (let i = 0; i < leafCount; i++) {
+    const t   = (i + 0.4) / leafCount;
+    const pos = curve.getPoint(t);
+    const tan = curve.getTangent(t);
+    const sz  = 0.10 + Math.random() * 0.11;
+    const sh  = new THREE.Shape();
+    sh.moveTo(0, 0);
+    sh.bezierCurveTo(-sz * 0.6, sz * 0.2, -sz * 0.5, sz * 0.72, 0, sz);
+    sh.bezierCurveTo( sz * 0.5, sz * 0.72, sz * 0.6, sz * 0.2, 0, 0);
+    const leaf = new THREE.Mesh(
+      new THREE.ExtrudeGeometry(sh, { depth: 0.009, bevelEnabled: false }),
+      leafMat.clone()
+    );
+    const side = i % 2 === 0 ? 1 : -1;
+    const ld   = new THREE.Vector3(
+      -tan.z * side + rnd(-0.3, 0.3),
+       0.5,
+       tan.x * side + rnd(-0.3, 0.3)
+    ).normalize();
+    leaf.position.copy(pos).addScaledVector(ld, 0.11);
+    leaf.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), ld);
+    leaf.rotation.x += rnd(-0.9, 0.9);
+    leaf.rotation.y += rnd(-0.9, 0.9);
+    leaf.rotation.z += rnd(-0.9, 0.9);
+    leaf.visible = false;
+    leaf._t      = t;
+    group.add(leaf);
+    leafMeshes.push(leaf);
   }
-  return samples;
+
+  /* 크리스탈 꽃 (줄기 끝) */
+  const fg = new THREE.Group();
+  for (let i = 0; i < 12; i++) {
+    const phi   = (i / 12) * Math.PI * 2;
+    const theta = Math.PI / 6 + (i % 3) * (Math.PI / 8);
+    const len   = 0.30 + (i % 3) * 0.06;
+    const psh   = new THREE.Shape();
+    psh.moveTo(0, 0);
+    psh.lineTo(-0.025, len * 0.3);
+    psh.lineTo(0, len);
+    psh.lineTo( 0.025, len * 0.3);
+    psh.closePath();
+    const petal = new THREE.Mesh(
+      new THREE.ExtrudeGeometry(psh, { depth: 0.005, bevelEnabled: false }),
+      crystalMat
+    );
+    const dir = new THREE.Vector3(
+      Math.sin(theta) * Math.cos(phi),
+      Math.cos(theta),
+      Math.sin(theta) * Math.sin(phi)
+    ).normalize();
+    petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    petal.position.copy(dir).multiplyScalar(0.045);
+    fg.add(petal);
+  }
+  fg.add(new THREE.Mesh(
+    new THREE.SphereGeometry(0.042, 10, 10),
+    new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 320 })
+  ));
+  fg.position.copy(curve.getPoint(1));
+  fg.scale.setScalar(0);
+  fg.rotation.y = Math.random() * Math.PI * 2;
+  group.add(fg);
+
+  const stemObj = {
+    mesh, geo,
+    total: geo.index.count,
+    curve,
+    thorns: thornMeshes,
+    leaves: leafMeshes,
+    flower: fg,
+    progress: 0,
+    speed: 0.007 + stress * 0.000065,
+    growing: true,
+    removed: false,
+  };
+  stems.push(stemObj);
+  return stemObj;
 }
 
-function drawTubeSegment(a, b, radius, alpha) {
-  const dx = b.screen.x - a.screen.x;
-  const dy = b.screen.y - a.screen.y;
-  const lineWidth = Math.max(1, radius * (a.screen.s + b.screen.s) * 0.5);
+/* ─────────────────────────────────────────
+   카메라 궤도 드래그
+   ───────────────────────────────────────── */
+let isDrag     = false;
+let isDragged  = false;
+let dragPX     = 0, dragPY = 0;
+let targetRY   = 0, targetRX = 0;
+let currentRY  = 0, currentRX = 0;
 
-  // 줄기 수직 방향(단면) 노멀 벡터
-  const normalLength = Math.hypot(dx, dy) || 1;
-  const nx = -dy / normalLength;
-  const ny = dx / normalLength;
+/* ─────────────────────────────────────────
+   레이캐스팅
+   ───────────────────────────────────────── */
+const raycaster   = new THREE.Raycaster();
+const mouseNDC    = new THREE.Vector2();
+const spawnPlane  = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
-  // 세그먼트 중점에서 노멀 방향으로 그라디언트 (단면 크롬 반사)
-  const mx = (a.screen.x + b.screen.x) * 0.5;
-  const my = (a.screen.y + b.screen.y) * 0.5;
-  const hw = lineWidth * 0.5;
-  const grad = ctx.createLinearGradient(
-    mx - nx * hw, my - ny * hw,
-    mx + nx * hw, my + ny * hw
+function setMouseNDC(clientX, clientY) {
+  const rect = canvas.getBoundingClientRect();
+  mouseNDC.x =  ((clientX - rect.left) / rect.width)  * 2 - 1;
+  mouseNDC.y = -((clientY - rect.top)  / rect.height) * 2 + 1;
+}
+
+/* ─────────────────────────────────────────
+   도구 동작
+   ───────────────────────────────────────── */
+function cutAt(clientX, clientY) {
+  setMouseNDC(clientX, clientY);
+  raycaster.setFromCamera(mouseNDC, camera);
+  const visibleMeshes = stems.filter(s => !s.removed).map(s => s.mesh);
+  const hits = raycaster.intersectObjects(visibleMeshes);
+  if (hits.length) {
+    const stemObj = stems.find(s => s.mesh === hits[0].object);
+    if (stemObj) {
+      stemObj.removed = true;
+      stemObj.mesh.visible = false;
+      stemObj.thorns.forEach(t => { t.visible = false; });
+      stemObj.leaves.forEach(l => { l.visible = false; });
+      stemObj.flower.visible = false;
+      history.push({ type: "cut", stem: stemObj });
+      updateStatus("Vine stem clipped.");
+      return;
+    }
+  }
+  updateStatus("Cut: click directly on a vine stem.");
+}
+
+function pluckAt(clientX, clientY) {
+  setMouseNDC(clientX, clientY);
+  raycaster.setFromCamera(mouseNDC, camera);
+  const activeThorns = stems.flatMap(s =>
+    !s.removed ? s.thorns.filter(t => t.visible && !t._removed) : []
   );
-  // matte silver-aluminum gradient
-  grad.addColorStop(0,    "#4e5452");
-  grad.addColorStop(0.12, "#7a8280");
-  grad.addColorStop(0.28, "#b2bcba");
-  grad.addColorStop(0.44, "#d8e0de");
-  grad.addColorStop(0.52, "#eef2f0");
-  grad.addColorStop(0.60, "#d4dcda");
-  grad.addColorStop(0.76, "#a8b2b0");
-  grad.addColorStop(0.88, "#6e7876");
-  grad.addColorStop(1,    "#4a504e");
-
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  // 외곽 그림자 (부드러운 은색 그림자)
-  ctx.strokeStyle = "rgba(40, 48, 46, 0.32)";
-  ctx.lineWidth = lineWidth + 4;
-  ctx.beginPath();
-  ctx.moveTo(a.screen.x, a.screen.y);
-  ctx.lineTo(b.screen.x, b.screen.y);
-  ctx.stroke();
-
-  // 메인 알루미늄 단면 그라디언트
-  ctx.strokeStyle = grad;
-  ctx.lineWidth = lineWidth;
-  ctx.beginPath();
-  ctx.moveTo(a.screen.x, a.screen.y);
-  ctx.lineTo(b.screen.x, b.screen.y);
-  ctx.stroke();
-
-  // 하이라이트 반사선 (매트 소프트 하이라이트)
-  ctx.globalCompositeOperation = "screen";
-  ctx.strokeStyle = "rgba(240, 248, 246, 0.55)";
-  ctx.lineWidth = Math.max(0.5, lineWidth * 0.10);
-  ctx.beginPath();
-  ctx.moveTo(a.screen.x + nx * lineWidth * 0.18, a.screen.y + ny * lineWidth * 0.18);
-  ctx.lineTo(b.screen.x + nx * lineWidth * 0.18, b.screen.y + ny * lineWidth * 0.18);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawThorn(stem, thorn) {
-  if (thorn.removed || thorn.t > stem.length / stem.targetLength) return;
-
-  const baseWorld = stem.pointAt(thorn.t);
-  const base = project(baseWorld);
-  const tangentWorld = normalize(add(stem.pointAt(Math.min(1, thorn.t + 0.04)), scale(baseWorld, -1)));
-  const normalWorld = normalize(v3(
-    -tangentWorld.z * thorn.side + Math.cos(thorn.roll) * 0.25,
-    0.38 + Math.sin(thorn.roll) * 0.34,
-    tangentWorld.x * thorn.side
-  ));
-  const tip = project(add(baseWorld, scale(normalWorld, thorn.size)));
-  const side = project(add(baseWorld, scale(v3(normalWorld.z, -normalWorld.x, normalWorld.y), thorn.size * 0.22)));
-  const side2 = project(add(baseWorld, scale(v3(-normalWorld.z, normalWorld.x, -normalWorld.y), thorn.size * 0.22)));
-
-  const thornGrad = ctx.createLinearGradient(base.x, base.y, tip.x, tip.y);
-  thornGrad.addColorStop(0,    "#2a2e2c");
-  thornGrad.addColorStop(0.28, "#1a1e1c");
-  thornGrad.addColorStop(0.52, "#3a4240");
-  thornGrad.addColorStop(0.72, "#141816");
-  thornGrad.addColorStop(1,    "#080a09");
-
-  ctx.save();
-  ctx.fillStyle = thornGrad;
-  ctx.strokeStyle = "rgba(200, 220, 216, 0.22)";
-  ctx.lineWidth = 0.7;
-  ctx.beginPath();
-  ctx.moveTo(side.x, side.y);
-  ctx.lineTo(tip.x, tip.y);
-  ctx.lineTo(side2.x, side2.y);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.globalCompositeOperation = "screen";
-  ctx.strokeStyle = "rgba(220, 240, 236, 0.42)";
-  ctx.lineWidth = 0.6;
-  ctx.beginPath();
-  ctx.moveTo(base.x, base.y);
-  ctx.lineTo(tip.x, tip.y);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawLeaf(stem, leaf) {
-  if (leaf.removed || leaf.t > stem.length / stem.targetLength) return;
-  const baseWorld = stem.pointAt(leaf.t);
-  const tangentWorld = normalize(add(
-    stem.pointAt(Math.min(1, leaf.t + 0.06)),
-    scale(baseWorld, -1)
-  ));
-
-  // 잎 법선: 줄기에 수직, side와 roll 적용
-  const perpWorld = normalize(v3(
-    -tangentWorld.z * leaf.side + Math.sin(leaf.roll) * 0.4,
-    0.6 + Math.cos(leaf.roll) * 0.3,
-    tangentWorld.x * leaf.side
-  ));
-
-  const leafSize = leaf.size;
-  const tipWorld = add(baseWorld, scale(perpWorld, leafSize));
-  const ctrl1World = add(baseWorld, add(
-    scale(perpWorld, leafSize * 0.55),
-    scale(tangentWorld, leafSize * 0.32)
-  ));
-  const ctrl2World = add(baseWorld, add(
-    scale(perpWorld, leafSize * 0.55),
-    scale(tangentWorld, -leafSize * 0.32)
-  ));
-
-  const base = project(baseWorld);
-  const tip  = project(tipWorld);
-  const c1   = project(ctrl1World);
-  const c2   = project(ctrl2World);
-
-  // 잎 실버 그라디언트
-  const lg = ctx.createLinearGradient(base.x, base.y, tip.x, tip.y);
-  lg.addColorStop(0,    "#3e4442");
-  lg.addColorStop(0.25, "#6e7876");
-  lg.addColorStop(0.50, "#a8b4b2");
-  lg.addColorStop(0.72, "#7a8482");
-  lg.addColorStop(1,    "#4a5250");
-
-  ctx.save();
-  ctx.globalAlpha = Math.max(0.45, 1 - stem.depth * 0.15);
-  ctx.fillStyle = lg;
-  ctx.strokeStyle = "rgba(180, 200, 196, 0.30)";
-  ctx.lineWidth = 0.6;
-
-  ctx.beginPath();
-  ctx.moveTo(base.x, base.y);
-  ctx.quadraticCurveTo(c1.x, c1.y, tip.x, tip.y);
-  ctx.quadraticCurveTo(c2.x, c2.y, base.x, base.y);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  // 잎 중앙 맥
-  ctx.globalCompositeOperation = "screen";
-  ctx.strokeStyle = "rgba(220, 240, 236, 0.38)";
-  ctx.lineWidth = 0.7;
-  ctx.beginPath();
-  ctx.moveTo(base.x, base.y);
-  ctx.lineTo(tip.x, tip.y);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawFlower(stem) {
-  if (!stem.done || stem.removed) return;
-  const tipWorld = stem.endPoint();
-  const center = project(tipWorld);
-  const sc = center.s * stem.radius;
-  const r1 = Math.max(3, sc * 2.6);   // 바깥 꽃잎 길이
-  const r2 = Math.max(1.5, sc * 1.2); // 안쪽 꽃잎 길이
-  const spokes = 12;
-
-  ctx.save();
-  ctx.globalAlpha = Math.max(0.5, 1 - stem.depth * 0.12);
-  ctx.translate(center.x, center.y);
-
-  // 크리스탈 광선 (바깥 뾰족한 꽃잎)
-  for (let i = 0; i < spokes; i += 1) {
-    const angle = (i / spokes) * Math.PI * 2;
-    const nextAngle = ((i + 0.5) / spokes) * Math.PI * 2;
-    const tipX = Math.cos(angle) * r1;
-    const tipY = Math.sin(angle) * r1;
-    const mid1X = Math.cos(angle - 0.18) * r2;
-    const mid1Y = Math.sin(angle - 0.18) * r2;
-    const mid2X = Math.cos(nextAngle) * r2;
-    const mid2Y = Math.sin(nextAngle) * r2;
-
-    const petalGrad = ctx.createLinearGradient(0, 0, tipX, tipY);
-    petalGrad.addColorStop(0,    "rgba(200, 220, 216, 0.88)");
-    petalGrad.addColorStop(0.45, "rgba(240, 248, 246, 0.72)");
-    petalGrad.addColorStop(0.75, "rgba(210, 230, 228, 0.55)");
-    petalGrad.addColorStop(1,    "rgba(180, 210, 206, 0.18)");
-
-    ctx.fillStyle = petalGrad;
-    ctx.strokeStyle = "rgba(160, 200, 196, 0.40)";
-    ctx.lineWidth = 0.6;
-    ctx.beginPath();
-    ctx.moveTo(mid1X, mid1Y);
-    ctx.quadraticCurveTo(tipX * 0.7, tipY * 0.7, tipX, tipY);
-    ctx.quadraticCurveTo(mid2X * 0.7, mid2Y * 0.7, mid2X, mid2Y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-  }
-
-  // 중앙 크리스탈 코어
-  const coreGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, r2 * 0.7);
-  coreGrad.addColorStop(0,   "rgba(248, 252, 250, 0.92)");
-  coreGrad.addColorStop(0.4, "rgba(220, 238, 234, 0.70)");
-  coreGrad.addColorStop(1,   "rgba(180, 210, 208, 0.25)");
-  ctx.fillStyle = coreGrad;
-  ctx.beginPath();
-  ctx.arc(0, 0, r2 * 0.68, 0, Math.PI * 2);
-  ctx.fill();
-
-  // 중앙 글로우
-  ctx.globalCompositeOperation = "screen";
-  ctx.fillStyle = "rgba(242, 252, 250, 0.55)";
-  ctx.beginPath();
-  ctx.arc(0, 0, r2 * 0.32, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.restore();
-}
-
-function buildRenderQueue() {
-  const items = [];
-  cachedStems.forEach((stem) => {
-    const sampleCount = Math.max(4, Math.floor(stem.length / 18));
-    const samples = pathSamples(stem, sampleCount);
-
-    for (let i = 0; i < samples.length - 1; i += 1) {
-      items.push({
-        type: "tube",
-        depth: (samples[i].screen.z + samples[i + 1].screen.z) * 0.5,
-        stem,
-        a: samples[i],
-        b: samples[i + 1],
-      });
-    }
-
-    stem.thorns.forEach((thorn) => {
-      const p = project(stem.pointAt(thorn.t));
-      items.push({ type: "thorn", depth: p.z + 4, stem, thorn });
-    });
-
-    stem.leaves.forEach((leaf) => {
-      if (!leaf.removed && leaf.t <= stem.length / stem.targetLength) {
-        const p = project(stem.pointAt(leaf.t));
-        items.push({ type: "leaf", depth: p.z + 2, stem, leaf });
-      }
-    });
-
-    if (stem.done && stem.depth === stem.maxDepth && !stem.removed) {
-      const p = project(stem.endPoint());
-      items.push({ type: "flower", depth: p.z - 2, stem });
-    }
-  });
-
-  items.sort((a, b) => a.depth - b.depth);
-  return items;
-}
-
-function drawScene() {
-  buildRenderQueue().forEach((item) => {
-    const alpha = Math.max(0.25, 1 - item.stem.depth * 0.13);
-    if (item.type === "tube") {
-      drawTubeSegment(item.a, item.b, item.stem.radius, alpha);
-    } else if (item.type === "thorn") {
-      drawThorn(item.stem, item.thorn);
-    } else if (item.type === "leaf") {
-      drawLeaf(item.stem, item.leaf);
-    } else if (item.type === "flower") {
-      drawFlower(item.stem);
-    }
-  });
-}
-
-function updateScene() {
-  cameraYaw += (targetYaw - cameraYaw) * 0.045;
-  cameraPitch += (targetPitch - cameraPitch) * 0.045;
-  roots.forEach((root) => root.update());
-
-  autoTimer += 1;
-  const stress = Number(slider.value);
-  const interval = Math.max(170, 360 - stress * 1.2);
-  if (autoTimer > interval && roots.length < 70) {
-    autoTimer = 0;
-    const side = Math.random();
-    if (side < 0.35) addRoot3D(randomBetween(-360, 360), -220, randomBetween(-80, 80), randomBetween(0, Math.PI * 2), randomBetween(0.42, 1.1), 1);
-    else if (side < 0.68) addRoot3D(-440, randomBetween(-90, 80), randomBetween(-90, 90), 0, randomBetween(-0.15, 0.28), 1);
-    else addRoot3D(440, randomBetween(-90, 80), randomBetween(-90, 90), Math.PI, randomBetween(-0.15, 0.28), 1);
-  }
-
-  if (roots.length > 90) roots.splice(0, 8);
-}
-
-function plantAtScreen(x, y) {
-  const world = screenToWorld(x, y);
-  const movementAngle = Math.atan2(-pointer.vy, pointer.vx || 0.001);
-  const yaw = Number.isFinite(movementAngle) ? movementAngle : randomBetween(0, Math.PI * 2);
-  const pitch = randomBetween(-0.08, 0.32);
-
-  const created = addRoot3D(world.x, world.y, world.z, yaw, pitch, 1);
-  remember({ type: "plant", roots: created });
-  updateStatus("Growth planted from your click.");
-}
-
-function nearestStemTip(x, y) {
-  let best = null;
-  cachedStems.forEach((stem) => {
-    if (stem.depth < 2 || stem.children.some((child) => !child.removed)) return;
-    const end = project(stem.endPoint());
-    const distance = Math.hypot(end.x - x, end.y - y);
-    const edgeBias = Math.min(end.x, width - end.x, end.y, height - end.y);
-    const score = distance + edgeBias * 0.1 - stem.depth * 12;
-    if (distance < 96 && (!best || score < best.score)) best = { stem, end, score };
-  });
-  return best;
-}
-
-function cutAt(x, y) {
-  const hit = nearestStemTip(x, y);
-  if (!hit) {
-    updateStatus("Cut the outer 3D tips.");
-    return;
-  }
-
-  remember({ type: "cut", stem: hit.stem });
-  hit.stem.removed = true;
-  spawnParticles(hit.end.x, hit.end.y, 12);
-  updateStatus("Outer vine tip clipped.");
-}
-
-function combAt(x, y) {
-  let touched = 0;
-  cachedStems.forEach((stem) => {
-    const mid = project(stem.pointAt(0.55));
-    const distance = Math.hypot(mid.x - x, mid.y - y);
-    if (distance > 150) return;
-
-    const influence = Math.pow(1 - distance / 150, 2);
-    if (currentCombChanges && !currentCombChanges.has(stem)) {
-      currentCombChanges.set(stem, {
-        x: stem.bend.x,
-        y: stem.bend.y,
-        z: stem.bend.z,
-      });
-    }
-    stem.velocity.x += pointer.vx * 0.018 * influence;
-    stem.velocity.y += -pointer.vy * 0.014 * influence;
-    stem.velocity.z += (x - mid.x) * 0.01 * influence;
-    stem.bend.x += pointer.vx * 0.42 * influence;
-    stem.bend.y += -pointer.vy * 0.34 * influence;
-    stem.bend.z += (x - mid.x) * 0.018 * influence;
-    stem.bend.x = clamp(stem.bend.x, -280, 280);
-    stem.bend.y = clamp(stem.bend.y, -280, 280);
-    stem.bend.z = clamp(stem.bend.z, -280, 280);
-    touched += 1;
-  });
-
-  updateStatus(touched ? "Vines hold the dragged shape." : "Touch closer to the vines.");
-}
-
-function pluckAt(x, y) {
-  let best = null;
-  cachedStems.forEach((stem) => {
-    stem.thorns.forEach((thorn) => {
-      if (thorn.removed || thorn.t > stem.length / stem.targetLength) return;
-      const p = project(stem.pointAt(thorn.t));
-      const distance = Math.hypot(p.x - x, p.y - y);
-      if (distance < 64 && (!best || distance < best.distance)) best = { stem, thorn, p, distance };
-    });
-  });
-
-  if (!best) {
-    updateStatus("Pick a visible black thorn.");
-    return;
-  }
-
-  remember({ type: "pluck", thorn: best.thorn });
-  best.thorn.removed = true;
-  spawnParticles(best.p.x, best.p.y, 5);
-  updateStatus("Black thorn removed.");
-}
-
-function useToolAt(x, y) {
-  if (currentTool === "cut") cutAt(x, y);
-  if (currentTool === "comb") combAt(x, y);
-  if (currentTool === "pluck") pluckAt(x, y);
-}
-
-function spawnParticles(x, y, count) {
-  for (let i = 0; i < count; i += 1) {
-    particles.push({
-      x,
-      y,
-      vx: randomBetween(-1.8, 1.8),
-      vy: randomBetween(-2.2, 0.7),
-      size: randomBetween(1.5, 4.4),
-      age: 0,
-      life: randomBetween(360, 820),
-    });
+  const hits = raycaster.intersectObjects(activeThorns);
+  if (hits.length) {
+    const thorn = hits[0].object;
+    thorn.visible   = false;
+    thorn._removed  = true;
+    history.push({ type: "pluck", thorn });
+    updateStatus("Thorn removed.");
+  } else {
+    updateStatus("Pluck: click on a visible thorn.");
   }
 }
 
-function drawParticles() {
-  particles = particles.filter((particle) => {
-    particle.age += 16;
-    particle.vy += 0.07;
-    particle.x += particle.vx;
-    particle.y += particle.vy;
-    const alpha = 1 - particle.age / particle.life;
-    if (alpha <= 0) return false;
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = "#111412";
-    ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
-    ctx.restore();
-    return true;
-  });
+function plantAt(clientX, clientY) {
+  setMouseNDC(clientX, clientY);
+  raycaster.setFromCamera(mouseNDC, camera);
+  const target = new THREE.Vector3();
+  raycaster.ray.intersectPlane(spawnPlane, target);
+  const inv = new THREE.Matrix4().copy(group.matrixWorld).invert();
+  target.applyMatrix4(inv);
+  const stemObj = spawnStem(target.x, Math.max(target.y - 1.2, -0.1), target.z);
+  history.push({ type: "plant", stem: stemObj });
+  updateStatus("Growth planted.");
 }
 
-function updateStatus(message) {
-  const growth = Math.min(100, Math.round((cachedStems.length / 260) * 100));
-  const stress = Number(slider.value);
-  const label = stress < 31 ? "LOW TENSION" : stress < 66 ? "CHRONIC TENSION" : "OVERGROWTH";
-  statusText.textContent = `${message} | ${label} | Depth ${growth}%`;
-}
-
+/* ── Undo ── */
 function undoLastAction() {
   const action = history.pop();
-  if (!action) {
-    updateStatus("Nothing to undo.");
-    return;
-  }
+  if (!action) { updateStatus("Nothing to undo."); return; }
 
   if (action.type === "cut") {
-    action.stem.removed = false;
+    const s = action.stem;
+    s.removed          = false;
+    s.mesh.visible     = true;
+    s.flower.visible   = s.progress >= 1;
+    s.thorns.forEach(t => { if (!t._removed && t._t <= s.progress) t.visible = true; });
+    s.leaves.forEach(l => { if (l._t <= s.progress * 0.9) l.visible = true; });
   }
-
   if (action.type === "pluck") {
-    action.thorn.removed = false;
+    action.thorn._removed = false;
+    action.thorn.visible  = true;
   }
-
   if (action.type === "plant") {
-    roots = roots.filter((root) => !action.roots.includes(root));
+    const s = action.stem;
+    s.removed = true;
+    s.mesh.visible = false;
+    s.thorns.forEach(t => t.visible = false);
+    s.leaves.forEach(l => l.visible = false);
+    s.flower.visible = false;
   }
-
-  if (action.type === "comb") {
-    action.changes.forEach((bend, stem) => {
-      stem.bend.x = bend.x;
-      stem.bend.y = bend.y;
-      stem.bend.z = bend.z;
-      stem.velocity = v3();
-    });
-  }
-
-  cachedStems = allStems();
   updateStatus("Last action undone.");
 }
 
+/* ── Reset view ── */
 function resetView() {
-  cameraYaw = -0.22;
-  cameraPitch = 0.08;
-  targetYaw = -0.22;
-  targetPitch = 0.08;
+  targetRY = 0; targetRX = 0;
   updateStatus("View reset.");
 }
 
+/* ── 씬 초기화 ── */
+function seedScene() {
+  stems.forEach(s => {
+    group.remove(s.mesh);
+    s.thorns.forEach(t => group.remove(t));
+    s.leaves.forEach(l => group.remove(l));
+    group.remove(s.flower);
+  });
+  stems.length   = 0;
+  history.length = 0;
+  autoTimer      = 0;
+  targetRY = 0; targetRX = 0;
+  spawnStem(-0.35, 0, -0.12);
+  spawnStem( 0.05, 0,  0.18);
+  spawnStem( 0.35, 0, -0.08);
+  updateStatus("Comb: click to grow · drag to rotate · Cut/Pluck to prune.");
+}
+
+/* ── 상태 텍스트 ── */
+function updateStatus(msg) {
+  const stress = Number(slider.value);
+  const label  = stress < 31 ? "LOW TENSION" : stress < 66 ? "CHRONIC TENSION" : "OVERGROWTH";
+  const density = Math.min(100, Math.round((stems.filter(s => !s.removed).length / 30) * 100));
+  statusText.textContent = `${msg} | ${label} | Density ${density}%`;
+}
+
+/* ── Save ── */
 function saveSpecimen() {
-  const off = document.createElement("canvas");
-  off.width = canvas.width;
-  off.height = canvas.height;
-  const offCtx = off.getContext("2d");
-  offCtx.fillStyle = "#f8f9f8";
-  offCtx.fillRect(0, 0, off.width, off.height);
-  offCtx.drawImage(canvas, 0, 0);
-  const link = document.createElement("a");
-  link.download = `stress-gardening-${Date.now()}.png`;
-  link.href = off.toDataURL("image/png");
+  renderer.render(scene, camera);
+  const link      = document.createElement("a");
+  link.download   = `stress-gardening-${Date.now()}.png`;
+  link.href       = canvas.toDataURL("image/png");
   link.click();
   updateStatus("Specimen saved.");
 }
 
-function loop() {
-  requestAnimationFrame(loop);
-  frame += 1;
-  cachedStems = allStems();
-  updateScene();
-  drawBackground();
-  drawScene();
-  drawParticles();
+/* ── 리사이즈 ── */
+function resizeRenderer() {
+  const rect = canvas.getBoundingClientRect();
+  const w    = Math.max(320, Math.floor(rect.width));
+  const h    = Math.max(420, Math.floor(rect.height));
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
 }
 
-toolButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    currentTool = button.dataset.tool;
-    toolButtons.forEach((item) => item.classList.toggle("active", item === button));
+/* ─────────────────────────────────────────
+   이벤트 리스너
+   ───────────────────────────────────────── */
+toolButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentTool = btn.dataset.tool;
+    toolButtons.forEach(b => b.classList.toggle("active", b === btn));
     const labels = {
-      cut: "Cut: trim outer 3D tips.",
-      comb: "Comb: click to grow, drag to sculpt.",
-      pluck: "Pluck: remove black thorns.",
+      cut:   "Cut: click on a vine stem to remove it.",
+      comb:  "Comb: click to grow · drag to rotate.",
+      pluck: "Pluck: click on a thorn to remove it.",
     };
     updateStatus(labels[currentTool]);
   });
 });
 
-canvas.addEventListener("pointerdown", (event) => {
-  isPointerDown = true;
-  canvas.setPointerCapture(event.pointerId);
-  const position = updatePointer(event);
-  pointerDownX = position.x;
-  pointerDownY = position.y;
-  pointerMoved = false;
-  currentCombChanges = currentTool === "comb" ? new Map() : null;
-  if (currentTool !== "comb") useToolAt(position.x, position.y);
+/* 마우스 */
+canvas.addEventListener("mousedown", e => {
+  isDrag    = true;
+  isDragged = false;
+  dragPX    = e.clientX;
+  dragPY    = e.clientY;
 });
-
-canvas.addEventListener("pointermove", (event) => {
-  const position = updatePointer(event);
-  if (!isPointerDown) return;
-  const dragDistance = Math.hypot(position.x - pointerDownX, position.y - pointerDownY);
-  if (dragDistance > 6) pointerMoved = true;
-
-  if (currentTool === "comb") {
-    combAt(position.x, position.y);
-  } else {
-    useToolAt(position.x, position.y);
+window.addEventListener("mousemove", e => {
+  if (!isDrag) return;
+  const dx = e.clientX - dragPX;
+  const dy = e.clientY - dragPY;
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) isDragged = true;
+  targetRY += dx * 0.007;
+  targetRX += dy * 0.004;
+  targetRX  = Math.max(-0.55, Math.min(0.55, targetRX));
+  dragPX    = e.clientX;
+  dragPY    = e.clientY;
+});
+window.addEventListener("mouseup", e => {
+  if (!isDragged) {
+    if (currentTool === "cut")   cutAt(e.clientX, e.clientY);
+    else if (currentTool === "comb")  plantAt(e.clientX, e.clientY);
+    else if (currentTool === "pluck") pluckAt(e.clientX, e.clientY);
   }
+  isDrag    = false;
+  isDragged = false;
 });
 
-canvas.addEventListener("pointerup", (event) => {
-  const position = updatePointer(event);
-  if (currentTool === "comb" && !pointerMoved) {
-    plantAtScreen(position.x, position.y);
+/* 터치 */
+canvas.addEventListener("touchstart", e => {
+  const t = e.touches[0];
+  isDrag = true; isDragged = false;
+  dragPX = t.clientX; dragPY = t.clientY;
+  e.preventDefault();
+}, { passive: false });
+canvas.addEventListener("touchmove", e => {
+  if (!isDrag) return;
+  const t  = e.touches[0];
+  const dx = t.clientX - dragPX;
+  const dy = t.clientY - dragPY;
+  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDragged = true;
+  targetRY += dx * 0.007;
+  targetRX += dy * 0.004;
+  targetRX  = Math.max(-0.55, Math.min(0.55, targetRX));
+  dragPX = t.clientX; dragPY = t.clientY;
+  e.preventDefault();
+}, { passive: false });
+canvas.addEventListener("touchend", e => {
+  if (!isDragged && e.changedTouches.length) {
+    const t = e.changedTouches[0];
+    if (currentTool === "cut")        cutAt(t.clientX, t.clientY);
+    else if (currentTool === "comb")  plantAt(t.clientX, t.clientY);
+    else if (currentTool === "pluck") pluckAt(t.clientX, t.clientY);
   }
-  if (currentTool === "comb" && pointerMoved && currentCombChanges && currentCombChanges.size) {
-    remember({ type: "comb", changes: currentCombChanges });
-  }
-
-  isPointerDown = false;
-  currentCombChanges = null;
-  pointer.vx = 0;
-  pointer.vy = 0;
+  isDrag = false; isDragged = false;
 });
 
-canvas.addEventListener("pointercancel", () => {
-  isPointerDown = false;
-  pointerMoved = false;
-  currentCombChanges = null;
-  pointer.vx = 0;
-  pointer.vy = 0;
-});
-
-slider.addEventListener("input", () => updateStatus("Stress growth changed."));
-regrowButton.addEventListener("click", seedScene);
-undoButton?.addEventListener("click", undoLastAction);
+slider.addEventListener("input",  () => updateStatus("Stress level changed."));
+regrowButton.addEventListener("click",  seedScene);
+undoButton?.addEventListener("click",   undoLastAction);
 resetViewButton?.addEventListener("click", resetView);
-saveButton?.addEventListener("click", saveSpecimen);
+saveButton?.addEventListener("click",   saveSpecimen);
 
-let wasMobile = window.innerWidth < 720;
-window.addEventListener("resize", () => {
-  const isMobile = window.innerWidth < 720;
-  resizeCanvas();
-  if (isMobile !== wasMobile) { wasMobile = isMobile; seedScene(); }
+window.addEventListener("keydown", e => {
+  if (e.key === "r" || e.key === "R") seedScene();
 });
+window.addEventListener("resize", resizeRenderer);
 
-resizeCanvas();
+/* ─────────────────────────────────────────
+   애니메이션 루프
+   ───────────────────────────────────────── */
+function animate() {
+  requestAnimationFrame(animate);
+
+  /* 카메라 부드러운 회전 */
+  currentRY += (targetRY - currentRY) * 0.06;
+  currentRX += (targetRX - currentRX) * 0.06;
+  group.rotation.y = currentRY;
+  group.rotation.x = currentRX;
+
+  /* 줄기 성장 애니메이션 */
+  stems.forEach(s => {
+    if (!s.growing || s.removed) return;
+    s.progress = Math.min(1, s.progress + s.speed);
+    const drawn = Math.floor(s.progress * s.total);
+    s.geo.setDrawRange(0, drawn);
+    s.thorns.forEach(t => {
+      if (!t._removed) t.visible = t._t <= s.progress;
+    });
+    s.leaves.forEach(l => {
+      l.visible = l._t <= s.progress * 0.9;
+    });
+    const fp = Math.max(0, (s.progress - 0.84) / 0.16);
+    s.flower.scale.setScalar(fp * 0.72);
+    if (s.progress >= 1) s.growing = false;
+  });
+
+  /* 자동 성장 (스트레스 기반) */
+  const stress      = Number(slider.value);
+  const activeCnt   = stems.filter(s => !s.removed).length;
+  autoTimer += 1;
+  const interval    = Math.max(200, 440 - stress * 1.8);
+  if (autoTimer > interval && activeCnt < MAX_STEMS) {
+    autoTimer = 0;
+    const ang = Math.random() * Math.PI * 2;
+    const rad = rnd(0.1, 1.4);
+    spawnStem(Math.cos(ang) * rad, 0, Math.sin(ang) * rad);
+  }
+
+  renderer.render(scene, camera);
+}
+
+/* ── 초기화 ── */
+resizeRenderer();
 seedScene();
-loop();
+animate();
