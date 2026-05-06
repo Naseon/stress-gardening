@@ -33,8 +33,8 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf4f3ef);
 
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-camera.position.set(0, 3, 10);
-camera.lookAt(0, 1.5, 0);
+camera.position.set(0, 4, 18);
+camera.lookAt(0, 1.0, 0);
 
 /* ── 조명 ── */
 scene.add(new THREE.AmbientLight(0xffffff, 2.5));
@@ -86,19 +86,19 @@ function spawnStem(sx, sy, sz) {
   const points = [];
   let cx = sx, cy = sy + 0.02, cz = sz;
   let vx = rnd(-0.9, 0.9), vz = rnd(-0.9, 0.9);
-  const segCount = 18 + Math.floor(stress * 0.05);
+  const segCount = 14 + Math.floor(stress * 0.04);
   points.push(new THREE.Vector3(cx, cy, cz));
   for (let i = 1; i <= segCount; i++) {
-    vx += rnd(-0.38, 0.38); vz += rnd(-0.38, 0.38);
-    vx *= 0.78; vz *= 0.78;
-    cx += vx;
-    cy += 0.22 + Math.random() * 0.07;
-    cz += vz;
+    vx += rnd(-0.28, 0.28); vz += rnd(-0.28, 0.28);
+    vx *= 0.76; vz *= 0.76;
+    cx += vx * 0.72;
+    cy += 0.14 + Math.random() * 0.05;
+    cz += vz * 0.72;
     points.push(new THREE.Vector3(cx, cy, cz));
   }
 
   const curve    = new THREE.CatmullRomCurve3(points);
-  const tubeR    = 0.055 + stress * 0.00042;
+  const tubeR    = 0.038 + stress * 0.00028;
   const geo      = new THREE.TubeGeometry(curve, 64, tubeR, 8, false);
   geo.setDrawRange(0, 0);
   const mesh     = new THREE.Mesh(geo, stemMat.clone());
@@ -337,9 +337,9 @@ function seedScene() {
   history.length = 0;
   autoTimer      = 0;
   targetRY = 0; targetRX = 0;
-  spawnStem(-0.35, 0, -0.12);
-  spawnStem( 0.05, 0,  0.18);
-  spawnStem( 0.35, 0, -0.08);
+  spawnStem(-0.22, 0, -0.08);
+  spawnStem( 0.03, 0,  0.12);
+  spawnStem( 0.22, 0, -0.05);
   updateStatus("Comb: click to grow · drag to rotate · Cut/Pluck to prune.");
 }
 
@@ -492,7 +492,7 @@ function animate() {
   if (autoTimer > interval && activeCnt < MAX_STEMS) {
     autoTimer = 0;
     const ang = Math.random() * Math.PI * 2;
-    const rad = rnd(0.1, 1.4);
+    const rad = rnd(0.08, 0.9);
     spawnStem(Math.cos(ang) * rad, 0, Math.sin(ang) * rad);
   }
 
