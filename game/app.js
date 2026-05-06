@@ -375,16 +375,17 @@ function resetView() {
 
 /* ── 초기 줄기 생성 (이미지1: 가느다란 직립 1~2개) ── */
 function buildTree() {
-  /* Level-1 모습: 가는 줄기 1~2개, 거의 수직, 버드 꽃 */
+  /* Level-1 모습: 가는 줄기 1~2개, 자연스러운 S커브, 버드 꽃 */
   const count = 1 + (Math.random() < 0.55 ? 1 : 0);
   for (let i = 0; i < count; i++) {
+    const ang = Math.random() * Math.PI * 2;
     spawnStem(rnd(-0.06, 0.06), -0.02, rnd(-0.06, 0.06), {
-      vxInit:     rnd(-0.06, 0.06),
-      vzInit:     rnd(-0.06, 0.06),
+      vxInit:     Math.cos(ang) * rnd(0.18, 0.36),
+      vzInit:     Math.sin(ang) * rnd(0.18, 0.36),
       numSegs:    20,
       tubeRadius: 0.034,
-      stepY:      0.21,
-      driftMul:   0.18,
+      stepY:      0.20,
+      driftMul:   0.52,
       flowerType: 'bud',
     });
   }
