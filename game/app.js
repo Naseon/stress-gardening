@@ -85,10 +85,11 @@ function spawnStem(sx, sy, sz, {
   numSegs   = null,          /* 세그먼트 수 (null=기본값) */
   tubeRadius= null,          /* 튜브 반지름 (null=기본값) */
   stepY     = null,          /* 세그먼트당 y 증가량 (null=랜덤) */
-  driftMul  = 1.0,           /* 수평 흔들림 강도 배수 */
-  showThorns= true,
-  showLeaves= true,
-  showFlower= true,
+  driftMul   = 1.0,           /* 수평 흔들림 강도 배수 */
+  showThorns = true,
+  showLeaves = true,
+  showFlower = true,
+  flowerType = 'starburst',  /* 'bud' | 'starburst' */
 } = {}) {
   const stress = Number(slider.value);
 
@@ -176,35 +177,60 @@ function spawnStem(sx, sy, sz, {
     leafMeshes.push(leaf);
   }
 
-  /* 크리스탈 꽃 (줄기 끝, showFlower=false이면 숨김) */
+  /* 크리스탈 꽃 (줄기 끝) */
   const fg = new THREE.Group();
-  for (let i = 0; i < 12; i++) {
-    const phi   = (i / 12) * Math.PI * 2;
-    const theta = Math.PI / 6 + (i % 3) * (Math.PI / 8);
-    const len   = 0.30 + (i % 3) * 0.06;
-    const psh   = new THREE.Shape();
-    psh.moveTo(0, 0);
-    psh.lineTo(-0.025, len * 0.3);
-    psh.lineTo(0, len);
-    psh.lineTo( 0.025, len * 0.3);
-    psh.closePath();
-    const petal = new THREE.Mesh(
-      new THREE.ExtrudeGeometry(psh, { depth: 0.005, bevelEnabled: false }),
-      crystalMat
-    );
-    const dir = new THREE.Vector3(
-      Math.sin(theta) * Math.cos(phi),
-      Math.cos(theta),
-      Math.sin(theta) * Math.sin(phi)
-    ).normalize();
-    petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-    petal.position.copy(dir).multiplyScalar(0.045);
-    fg.add(petal);
+
+  if (flowerType === 'bud') {
+    /* ── 로즈 버드: 작은 구체 + 5개 안쪽 꽃잎 ── */
+    fg.add(new THREE.Mesh(
+      new THREE.SphereGeometry(0.058, 10, 10),
+      new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 340, specular: 0xffffff })
+    ));
+    for (let i = 0; i < 5; i++) {
+      const phi = (i / 5) * Math.PI * 2;
+      const psh = new THREE.Shape();
+      psh.moveTo(0, 0);
+      psh.bezierCurveTo(-0.034, 0.044, -0.026, 0.17, 0, 0.22);
+      psh.bezierCurveTo( 0.026, 0.17,   0.034, 0.044, 0, 0);
+      const petal = new THREE.Mesh(
+        new THREE.ExtrudeGeometry(psh, { depth: 0.005, bevelEnabled: false }),
+        crystalMat
+      );
+      const d = new THREE.Vector3(Math.cos(phi), 0.60, Math.sin(phi)).normalize();
+      petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
+      petal.position.copy(d).multiplyScalar(0.042);
+      fg.add(petal);
+    }
+  } else {
+    /* ── 스타버스트: 12갈래 뾰족한 크리스탈 ── */
+    for (let i = 0; i < 12; i++) {
+      const phi   = (i / 12) * Math.PI * 2;
+      const theta = Math.PI / 6 + (i % 3) * (Math.PI / 8);
+      const len   = 0.30 + (i % 3) * 0.06;
+      const psh   = new THREE.Shape();
+      psh.moveTo(0, 0);
+      psh.lineTo(-0.025, len * 0.3);
+      psh.lineTo(0, len);
+      psh.lineTo( 0.025, len * 0.3);
+      psh.closePath();
+      const petal = new THREE.Mesh(
+        new THREE.ExtrudeGeometry(psh, { depth: 0.005, bevelEnabled: false }),
+        crystalMat
+      );
+      const dir = new THREE.Vector3(
+        Math.sin(theta) * Math.cos(phi),
+        Math.cos(theta),
+        Math.sin(theta) * Math.sin(phi)
+      ).normalize();
+      petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+      petal.position.copy(dir).multiplyScalar(0.045);
+      fg.add(petal);
+    }
+    fg.add(new THREE.Mesh(
+      new THREE.SphereGeometry(0.042, 10, 10),
+      new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 320 })
+    ));
   }
-  fg.add(new THREE.Mesh(
-    new THREE.SphereGeometry(0.042, 10, 10),
-    new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 320 })
-  ));
   fg.position.copy(curve.getPoint(1));
   fg.scale.setScalar(0);
   fg.rotation.y = Math.random() * Math.PI * 2;
@@ -298,14 +324,16 @@ function plantAt(clientX, clientY) {
   raycaster.ray.intersectPlane(spawnPlane, target);
   const inv = new THREE.Matrix4().copy(group.matrixWorld).invert();
   target.applyMatrix4(inv);
-  const ang = Math.random() * Math.PI * 2;
-  const stemObj = spawnStem(target.x, Math.max(target.y - 1.2, -0.1), target.z, {
-    vxInit:  Math.cos(ang) * 0.35,
-    vzInit:  Math.sin(ang) * 0.35,
-    numSegs: 10,
-    tubeRadius: 0.030,
-    stepY:   0.11,
-    driftMul: 0.9,
+  const ang    = Math.random() * Math.PI * 2;
+  const spread = Math.min(1.0, Math.max(0, (stems.filter(s=>!s.removed).length - 2) / 18));
+  const stemObj = spawnStem(rnd(-0.08, 0.08), -0.02, rnd(-0.08, 0.08), {
+    vxInit:    Math.cos(ang) * (0.08 + spread * 0.65),
+    vzInit:    Math.sin(ang) * (0.08 + spread * 0.65),
+    numSegs:   Math.floor(12 + spread * 8),
+    tubeRadius: 0.030 + spread * 0.045,
+    stepY:     Math.max(0.06, 0.21 - spread * 0.15),
+    driftMul:  0.5 + spread * 0.6,
+    flowerType: spread > 0.35 ? 'starburst' : 'bud',
   });
   history.push({ type: "plant", stem: stemObj });
   updateStatus("Branch planted.");
@@ -345,61 +373,20 @@ function resetView() {
   updateStatus("View reset.");
 }
 
-/* ── 나무 구조 생성 ── */
+/* ── 초기 줄기 생성 (이미지1: 가느다란 직립 1~2개) ── */
 function buildTree() {
-  /* ① 기둥 (Trunk): 굵고 거의 수직 */
-  const trunk = spawnStem(0, -0.02, 0, {
-    vxInit:    rnd(-0.025, 0.025),
-    vzInit:    rnd(-0.025, 0.025),
-    numSegs:   22,
-    tubeRadius: 0.11,
-    stepY:     0.20,
-    driftMul:  0.10,
-    showThorns: false,
-    showLeaves: false,
-    showFlower: false,
-  });
-  const tip = trunk.curve.getPoint(1);
-
-  /* ② 주 가지 (Main branches): 기둥 끝에서 방사형으로 */
-  const mainCount = 5 + Math.floor(Math.random() * 2);
-  for (let i = 0; i < mainCount; i++) {
-    const ang  = (i / mainCount) * Math.PI * 2 + rnd(-0.18, 0.18);
-    const dx   = Math.cos(ang), dz = Math.sin(ang);
-    const branch = spawnStem(
-      tip.x + dx * 0.05,
-      tip.y - 0.18,
-      tip.z + dz * 0.05,
-      {
-        vxInit:    dx * 0.52,
-        vzInit:    dz * 0.52,
-        numSegs:   12,
-        tubeRadius: 0.056,
-        stepY:     0.13,
-        driftMul:  0.55,
-        showFlower: false,
-      }
-    );
-    const bTip = branch.curve.getPoint(1);
-
-    /* ③ 잔가지 (Sub-branches): 주 가지 끝에서 더 얇게 */
-    const subCount = 2 + Math.floor(Math.random() * 2);
-    for (let j = 0; j < subCount; j++) {
-      const subAng = ang + rnd(-0.75, 0.75);
-      spawnStem(
-        bTip.x + rnd(-0.04, 0.04),
-        bTip.y - 0.08,
-        bTip.z + rnd(-0.04, 0.04),
-        {
-          vxInit:    Math.cos(subAng) * 0.38,
-          vzInit:    Math.sin(subAng) * 0.38,
-          numSegs:   10,
-          tubeRadius: 0.028,
-          stepY:     0.10,
-          driftMul:  0.85,
-        }
-      );
-    }
+  /* Level-1 모습: 가는 줄기 1~2개, 거의 수직, 버드 꽃 */
+  const count = 1 + (Math.random() < 0.55 ? 1 : 0);
+  for (let i = 0; i < count; i++) {
+    spawnStem(rnd(-0.06, 0.06), -0.02, rnd(-0.06, 0.06), {
+      vxInit:     rnd(-0.06, 0.06),
+      vzInit:     rnd(-0.06, 0.06),
+      numSegs:    20,
+      tubeRadius: 0.034,
+      stepY:      0.21,
+      driftMul:   0.18,
+      flowerType: 'bud',
+    });
   }
 }
 
@@ -560,22 +547,41 @@ function animate() {
     if (s.progress >= 1) s.growing = false;
   });
 
-  /* 자동 성장 (스트레스 기반) */
-  const stress      = Number(slider.value);
-  const activeCnt   = stems.filter(s => !s.removed).length;
+  /* ── 자동 성장: 줄기 수에 따라 점점 퍼지는 형태 ──
+     적을 때(Level1): 가늘고 수직  →  많을 때(Level5): 굵고 수평 확산 */
+  const stress    = Number(slider.value);
+  const activeCnt = stems.filter(s => !s.removed).length;
   autoTimer += 1;
-  const interval    = Math.max(200, 440 - stress * 1.8);
+  const interval  = Math.max(160, 420 - stress * 1.8);
   if (autoTimer > interval && activeCnt < MAX_STEMS) {
     autoTimer = 0;
-    const ang = Math.random() * Math.PI * 2;
-    const rad = rnd(0.06, 0.7);
-    spawnStem(Math.cos(ang) * rad, rnd(0.5, 2.5), Math.sin(ang) * rad, {
-      vxInit:    Math.cos(ang) * rnd(0.2, 0.5),
-      vzInit:    Math.sin(ang) * rnd(0.2, 0.5),
-      numSegs:   rnd(8, 12) | 0,
-      tubeRadius: rnd(0.022, 0.040),
-      stepY:     rnd(0.08, 0.14),
-      driftMul:  rnd(0.6, 1.0),
+
+    /* 0(초기·수직) → 1(밀도높음·수평) */
+    const spread = Math.min(1.0, Math.max(0, (activeCnt - 2) / 18));
+
+    const ang    = Math.random() * Math.PI * 2;
+    /* 수평 초속: 초기=거의0, 성장=강하게 옆으로 */
+    const vAmp   = 0.05 + spread * 0.78;
+    /* y증가량: 초기=높게, 성장=낮게(수평에 가깝게) */
+    const sy     = Math.max(0.055, 0.22 - spread * 0.165);
+    /* 튜브 굵기: 초기=얇게, 성장=굵게 */
+    const tr     = 0.028 + spread * 0.052 + stress * 0.00022;
+    /* 세그먼트: 성장할수록 길어짐 */
+    const ns     = Math.floor(14 + spread * 8);
+    /* 꽃 타입: 초반=버드, 중반이후=스타버스트 */
+    const ft     = spread > 0.35 ? 'starburst' : 'bud';
+    /* 시작 위치: 모두 베이스 근처에서 묶음 */
+    const bx     = rnd(-0.08, 0.08);
+    const bz     = rnd(-0.08, 0.08);
+
+    spawnStem(bx, -0.02, bz, {
+      vxInit:    Math.cos(ang) * vAmp,
+      vzInit:    Math.sin(ang) * vAmp,
+      numSegs:   ns,
+      tubeRadius: tr,
+      stepY:     sy,
+      driftMul:  0.45 + spread * 0.65,
+      flowerType: ft,
     });
   }
 
