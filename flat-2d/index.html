@@ -3,138 +3,189 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stress Gardening — Flat 2D</title>
+    <title>Stress Gardening | Flat 2D Lab Edition</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="app">
-      <section class="stage" id="garden">
-        <nav class="site-nav" aria-label="주요 섹션">
-          <a href="#garden">Garden</a>
-          <a href="#collection">Collection</a>
-          <a href="#archive">Archive</a>
-          <a href="#tools">Tools</a>
-          <a href="#process">Process</a>
+    <main class="app-shell">
+      <section class="hero-shell">
+        <nav class="site-nav" aria-label="Primary">
+          <p class="brand-mark">Fake Goods Company / Stress Gardening</p>
+          <div class="nav-links">
+            <a href="#live-lab">Lab</a>
+            <a href="#collection">Collection</a>
+            <a href="#tools">System</a>
+            <a href="#process">Process</a>
+          </div>
         </nav>
 
-        <div class="brand">
-          <p class="eyebrow">Brand-Based Design Studio II</p>
-          <h1>Stress Gardening</h1>
-          <p class="description">
-            HRV 스트레스 데이터로 자라나는 평면 가시덤불을 직접 심고, 밀고, 잘라내는 2D 인터랙션 굿즈
-          </p>
+        <div class="hero-stage">
+          <figure class="hero-shot hero-shot-a">
+            <img src="./assets/thorn-mug-reference.png" alt="Thorn Mug reference" />
+          </figure>
+          <figure class="hero-shot hero-shot-b">
+            <img src="./assets/thorn-mug-reference.png" alt="Thorn Mug reference" />
+          </figure>
+          <figure class="hero-shot hero-shot-c">
+            <img src="./assets/thorn-mug-reference.png" alt="Thorn Mug reference" />
+          </figure>
+          <figure class="hero-shot hero-shot-d">
+            <img src="./assets/thorn-mug-reference.png" alt="Thorn Mug reference" />
+          </figure>
+
+          <div class="hero-copy">
+            <p class="eyebrow">Brand-Based Design Studio II</p>
+            <h1>Stress Gardening.</h1>
+            <p class="description">
+              Stress gardening, right at your fingertips. A modular web skeleton for future game logic,
+              changing visuals, and collectible fake goods, wrapped in a quiet laboratory mood.
+            </p>
+            <a class="hero-cta" href="#live-lab">Discover stress gardening</a>
+          </div>
         </div>
-
-        <canvas id="thornCanvas" width="1280" height="720" aria-label="2D 가시덤불 성장 및 정리 모션"></canvas>
-
-        <section class="toolbox" aria-label="도구 선택">
-          <button class="tool-button active" type="button" data-tool="cut">Cut</button>
-          <button class="tool-button" type="button" data-tool="comb">Comb</button>
-          <button class="tool-button" type="button" data-tool="pluck">Pluck</button>
-          <button class="tool-button utility" id="undoButton" type="button">Undo</button>
-          <button class="tool-button utility" id="resetViewButton" type="button">View</button>
-        </section>
-
-        <section class="panel" aria-label="인터랙션 패널">
-          <label class="control">
-            <span>Stress Level</span>
-            <input id="stressSlider" type="range" min="0" max="100" value="62" />
-          </label>
-          <output id="statusText">Comb: click to grow, drag to sculpt.</output>
-          <button id="regrowButton" type="button">Regrow</button>
-          <button id="saveButton" type="button">Save</button>
-        </section>
       </section>
 
-      <div class="ticker" aria-hidden="true">
-        <span>HRV MONITOR</span><span>GENERATIVE VINE</span><span>FLAT THORN GRAPHICS</span><span>PRECISION PRUNING</span><span>FAKE GOODS COMPANY</span><span>STRESS PRESERVATION</span>
-        <span>HRV MONITOR</span><span>GENERATIVE VINE</span><span>FLAT THORN GRAPHICS</span><span>PRECISION PRUNING</span><span>FAKE GOODS COMPANY</span><span>STRESS PRESERVATION</span>
-      </div>
+      <section class="live-lab" id="live-lab">
+        <div class="section-heading">
+          <p>Live Lab</p>
+          <h2>Keep the structure. Let the specimen evolve.</h2>
+        </div>
 
-      <section class="collection" id="collection">
+        <div class="lab-grid">
+          <article class="lab-stage">
+            <div class="lab-stage-head">
+              <div>
+                <p class="micro-label">Interactive specimen interface</p>
+                <h3>Flat 2D stress sample</h3>
+              </div>
+              <section class="toolbox" aria-label="Tool selection">
+                <button class="tool-button active" type="button" data-tool="cut">Cut</button>
+                <button class="tool-button" type="button" data-tool="comb">Comb</button>
+                <button class="tool-button" type="button" data-tool="pluck">Pluck</button>
+                <button class="tool-button utility" id="undoButton" type="button">Undo</button>
+                <button class="tool-button utility" id="resetViewButton" type="button">View</button>
+              </section>
+            </div>
+
+            <div class="canvas-shell">
+              <canvas id="thornCanvas" width="1280" height="720" aria-label="Stress Gardening flat 2D specimen canvas"></canvas>
+              <div class="specimen-plinth" aria-hidden="true">
+                <span class="plinth-rim"></span>
+                <span class="plinth-label">CHROME-THORN / LIVE SAMPLE</span>
+              </div>
+            </div>
+
+            <section class="panel" aria-label="Interaction controls">
+              <label class="control">
+                <span>Stress Level</span>
+                <input id="stressSlider" type="range" min="0" max="100" value="62" />
+              </label>
+              <output id="statusText">Comb: click to grow, drag to sculpt.</output>
+              <button id="regrowButton" type="button">Regrow</button>
+              <button id="saveButton" type="button">Save</button>
+            </section>
+          </article>
+
+          <aside class="lab-notes" id="archive">
+            <article class="note-card image-card">
+              <img src="./assets/lab-rose.png" alt="Chrome rose laboratory reference" />
+            </article>
+            <article class="note-card text-card">
+              <p class="micro-label">Design direction</p>
+              <h3>White tile studio, chrome stems, dark crystal points.</h3>
+              <p>
+                The page frame stays fixed while the internal game, copy, objects, and current featured
+                goods can change over time.
+              </p>
+            </article>
+            <article class="note-card image-card wide">
+              <img src="./assets/lab-rose-full.png" alt="Specimen on laboratory tray" />
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="collection-section" id="collection">
         <div class="section-heading">
           <p>Collection</p>
-          <h2>Flat objects for preserving temporary relief.</h2>
+          <h2>A luxury specimen board for changing objects.</h2>
         </div>
-        <div class="product-grid">
-          <article class="product-card">
-            <div class="specimen-visual vine-specimen" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-            <div><p>FLAT-THORN</p><h3>Vine Graphics</h3><span>HRV SAMPLE / 062</span></div>
+
+        <div class="collection-grid">
+          <article class="collection-card">
+            <div class="collection-visual img-fit-top">
+              <img src="./assets/specimen-archive.jpg" alt="Stress Gardening specimen archive" />
+            </div>
+            <div class="collection-copy">
+              <p>Sample board</p>
+              <h3>Archive objects</h3>
+              <span>Replaceable visual slot</span>
+            </div>
           </article>
-          <article class="product-card">
-            <div class="specimen-visual tool-specimen" aria-hidden="true"><span></span><span></span><span></span></div>
-            <div><p>PRECISION KIT</p><h3>Pruning Tools</h3><span>CUT / COMB / PLUCK</span></div>
+
+          <article class="collection-card">
+            <div class="collection-visual image-mug">
+              <img src="./assets/thorn-mug-reference.png" alt="Thorn Mug product reference" />
+            </div>
+            <div class="collection-copy">
+              <p>Hero object</p>
+              <h3>Thorn Mug</h3>
+              <span>Swappable campaign asset</span>
+            </div>
           </article>
-          <article class="product-card">
-            <div class="specimen-visual rule-specimen" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-            <div><p>VISUAL RULES</p><h3>Thorn System</h3><span>DATA-DRIVEN / MODULAR</span></div>
+
+          <article class="collection-card collection-card-text">
+            <div class="collection-copy text-only">
+              <p>System note</p>
+              <h3>Fixed skeleton, flexible internals.</h3>
+              <span>Images, text, goods, and game rules can all update without changing the page frame.</span>
+            </div>
           </article>
         </div>
       </section>
 
-      <section class="image-band" id="archive">
+      <section class="system-section" id="tools">
+        <div class="section-heading inverse">
+          <p>System</p>
+          <h2>Quiet, clean, and collectible.</h2>
+        </div>
+
+        <div class="system-grid">
+          <article class="system-card">
+            <p class="micro-label">Base rules</p>
+            <h3>Tile wall laboratory</h3>
+            <p>Three-dimensional white tiles, soft reflections, chrome trays, and museum-like spacing.</p>
+          </article>
+          <article class="system-card">
+            <p class="micro-label">Interaction rules</p>
+            <h3>Cut / Comb / Pluck</h3>
+            <p>The game can update, but the interface language remains stable and easy to extend.</p>
+          </article>
+          <article class="system-card">
+            <p class="micro-label">Object rules</p>
+            <h3>Luxury fake goods</h3>
+            <p>Each season can feature a new hero object while keeping the same premium visual system.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="process-section" id="process">
         <div class="section-heading">
-          <p>Expectation</p>
-          <h2>Data-driven horizon for stress relief goods.</h2>
+          <p>Process</p>
+          <h2>From stress signal to preserved specimen.</h2>
         </div>
-        <div class="mood-board" aria-label="Stress Gardening mood board">
-          <article><span>STRESS</span><span>GARDENING</span></article>
-          <article><span>FLAT NATURE</span><span>VECTOR VEGETATION</span></article>
-          <article><span>THORNY MINIMALISM</span><span>PRECISION PRUNING</span></article>
-          <article><span>HRV_SAMPLE_A1</span><span>DATA-DRIVEN GROWTH</span></article>
-          <article><span>FAKE GOODS</span><span>STRESS PRESERVATION</span></article>
-          <article><span>BRAND_SYSTEM</span><span>VISUAL_RULES</span></article>
-        </div>
-      </section>
 
-      <section class="split-feature">
-        <div class="feature-copy">
-          <p class="eyebrow">FLAT THORN GRAPHICS</p>
-          <h2>Stress as a two-dimensional thicket.</h2>
-          <p>
-            3D 오브젝트 대신 평면 벡터 그래픽처럼 덩굴의 밀도, 선의 방향, 검은 가시 패턴으로 스트레스의 복잡도를 보여줍니다.
-          </p>
-        </div>
-        <div class="lab-scene" aria-hidden="true">
-          <div class="petri petri-a"><span></span></div>
-          <div class="petri petri-b"><span></span></div>
-          <div class="label">FLAT-THORN<br />VINE SPECIES</div>
-        </div>
-      </section>
-
-      <section class="tool-grid" id="tools">
-        <div class="section-heading">
-          <p>Pruning Tools</p>
-          <h2>Touch, cut, preserve.</h2>
-        </div>
-        <div class="tool-layout">
-          <div class="tool-panel thorn-rules" aria-hidden="true"></div>
-          <div class="tool-panel chrome-tools" aria-hidden="true"></div>
-        </div>
-      </section>
-
-      <section class="process" id="process">
-        <div class="process-title">
-          <p class="eyebrow">SERVICE FLOW</p>
-          <h2>From stress signal to fake goods ritual.</h2>
-        </div>
-        <ol>
-          <li><span>01</span>HRV수치 측정 및 스트레스 강도 분석</li>
-          <li><span>02</span>데이터 기반 덩굴 밀도와 성장 속도 생성</li>
-          <li><span>03</span>사용자가 클릭한 위치에서 평면 덩굴 발아</li>
-          <li><span>04</span>드래그로 덤불을 조형하고 Cut/Pluck으로 정리</li>
-          <li><span>05</span>개인화된 스트레스 표본 그래픽으로 보존</li>
+        <ol class="process-list">
+          <li><span>01</span><strong>Measure</strong><p>Read stress and HRV values as the starting condition.</p></li>
+          <li><span>02</span><strong>Generate</strong><p>Grow a new 2D chrome-thorn specimen in the lab stage.</p></li>
+          <li><span>03</span><strong>Sculpt</strong><p>Click to plant, drag to shape, and trim the visible thicket.</p></li>
+          <li><span>04</span><strong>Preserve</strong><p>Save the resulting sample as a collectible fake goods record.</p></li>
         </ol>
-      </section>
-
-      <section class="preserve">
-        <div><p class="eyebrow">PRESERVE SAMPLE</p><h2>Archive the shape of a temporary relief.</h2></div>
-        <p>사용자가 심고, 밀고, 잘라낸 평면 가시덤불은 하나의 스트레스 표본 이미지로 저장됩니다.</p>
       </section>
 
       <footer class="footer">
         <p>Fake Goods Company</p>
-        <p>Stress Gardening / Flat 2D Edition / 2026</p>
+        <p>Stress Gardening / Flat 2D Lab Edition / 2026</p>
       </footer>
     </main>
 

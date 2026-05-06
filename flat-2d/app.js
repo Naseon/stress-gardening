@@ -28,8 +28,9 @@ const pointer = { x: 0, y: 0, lastX: 0, lastY: 0, vx: 0, vy: 0 };
 
 function resizeCanvas() {
   pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-  width = window.innerWidth;
-  height = window.innerHeight;
+  const rect = canvas.getBoundingClientRect();
+  width = Math.max(320, Math.floor(rect.width));
+  height = Math.max(420, Math.floor(rect.height));
   canvas.width = Math.floor(width * pixelRatio);
   canvas.height = Math.floor(height * pixelRatio);
   canvas.style.width = `${width}px`;
@@ -190,21 +191,83 @@ function seedScene() {
   particles = [];
   history = [];
   autoTimer = 0;
-  addRoot(width * 0.34, height * 0.42, randomBetween(-0.35, 0.35), 1);
-  addRoot(width * 0.66, height * 0.48, Math.PI + randomBetween(-0.35, 0.35), 1);
-  addRoot(width * 0.5, height * 0.38, Math.PI / 2 + randomBetween(-0.3, 0.3), 1);
+  addRoot(width * 0.42, height * 0.72, -Math.PI / 2 + randomBetween(-0.18, 0.18), 1);
+  addRoot(width * 0.5, height * 0.76, -Math.PI / 2 + randomBetween(-0.12, 0.12), 1);
+  addRoot(width * 0.58, height * 0.72, -Math.PI / 2 + randomBetween(-0.18, 0.18), 1);
   updateStatus("Comb: click to grow, drag to sculpt.");
 }
 
 function drawBackground() {
-  ctx.fillStyle = "rgba(253, 253, 252, 0.94)";
+  ctx.clearRect(0, 0, width, height);
+
+  const wall = ctx.createLinearGradient(0, 0, 0, height);
+  wall.addColorStop(0, "#fbfbf8");
+  wall.addColorStop(0.52, "#f2f0eb");
+  wall.addColorStop(1, "#ebe8e2");
+  ctx.fillStyle = wall;
   ctx.fillRect(0, 0, width, height);
+
+  const tileSize = Math.max(72, Math.min(138, width * 0.12));
+  for (let y = 0; y < height + tileSize; y += tileSize) {
+    for (let x = 0; x < width + tileSize; x += tileSize) {
+      ctx.fillStyle = "rgba(255,255,255,0.12)";
+      ctx.fillRect(x + 1, y + 1, tileSize - 2, tileSize - 2);
+      ctx.strokeStyle = "rgba(165, 165, 160, 0.34)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, tileSize, tileSize);
+      ctx.strokeStyle = "rgba(255,255,255,0.48)";
+      ctx.beginPath();
+      ctx.moveTo(x + 1, y + 1);
+      ctx.lineTo(x + tileSize - 1, y + 1);
+      ctx.moveTo(x + 1, y + 1);
+      ctx.lineTo(x + 1, y + tileSize - 1);
+      ctx.stroke();
+    }
+  }
+
+  const glows = [
+    { x: width * 0.16, y: height * 0.18, r: width * 0.2, alpha: 0.32 },
+    { x: width * 0.82, y: height * 0.26, r: width * 0.18, alpha: 0.22 },
+    { x: width * 0.72, y: height * 0.62, r: width * 0.22, alpha: 0.14 },
+  ];
+
+  glows.forEach((glow) => {
+    const grad = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, glow.r);
+    grad.addColorStop(0, `rgba(255,255,255,${glow.alpha})`);
+    grad.addColorStop(0.42, "rgba(255,255,255,0.12)");
+    grad.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+  });
+
+  const trayTop = height * 0.84;
+  const trayHeight = Math.max(40, height * 0.09);
+  const trayGrad = ctx.createLinearGradient(0, trayTop, 0, trayTop + trayHeight);
+  trayGrad.addColorStop(0, "rgba(210, 210, 206, 0.9)");
+  trayGrad.addColorStop(0.46, "rgba(126, 126, 122, 0.55)");
+  trayGrad.addColorStop(1, "rgba(72, 72, 70, 0.62)");
+  ctx.fillStyle = trayGrad;
+  ctx.fillRect(width * 0.06, trayTop, width * 0.88, trayHeight);
+
+  ctx.strokeStyle = "rgba(248, 248, 245, 0.82)";
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(width * 0.06, trayTop, width * 0.88, trayHeight);
+
+  const dishX = width * 0.5;
+  const dishY = height * 0.79;
+  const dishW = Math.min(300, width * 0.28);
+  const dishH = Math.max(42, height * 0.06);
+
   ctx.save();
-  ctx.globalAlpha = 0.18;
-  ctx.strokeStyle = "#050605";
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = "rgba(110, 110, 106, 0.34)";
+  ctx.lineWidth = 1.4;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.14)";
   ctx.beginPath();
-  ctx.ellipse(width * 0.54, height * 0.5, Math.min(260, width * 0.22), 42, 0, 0, Math.PI * 2);
+  ctx.ellipse(dishX, dishY, dishW, dishH, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(dishX, dishY + 18, dishW * 0.96, dishH * 0.88, 0, 0, Math.PI * 2);
   ctx.stroke();
   ctx.restore();
 }
@@ -233,11 +296,20 @@ function drawStem(stem) {
   for (let i = 0; i <= 14; i += 1) samples.push(stem.pointAt(i / 14));
   const alpha = Math.max(0.22, 1 - stem.depth * 0.14);
   const widthBase = Math.max(0.5, stem.thickness * (1 - stem.depth * 0.12));
+  const start = samples[0];
+  const end = samples[samples.length - 1];
+  const chrome = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
+  chrome.addColorStop(0, "#575753");
+  chrome.addColorStop(0.18, "#f4f4f0");
+  chrome.addColorStop(0.34, "#9b9b97");
+  chrome.addColorStop(0.52, "#ffffff");
+  chrome.addColorStop(0.72, "#7a7a76");
+  chrome.addColorStop(1, "#3f3f3d");
   ctx.save();
   ctx.globalAlpha = alpha;
-  drawSmoothPath(samples, widthBase + 4.5, "rgba(5, 6, 5, 0.12)");
-  drawSmoothPath(samples, widthBase + 1.4, "#050605");
-  drawSmoothPath(samples, Math.max(0.7, widthBase * 0.32), "rgba(248, 249, 248, 0.52)");
+  drawSmoothPath(samples, widthBase + 5.6, "rgba(17, 17, 16, 0.12)");
+  drawSmoothPath(samples, widthBase + 1.8, chrome);
+  drawSmoothPath(samples, Math.max(0.7, widthBase * 0.26), "rgba(255, 255, 255, 0.58)");
 
   stem.thorns.forEach((thorn) => {
     if (thorn.removed || thorn.t > stem.length / stem.targetLength) return;
@@ -247,7 +319,12 @@ function drawStem(stem) {
     const tip = { x: base.x + Math.cos(angle) * thorn.size, y: base.y + Math.sin(angle) * thorn.size };
     const sideA = angle + Math.PI / 2;
     const b = thorn.size * 0.28;
-    ctx.fillStyle = "#050605";
+    const thornGrad = ctx.createLinearGradient(base.x, base.y, tip.x, tip.y);
+    thornGrad.addColorStop(0, "#070707");
+    thornGrad.addColorStop(0.42, "#2e2e30");
+    thornGrad.addColorStop(0.78, "#0a0a0b");
+    thornGrad.addColorStop(1, "#000000");
+    ctx.fillStyle = thornGrad;
     ctx.beginPath();
     ctx.moveTo(base.x + Math.cos(sideA) * b, base.y + Math.sin(sideA) * b);
     ctx.lineTo(tip.x, tip.y);
@@ -266,11 +343,10 @@ function updateScene() {
   const interval = Math.max(180, 380 - stress * 1.3);
   if (autoTimer > interval && roots.length < 70) {
     autoTimer = 0;
-    const fromLeft = Math.random() < 0.5;
     addRoot(
-      fromLeft ? -8 : width + 8,
-      randomBetween(height * 0.24, height * 0.62),
-      fromLeft ? randomBetween(-0.28, 0.36) : Math.PI + randomBetween(-0.36, 0.28),
+      randomBetween(width * 0.42, width * 0.58),
+      randomBetween(height * 0.7, height * 0.8),
+      -Math.PI / 2 + randomBetween(-0.22, 0.22),
       1
     );
   }
@@ -299,11 +375,11 @@ function nearestTip(x, y) {
 
 function cutAt(x, y) {
   const hit = nearestTip(x, y);
-  if (!hit) return updateStatus("Cut the outer 2D tips.");
+  if (!hit) return updateStatus("Cut the outer specimen tips.");
   remember({ type: "cut", stem: hit.stem });
   hit.stem.removed = true;
   spawnParticles(hit.end.x, hit.end.y, 12);
-  updateStatus("Flat vine tip clipped.");
+  updateStatus("Outer specimen tip clipped.");
 }
 
 function combAt(x, y) {
@@ -322,7 +398,7 @@ function combAt(x, y) {
     stem.bendY = clamp(stem.bendY + pointer.vy * 0.5 * influence, -260, 260);
     touched += 1;
   });
-  updateStatus(touched ? "Flat vines hold the dragged shape." : "Touch closer to the 2D vines.");
+  updateStatus(touched ? "Chrome vines hold the dragged shape." : "Touch closer to the specimen.");
 }
 
 function pluckAt(x, y) {
@@ -335,11 +411,11 @@ function pluckAt(x, y) {
       if (distance < 58 && (!best || distance < best.distance)) best = { thorn, point, distance };
     });
   });
-  if (!best) return updateStatus("Pick a visible black thorn.");
+  if (!best) return updateStatus("Pick a visible crystal thorn.");
   remember({ type: "pluck", thorn: best.thorn });
   best.thorn.removed = true;
   spawnParticles(best.point.x, best.point.y, 5);
-  updateStatus("2D thorn removed.");
+  updateStatus("Crystal thorn removed.");
 }
 
 function useToolAt(x, y) {
@@ -375,7 +451,7 @@ function updateStatus(message) {
   const growth = Math.min(100, Math.round((stems.length / 260) * 100));
   const stress = Number(slider.value);
   const label = stress < 31 ? "LOW TENSION" : stress < 66 ? "CHRONIC TENSION" : "OVERGROWTH";
-  statusText.textContent = `${message} | ${label} | Flat ${growth}%`;
+  statusText.textContent = `${message} | ${label} | Sample ${growth}%`;
 }
 
 function undoLastAction() {
@@ -397,7 +473,7 @@ function undoLastAction() {
 }
 
 function resetView() {
-  updateStatus("Flat view is already aligned.");
+  updateStatus("Studio view is already aligned.");
 }
 
 function saveSpecimen() {
@@ -405,7 +481,7 @@ function saveSpecimen() {
   link.download = `stress-gardening-flat-${Date.now()}.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
-  updateStatus("Flat specimen image saved.");
+  updateStatus("Specimen image saved.");
 }
 
 function loop() {
@@ -423,9 +499,9 @@ toolButtons.forEach((button) => {
     currentTool = button.dataset.tool;
     toolButtons.forEach((item) => item.classList.toggle("active", item === button));
     const labels = {
-      cut: "Cut: trim outer 2D tips.",
+      cut: "Cut: trim outer specimen tips.",
       comb: "Comb: click to grow, drag to sculpt.",
-      pluck: "Pluck: remove black thorns.",
+      pluck: "Pluck: remove crystal thorns.",
     };
     updateStatus(labels[currentTool]);
   });
