@@ -4,25 +4,27 @@
 
 .app { min-height: 100vh; }
 
-/* ── Stage ── */
+/* ── Stage — 흰 타일 벽 배경 (레퍼런스 이미지2·3 동일) ── */
 .stage {
   position: relative;
   min-height: 100svh;
   overflow: hidden;
-  /* 스튜디오 포토그래피 비네트 — 중앙 밝고 가장자리 자연스럽게 어두워짐 */
-  background: radial-gradient(ellipse 90% 80% at 50% 46%,
-    #ffffff 0%,
-    #f0ede8 55%,
-    #dedad3 100%);
+  background-color: #f2f1ef;
+  background-image:
+    linear-gradient(rgba(148,145,140,0.32) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(148,145,140,0.32) 1.5px, transparent 1.5px);
+  background-size: clamp(140px, 16vw, 220px) clamp(140px, 16vw, 220px);
 }
 
-/* 측정자 스타일 얇은 내부 프레임 — 실험실 계측기 느낌 */
+/* 타일 글로시 반사 — 상단 미묘한 밝기 그라디언트 */
 .stage::before {
   content: "";
   position: absolute;
-  inset: 20px;
-  z-index: 3;
-  border: 0.5px solid rgba(10,11,9,0.10);
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(ellipse 80% 60% at 50% 20%,
+    rgba(255,255,255,0.22) 0%,
+    transparent 70%);
   pointer-events: none;
 }
 

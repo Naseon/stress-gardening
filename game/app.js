@@ -25,13 +25,14 @@ const MAX_STEMS = 55;
 const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
-  preserveDrawingBuffer: true,  /* save 기능에 필요 */
+  alpha: true,                   /* CSS 타일 배경이 비치도록 투명 */
+  preserveDrawingBuffer: true,   /* save 기능에 필요 */
 });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0);  /* 완전 투명 */
 
 const scene = new THREE.Scene();
-/* 스튜디오 배경 — 갤러리 화이트, CSS 비네트와 통일 */
-scene.background = new THREE.Color(0xf6f5f2);
+scene.background = null;          /* CSS 타일 배경 사용 */
 
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
 camera.position.set(0, 4.5, 13);
@@ -57,24 +58,24 @@ const groundBounce = new THREE.DirectionalLight(0xfaf6f0, 0.6);
 groundBounce.position.set(0, -8, 2);
 scene.add(groundBounce);
 
-/* ── 재질 — 레퍼런스 은빛 금속 표본 ── */
+/* ── 재질 — 레퍼런스: 건메탈 줄기 + 투명 크리스탈 꽃 ── */
 const stemMat = new THREE.MeshStandardMaterial({
-  color: 0xc8c6c3,      /* 레퍼런스의 따뜻한 실버 톤 */
-  metalness: 0.95,
-  roughness: 0.22,
+  color: 0x3c3a38,      /* 건메탈/다크 스틸 (레퍼런스와 동일) */
+  metalness: 0.85,
+  roughness: 0.30,
 });
 const leafMat = new THREE.MeshStandardMaterial({
-  color: 0xb0aeac,      /* 잎: 줄기보다 살짝 어둡고 무광 */
-  metalness: 0.88,
-  roughness: 0.30,
+  color: 0x2e2c2a,      /* 잎: 줄기보다 더 어두운 다크 건메탈 */
+  metalness: 0.80,
+  roughness: 0.40,
   side: THREE.DoubleSide,
 });
 const crystalMat = new THREE.MeshPhongMaterial({
-  color: 0xf0f0ee,      /* 크리스탈: 거의 흰빛, 미묘한 따뜻함 */
+  color: 0xffffff,      /* 완전 투명 크리스탈 */
   specular: 0xffffff,
-  shininess: 320,
+  shininess: 500,
   transparent: true,
-  opacity: 0.82,
+  opacity: 0.72,
   side: THREE.DoubleSide,
 });
 
@@ -82,7 +83,37 @@ const crystalMat = new THREE.MeshPhongMaterial({
 const group = new THREE.Group();
 scene.add(group);
 
-/* ── 베이스 없음 (유리 디스크·링 제거) ── */
+/* ── 유리 원통 컨테이너 (이미지3 페트리 베이스) ── */
+const cylH = 1.1, cylR = 1.4;
+const glassCylMat = new THREE.MeshPhongMaterial({
+  color: 0xeaf0f4, specular: 0xffffff, shininess: 260,
+  transparent: true, opacity: 0.20, side: THREE.DoubleSide,
+});
+/* 원통 벽 */
+const glassWall = new THREE.Mesh(
+  new THREE.CylinderGeometry(cylR, cylR, cylH, 64, 1, true),
+  glassCylMat
+);
+glassWall.position.y = -(cylH / 2);
+group.add(glassWall);
+/* 바닥 원판 */
+const glassFloor = new THREE.Mesh(
+  new THREE.CircleGeometry(cylR, 64),
+  glassCylMat
+);
+glassFloor.rotation.x = -Math.PI / 2;
+glassFloor.position.y = -cylH;
+group.add(glassFloor);
+/* 상단 두꺼운 유리 테두리 */
+const glassRim = new THREE.Mesh(
+  new THREE.TorusGeometry(cylR, 0.042, 12, 64),
+  new THREE.MeshPhongMaterial({
+    color: 0xd0d8dc, specular: 0xffffff, shininess: 300,
+    transparent: true, opacity: 0.50,
+  })
+);
+glassRim.position.y = 0.01;
+group.add(glassRim);
 
 /* ─────────────────────────────────────────
    STEM 데이터 & 생성
@@ -192,55 +223,112 @@ function spawnStem(sx, sy, sz, {
   /* 크리스탈 꽃 (줄기 끝) */
   const fg = new THREE.Group();
 
+  const brightMat = new THREE.MeshPhongMaterial({
+    color: 0xffffff, specular: 0xffffff, shininess: 600,
+  });
+
   if (flowerType === 'bud') {
-    /* ── 로즈 버드: 작은 구체 + 5개 안쪽 꽃잎 ── */
-    fg.add(new THREE.Mesh(
-      new THREE.SphereGeometry(0.058, 10, 10),
-      new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 340, specular: 0xffffff })
-    ));
+    /* ── 크리스탈 로즈 버드 (이미지2) ── */
+    /* 중앙 크리스탈 포인트 */
+    const tip = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.13, 8), brightMat.clone());
+    tip.position.y = 0.16;
+    fg.add(tip);
+    /* 외곽 5장 꽃잎 (살짝 열린) */
     for (let i = 0; i < 5; i++) {
       const phi = (i / 5) * Math.PI * 2;
-      const psh = new THREE.Shape();
-      psh.moveTo(0, 0);
-      psh.bezierCurveTo(-0.034, 0.044, -0.026, 0.17, 0, 0.22);
-      psh.bezierCurveTo( 0.026, 0.17,   0.034, 0.044, 0, 0);
+      const ps = new THREE.Shape();
+      ps.moveTo(0, 0);
+      ps.bezierCurveTo(-0.048, 0.09, -0.038, 0.27, 0, 0.34);
+      ps.bezierCurveTo( 0.038, 0.27,  0.048, 0.09, 0, 0);
       const petal = new THREE.Mesh(
-        new THREE.ExtrudeGeometry(psh, { depth: 0.005, bevelEnabled: false }),
-        crystalMat
+        new THREE.ExtrudeGeometry(ps, { depth: 0.013, bevelEnabled: true, bevelSize: 0.007, bevelThickness: 0.007, bevelSegments: 2 }),
+        crystalMat.clone()
       );
-      const d = new THREE.Vector3(Math.cos(phi), 0.60, Math.sin(phi)).normalize();
+      const d = new THREE.Vector3(Math.cos(phi), 0.78, Math.sin(phi)).normalize();
       petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
-      petal.position.copy(d).multiplyScalar(0.042);
+      petal.position.copy(d).multiplyScalar(0.055);
       fg.add(petal);
     }
-  } else {
-    /* ── 스타버스트: 12갈래 뾰족한 크리스탈 ── */
-    for (let i = 0; i < 12; i++) {
-      const phi   = (i / 12) * Math.PI * 2;
-      const theta = Math.PI / 6 + (i % 3) * (Math.PI / 8);
-      const len   = 0.30 + (i % 3) * 0.06;
-      const psh   = new THREE.Shape();
-      psh.moveTo(0, 0);
-      psh.lineTo(-0.025, len * 0.3);
-      psh.lineTo(0, len);
-      psh.lineTo( 0.025, len * 0.3);
-      psh.closePath();
+    /* 안쪽 5장 작은 꽃잎 */
+    for (let i = 0; i < 5; i++) {
+      const phi = ((i + 0.5) / 5) * Math.PI * 2;
+      const ps = new THREE.Shape();
+      ps.moveTo(0, 0);
+      ps.bezierCurveTo(-0.028, 0.06, -0.022, 0.18, 0, 0.22);
+      ps.bezierCurveTo( 0.022, 0.18,  0.028, 0.06, 0, 0);
       const petal = new THREE.Mesh(
-        new THREE.ExtrudeGeometry(psh, { depth: 0.005, bevelEnabled: false }),
-        crystalMat
+        new THREE.ExtrudeGeometry(ps, { depth: 0.008, bevelEnabled: true, bevelSize: 0.005, bevelThickness: 0.005, bevelSegments: 2 }),
+        crystalMat.clone()
       );
+      const d = new THREE.Vector3(Math.cos(phi), 1.15, Math.sin(phi)).normalize();
+      petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d);
+      petal.position.copy(d).multiplyScalar(0.035);
+      fg.add(petal);
+    }
+    /* 중앙 발광 구체 */
+    fg.add(new THREE.Mesh(new THREE.SphereGeometry(0.042, 12, 12), brightMat.clone()));
+
+  } else {
+    /* ── 대형 컷 크리스탈 꽃 (이미지1·4 스와로브스키 스타일) ── */
+    /* 외곽 8장 큰 꽃잎 */
+    for (let i = 0; i < 8; i++) {
+      const phi = (i / 8) * Math.PI * 2;
+      const ps = new THREE.Shape();
+      ps.moveTo(0, 0);
+      ps.bezierCurveTo(-0.082, 0.28, -0.066, 0.60, 0, 0.78);
+      ps.bezierCurveTo( 0.066, 0.60,  0.082, 0.28, 0, 0);
+      const petal = new THREE.Mesh(
+        new THREE.ExtrudeGeometry(ps, { depth: 0.028, bevelEnabled: true, bevelSize: 0.014, bevelThickness: 0.014, bevelSegments: 4 }),
+        crystalMat.clone()
+      );
+      const theta = 1.18; /* ~68° 수직에서 → 거의 수평으로 열린 */
       const dir = new THREE.Vector3(
-        Math.sin(theta) * Math.cos(phi),
-        Math.cos(theta),
-        Math.sin(theta) * Math.sin(phi)
+        Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi)
       ).normalize();
       petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-      petal.position.copy(dir).multiplyScalar(0.045);
+      petal.position.copy(dir).multiplyScalar(0.065);
       fg.add(petal);
     }
+    /* 내측 8장 중간 꽃잎 */
+    for (let i = 0; i < 8; i++) {
+      const phi = ((i + 0.5) / 8) * Math.PI * 2;
+      const ps = new THREE.Shape();
+      ps.moveTo(0, 0);
+      ps.bezierCurveTo(-0.056, 0.20, -0.044, 0.44, 0, 0.56);
+      ps.bezierCurveTo( 0.044, 0.44,  0.056, 0.20, 0, 0);
+      const petal = new THREE.Mesh(
+        new THREE.ExtrudeGeometry(ps, { depth: 0.018, bevelEnabled: true, bevelSize: 0.010, bevelThickness: 0.010, bevelSegments: 3 }),
+        crystalMat.clone()
+      );
+      const theta = 0.85;
+      const dir = new THREE.Vector3(
+        Math.sin(theta) * Math.cos(phi), Math.cos(theta), Math.sin(theta) * Math.sin(phi)
+      ).normalize();
+      petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+      petal.position.copy(dir).multiplyScalar(0.042);
+      fg.add(petal);
+    }
+    /* 수술 — 14개 크리스탈 로드 + 구체 끝 */
+    for (let i = 0; i < 14; i++) {
+      const phi = (i / 14) * Math.PI * 2;
+      const r   = 0.038 + (i % 3) * 0.016;
+      const h   = 0.13  + (i % 4) * 0.025;
+      const rod = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.0038, 0.0038, h, 5),
+        brightMat.clone()
+      );
+      rod.position.set(Math.cos(phi) * r, h / 2, Math.sin(phi) * r);
+      fg.add(rod);
+      const tipSph = new THREE.Mesh(
+        new THREE.SphereGeometry(0.013, 8, 8), brightMat.clone()
+      );
+      tipSph.position.set(Math.cos(phi) * r, h, Math.sin(phi) * r);
+      fg.add(tipSph);
+    }
+    /* 중앙 발광 핵 */
     fg.add(new THREE.Mesh(
-      new THREE.SphereGeometry(0.042, 10, 10),
-      new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 320 })
+      new THREE.SphereGeometry(0.055, 16, 16),
+      new THREE.MeshPhongMaterial({ color: 0xffffff, specular: 0xffffff, shininess: 700, transparent: true, opacity: 0.95 })
     ));
   }
   fg.position.copy(curve.getPoint(1));
@@ -394,9 +482,9 @@ function buildTree() {
     spawnStem(rnd(-0.06, 0.06), -0.02, rnd(-0.06, 0.06), {
       vxInit:     Math.cos(ang) * rnd(0.18, 0.36),
       vzInit:     Math.sin(ang) * rnd(0.18, 0.36),
-      numSegs:    28,
-      tubeRadius: 0.044,
-      stepY:      0.28,
+      numSegs:    20,
+      tubeRadius: 0.034,
+      stepY:      0.20,
       driftMul:   0.52,
       flowerType: 'bud',
     });
@@ -556,7 +644,7 @@ function animate() {
       l.visible = l._t <= s.progress * 0.9;
     });
     const fp = Math.max(0, (s.progress - 0.84) / 0.16);
-    s.flower.scale.setScalar(fp * 0.72);
+    s.flower.scale.setScalar(fp * 1.05);
     if (s.progress >= 1) s.growing = false;
   });
 
@@ -574,13 +662,13 @@ function animate() {
 
     const ang    = Math.random() * Math.PI * 2;
     /* 수평 초속: 초기=거의0, 성장=강하게 옆으로 */
-    const vAmp   = 0.06 + spread * 0.90;
+    const vAmp   = 0.05 + spread * 0.78;
     /* y증가량: 초기=높게, 성장=낮게(수평에 가깝게) */
-    const sy     = Math.max(0.065, 0.30 - spread * 0.22);
+    const sy     = Math.max(0.055, 0.22 - spread * 0.165);
     /* 튜브 굵기: 초기=얇게, 성장=굵게 */
-    const tr     = 0.036 + spread * 0.062 + stress * 0.00022;
+    const tr     = 0.028 + spread * 0.052 + stress * 0.00022;
     /* 세그먼트: 성장할수록 길어짐 */
-    const ns     = Math.floor(18 + spread * 12);
+    const ns     = Math.floor(14 + spread * 8);
     /* 꽃 타입: 초반=버드, 중반이후=스타버스트 */
     const ft     = spread > 0.35 ? 'starburst' : 'bud';
     /* 시작 위치: 모두 베이스 근처에서 묶음 */
