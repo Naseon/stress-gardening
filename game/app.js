@@ -79,26 +79,37 @@ const stems = [];
 
 function rnd(a, b) { return a + Math.random() * (b - a); }
 
-function spawnStem(sx, sy, sz) {
+function spawnStem(sx, sy, sz, {
+  vxInit    = null,          /* 초기 수평 속도 X (null=랜덤) */
+  vzInit    = null,          /* 초기 수평 속도 Z (null=랜덤) */
+  numSegs   = null,          /* 세그먼트 수 (null=기본값) */
+  tubeRadius= null,          /* 튜브 반지름 (null=기본값) */
+  stepY     = null,          /* 세그먼트당 y 증가량 (null=랜덤) */
+  driftMul  = 1.0,           /* 수평 흔들림 강도 배수 */
+  showThorns= true,
+  showLeaves= true,
+  showFlower= true,
+} = {}) {
   const stress = Number(slider.value);
 
   /* 곡선 경로 생성 */
   const points = [];
   let cx = sx, cy = sy + 0.02, cz = sz;
-  let vx = rnd(-0.9, 0.9), vz = rnd(-0.9, 0.9);
-  const segCount = 14 + Math.floor(stress * 0.04);
+  let vx = vxInit ?? rnd(-0.9, 0.9);
+  let vz = vzInit ?? rnd(-0.9, 0.9);
+  const segCount = numSegs ?? (14 + Math.floor(stress * 0.04));
   points.push(new THREE.Vector3(cx, cy, cz));
   for (let i = 1; i <= segCount; i++) {
-    vx += rnd(-0.28, 0.28); vz += rnd(-0.28, 0.28);
+    vx += rnd(-0.28, 0.28) * driftMul; vz += rnd(-0.28, 0.28) * driftMul;
     vx *= 0.76; vz *= 0.76;
-    cx += vx * 0.72;
-    cy += 0.14 + Math.random() * 0.05;
-    cz += vz * 0.72;
+    cx += vx * 0.72 * driftMul;
+    cy += stepY ?? (0.14 + Math.random() * 0.05);
+    cz += vz * 0.72 * driftMul;
     points.push(new THREE.Vector3(cx, cy, cz));
   }
 
   const curve    = new THREE.CatmullRomCurve3(points);
-  const tubeR    = 0.038 + stress * 0.00028;
+  const tubeR    = tubeRadius ?? (0.038 + stress * 0.00028);
   const geo      = new THREE.TubeGeometry(curve, 64, tubeR, 8, false);
   geo.setDrawRange(0, 0);
   const mesh     = new THREE.Mesh(geo, stemMat.clone());
@@ -106,7 +117,7 @@ function spawnStem(sx, sy, sz) {
 
   /* 가시 */
   const thornMeshes = [];
-  const thornCount  = 8 + Math.floor(stress * 0.07);
+  const thornCount  = showThorns ? (8 + Math.floor(stress * 0.07)) : 0;
   for (let i = 0; i < thornCount; i++) {
     const t    = (i + 0.5) / thornCount;
     const pos  = curve.getPoint(t);
@@ -134,7 +145,7 @@ function spawnStem(sx, sy, sz) {
 
   /* 잎 */
   const leafMeshes = [];
-  const leafCount  = 4 + Math.floor(stress * 0.04);
+  const leafCount  = showLeaves ? (4 + Math.floor(stress * 0.04)) : 0;
   for (let i = 0; i < leafCount; i++) {
     const t   = (i + 0.4) / leafCount;
     const pos = curve.getPoint(t);
@@ -165,7 +176,7 @@ function spawnStem(sx, sy, sz) {
     leafMeshes.push(leaf);
   }
 
-  /* 크리스탈 꽃 (줄기 끝) */
+  /* 크리스탈 꽃 (줄기 끝, showFlower=false이면 숨김) */
   const fg = new THREE.Group();
   for (let i = 0; i < 12; i++) {
     const phi   = (i / 12) * Math.PI * 2;
@@ -197,6 +208,7 @@ function spawnStem(sx, sy, sz) {
   fg.position.copy(curve.getPoint(1));
   fg.scale.setScalar(0);
   fg.rotation.y = Math.random() * Math.PI * 2;
+  fg.visible = showFlower;
   group.add(fg);
 
   const stemObj = {
@@ -286,9 +298,17 @@ function plantAt(clientX, clientY) {
   raycaster.ray.intersectPlane(spawnPlane, target);
   const inv = new THREE.Matrix4().copy(group.matrixWorld).invert();
   target.applyMatrix4(inv);
-  const stemObj = spawnStem(target.x, Math.max(target.y - 1.2, -0.1), target.z);
+  const ang = Math.random() * Math.PI * 2;
+  const stemObj = spawnStem(target.x, Math.max(target.y - 1.2, -0.1), target.z, {
+    vxInit:  Math.cos(ang) * 0.35,
+    vzInit:  Math.sin(ang) * 0.35,
+    numSegs: 10,
+    tubeRadius: 0.030,
+    stepY:   0.11,
+    driftMul: 0.9,
+  });
   history.push({ type: "plant", stem: stemObj });
-  updateStatus("Growth planted.");
+  updateStatus("Branch planted.");
 }
 
 /* ── Undo ── */
@@ -325,6 +345,64 @@ function resetView() {
   updateStatus("View reset.");
 }
 
+/* ── 나무 구조 생성 ── */
+function buildTree() {
+  /* ① 기둥 (Trunk): 굵고 거의 수직 */
+  const trunk = spawnStem(0, -0.02, 0, {
+    vxInit:    rnd(-0.025, 0.025),
+    vzInit:    rnd(-0.025, 0.025),
+    numSegs:   22,
+    tubeRadius: 0.11,
+    stepY:     0.20,
+    driftMul:  0.10,
+    showThorns: false,
+    showLeaves: false,
+    showFlower: false,
+  });
+  const tip = trunk.curve.getPoint(1);
+
+  /* ② 주 가지 (Main branches): 기둥 끝에서 방사형으로 */
+  const mainCount = 5 + Math.floor(Math.random() * 2);
+  for (let i = 0; i < mainCount; i++) {
+    const ang  = (i / mainCount) * Math.PI * 2 + rnd(-0.18, 0.18);
+    const dx   = Math.cos(ang), dz = Math.sin(ang);
+    const branch = spawnStem(
+      tip.x + dx * 0.05,
+      tip.y - 0.18,
+      tip.z + dz * 0.05,
+      {
+        vxInit:    dx * 0.52,
+        vzInit:    dz * 0.52,
+        numSegs:   12,
+        tubeRadius: 0.056,
+        stepY:     0.13,
+        driftMul:  0.55,
+        showFlower: false,
+      }
+    );
+    const bTip = branch.curve.getPoint(1);
+
+    /* ③ 잔가지 (Sub-branches): 주 가지 끝에서 더 얇게 */
+    const subCount = 2 + Math.floor(Math.random() * 2);
+    for (let j = 0; j < subCount; j++) {
+      const subAng = ang + rnd(-0.75, 0.75);
+      spawnStem(
+        bTip.x + rnd(-0.04, 0.04),
+        bTip.y - 0.08,
+        bTip.z + rnd(-0.04, 0.04),
+        {
+          vxInit:    Math.cos(subAng) * 0.38,
+          vzInit:    Math.sin(subAng) * 0.38,
+          numSegs:   10,
+          tubeRadius: 0.028,
+          stepY:     0.10,
+          driftMul:  0.85,
+        }
+      );
+    }
+  }
+}
+
 /* ── 씬 초기화 ── */
 function seedScene() {
   stems.forEach(s => {
@@ -337,9 +415,7 @@ function seedScene() {
   history.length = 0;
   autoTimer      = 0;
   targetRY = 0; targetRX = 0;
-  spawnStem(-0.22, 0, -0.08);
-  spawnStem( 0.03, 0,  0.12);
-  spawnStem( 0.22, 0, -0.05);
+  buildTree();
   updateStatus("Comb: click to grow · drag to rotate · Cut/Pluck to prune.");
 }
 
@@ -492,8 +568,15 @@ function animate() {
   if (autoTimer > interval && activeCnt < MAX_STEMS) {
     autoTimer = 0;
     const ang = Math.random() * Math.PI * 2;
-    const rad = rnd(0.08, 0.9);
-    spawnStem(Math.cos(ang) * rad, 0, Math.sin(ang) * rad);
+    const rad = rnd(0.06, 0.7);
+    spawnStem(Math.cos(ang) * rad, rnd(0.5, 2.5), Math.sin(ang) * rad, {
+      vxInit:    Math.cos(ang) * rnd(0.2, 0.5),
+      vzInit:    Math.sin(ang) * rnd(0.2, 0.5),
+      numSegs:   rnd(8, 12) | 0,
+      tubeRadius: rnd(0.022, 0.040),
+      stepY:     rnd(0.08, 0.14),
+      driftMul:  rnd(0.6, 1.0),
+    });
   }
 
   renderer.render(scene, camera);
