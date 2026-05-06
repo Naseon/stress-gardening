@@ -34,8 +34,8 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf6f5f2);
 
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-camera.position.set(0, 4, 18);
-camera.lookAt(0, 1.0, 0);
+camera.position.set(0, 4.5, 13);
+camera.lookAt(0, 2.0, 0);
 
 /* ── 조명 — 스튜디오 소프트박스 세팅 ── */
 /* 전체 베이스 환경광: 균일하고 부드럽게 */
@@ -82,21 +82,7 @@ const crystalMat = new THREE.MeshPhongMaterial({
 const group = new THREE.Group();
 scene.add(group);
 
-/* ── 베이스 플레이트 — 레퍼런스의 유리 페트리 접시 ── */
-/* 유리 디스크 (투명, 반사) */
-const plateGeo = new THREE.CylinderGeometry(2.1, 2.1, 0.06, 64);
-const glassMat = new THREE.MeshPhongMaterial({
-  color: 0xf0f0ee, specular: 0xffffff, shininess: 180,
-  transparent: true, opacity: 0.38,
-});
-group.add(new THREE.Mesh(plateGeo, glassMat));
-/* 유리 테두리 링 */
-const rimGeo = new THREE.TorusGeometry(2.1, 0.045, 16, 64);
-const rimMat = new THREE.MeshStandardMaterial({
-  color: 0xd4d2cf, metalness: 0.6, roughness: 0.28,
-  transparent: true, opacity: 0.72,
-});
-group.add(new THREE.Mesh(rimGeo, rimMat));
+/* ── 베이스 없음 (유리 디스크·링 제거) ── */
 
 /* ─────────────────────────────────────────
    STEM 데이터 & 생성
@@ -408,9 +394,9 @@ function buildTree() {
     spawnStem(rnd(-0.06, 0.06), -0.02, rnd(-0.06, 0.06), {
       vxInit:     Math.cos(ang) * rnd(0.18, 0.36),
       vzInit:     Math.sin(ang) * rnd(0.18, 0.36),
-      numSegs:    20,
-      tubeRadius: 0.034,
-      stepY:      0.20,
+      numSegs:    28,
+      tubeRadius: 0.044,
+      stepY:      0.28,
       driftMul:   0.52,
       flowerType: 'bud',
     });
@@ -588,13 +574,13 @@ function animate() {
 
     const ang    = Math.random() * Math.PI * 2;
     /* 수평 초속: 초기=거의0, 성장=강하게 옆으로 */
-    const vAmp   = 0.05 + spread * 0.78;
+    const vAmp   = 0.06 + spread * 0.90;
     /* y증가량: 초기=높게, 성장=낮게(수평에 가깝게) */
-    const sy     = Math.max(0.055, 0.22 - spread * 0.165);
+    const sy     = Math.max(0.065, 0.30 - spread * 0.22);
     /* 튜브 굵기: 초기=얇게, 성장=굵게 */
-    const tr     = 0.028 + spread * 0.052 + stress * 0.00022;
+    const tr     = 0.036 + spread * 0.062 + stress * 0.00022;
     /* 세그먼트: 성장할수록 길어짐 */
-    const ns     = Math.floor(14 + spread * 8);
+    const ns     = Math.floor(18 + spread * 12);
     /* 꽃 타입: 초반=버드, 중반이후=스타버스트 */
     const ft     = spread > 0.35 ? 'starburst' : 'bud';
     /* 시작 위치: 모두 베이스 근처에서 묶음 */
