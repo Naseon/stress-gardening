@@ -1,0 +1,105 @@
+/* ─────────────────────────────────────────
+   BASE  —  design tokens + reset + typography
+   ───────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+
+  /* colour */
+  --bg:          #f4f3ef;
+  --surface:     #edecea;
+  --ink:         #0d0e0c;
+  --ink-2:       #5a5e58;
+  --ink-3:       rgba(13,14,12,0.32);
+  --line:        rgba(13,14,12,0.08);
+  --line-mid:    rgba(13,14,12,0.14);
+  --line-strong: rgba(13,14,12,0.22);
+  --panel:       rgba(244,243,239,0.88);
+  --accent:      #0d0e0c;
+
+  /* type */
+  --sans:  "Helvetica Neue", Arial, sans-serif;
+  --serif: Georgia, "Times New Roman", serif;
+
+  /* scale */
+  --text-xs:   10px;
+  --text-sm:   12px;
+  --text-base: 15px;
+  --text-md:   clamp(14px, 1.4vw, 18px);
+  --text-lg:   clamp(15px, 1.6vw, 20px);
+  --text-h2:   clamp(36px, 7vw, 106px);
+  --text-h1:   clamp(42px, 8.5vw, 116px);
+
+  /* space */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-section: clamp(36px, 5.5vw, 72px);
+  --sp-gutter:  clamp(24px, 5vw, 72px);
+
+  /* misc */
+  --radius:   3px;
+  --duration: 220ms;
+  --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+h1 { font-size: var(--text-h1); line-height: 0.86; }
+h2 { font-size: var(--text-h2); line-height: 0.88; max-width: 960px; }
+h3 { margin: 6px 0 16px; font-size: clamp(20px, 2.8vw, 42px); line-height: 0.92; }
+
+p  { margin: 0; }
+a  { color: inherit; text-decoration: none; }
+
+.eyebrow {
+  margin: 0 0 18px;
+  padding-left: 10px;
+  border-left: 1.5px solid var(--ink);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.description {
+  max-width: 520px;
+  margin: 18px 0 0;
+  color: var(--ink-2);
+  font-size: var(--text-md);
+  font-weight: 700;
+  line-height: 1.62;
+}
+
+canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+}
