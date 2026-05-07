@@ -174,57 +174,6 @@ a {
   font-weight: 900;
 }
 
-.hero-shot {
-  position: absolute;
-  z-index: 1;
-  width: min(28vw, 320px);
-  aspect-ratio: 1 / 1;
-  border-radius: 28px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 18px 36px rgba(17, 17, 16, 0.1);
-}
-
-.hero-shot img {
-  transform: scale(2.02);
-}
-
-.hero-shot-a {
-  top: 32px;
-  left: 32px;
-}
-
-.hero-shot-a img {
-  object-position: left top;
-}
-
-.hero-shot-b {
-  top: 32px;
-  right: 32px;
-}
-
-.hero-shot-b img {
-  object-position: right top;
-}
-
-.hero-shot-c {
-  bottom: 32px;
-  left: 32px;
-}
-
-.hero-shot-c img {
-  object-position: left bottom;
-}
-
-.hero-shot-d {
-  right: 32px;
-  bottom: 32px;
-}
-
-.hero-shot-d img {
-  object-position: right bottom;
-}
-
 .live-lab,
 .collection-section,
 .process-section {
@@ -561,10 +510,6 @@ input[type="range"] {
 }
 
 @media (max-width: 1080px) {
-  .hero-shot {
-    width: min(31vw, 240px);
-  }
-
   .lab-grid,
   .collection-grid,
   .system-grid,
@@ -603,42 +548,11 @@ input[type="range"] {
   }
 
   .hero-stage {
-    min-height: 900px;
-    padding-top: 220px;
+    min-height: 78vh;
   }
 
   .hero-copy {
-    position: relative;
-    top: auto;
-    left: auto;
-    transform: none;
-    width: calc(100% - 32px);
-    margin: 0 auto;
-  }
-
-  .hero-shot {
-    width: min(42vw, 220px);
-    aspect-ratio: 0.96 / 1;
-  }
-
-  .hero-shot-a,
-  .hero-shot-b {
-    top: 24px;
-  }
-
-  .hero-shot-c,
-  .hero-shot-d {
-    bottom: 24px;
-  }
-
-  .hero-shot-a,
-  .hero-shot-c {
-    left: 16px;
-  }
-
-  .hero-shot-b,
-  .hero-shot-d {
-    right: 16px;
+    width: min(560px, calc(100% - 32px));
   }
 
   .canvas-shell {
