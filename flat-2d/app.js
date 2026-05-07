@@ -1,5 +1,4 @@
 const canvas = document.querySelector("#thornCanvas");
-const ctx = canvas.getContext("2d");
 const slider = document.querySelector("#stressSlider");
 const regrowButton = document.querySelector("#regrowButton");
 const statusText = document.querySelector("#statusText");
@@ -8,550 +7,547 @@ const undoButton = document.querySelector("#undoButton");
 const resetViewButton = document.querySelector("#resetViewButton");
 const saveButton = document.querySelector("#saveButton");
 
-let width = 0;
-let height = 0;
-let pixelRatio = 1;
-let frame = 0;
-let roots = [];
-let stems = [];
-let particles = [];
+let currentTool = "comb";
 let history = [];
-let currentTool = "cut";
-let isPointerDown = false;
-let pointerDownX = 0;
-let pointerDownY = 0;
-let pointerMoved = false;
-let currentCombChanges = null;
-let autoTimer = 0;
+let isDrag = false;
+let isDragged = false;
+let dragPX = 0;
+let dragPY = 0;
+let targetRY = 0;
+let targetRX = 0;
+let currentRY = 0;
+let currentRX = 0;
 
-const pointer = { x: 0, y: 0, lastX: 0, lastY: 0, vx: 0, vy: 0 };
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  antialias: true,
+  alpha: true,
+  preserveDrawingBuffer: true,
+});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setClearColor(0x000000, 0);
 
-function resizeCanvas() {
-  pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+const scene = new THREE.Scene();
+scene.background = null;
+
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+camera.position.set(0, 3, 10);
+camera.lookAt(0, 1.5, 0);
+
+scene.add(new THREE.AmbientLight(0xffffff, 2.5));
+
+const sun = new THREE.DirectionalLight(0xffffff, 3.5);
+sun.position.set(3, 10, 5);
+scene.add(sun);
+
+const fill = new THREE.DirectionalLight(0xffffff, 1.2);
+fill.position.set(-5, 3, -3);
+scene.add(fill);
+
+const pointLight = new THREE.PointLight(0xffffff, 1.5, 20);
+pointLight.position.set(4, 5, 4);
+scene.add(pointLight);
+
+const group = new THREE.Group();
+scene.add(group);
+
+const stemMaterial = new THREE.MeshStandardMaterial({
+  color: 0xd0cecc,
+  metalness: 0.92,
+  roughness: 0.18,
+});
+
+const leafMaterial = new THREE.MeshStandardMaterial({
+  color: 0xb8b6b4,
+  metalness: 0.92,
+  roughness: 0.18,
+  side: THREE.DoubleSide,
+});
+
+const crystalMaterial = new THREE.MeshPhongMaterial({
+  color: 0xffffff,
+  specular: 0xffffff,
+  shininess: 200,
+  transparent: true,
+  opacity: 0.78,
+  side: THREE.DoubleSide,
+});
+
+const stems = [];
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+function getStress() {
+  return Number(slider?.value || 62);
+}
+
+function resizeRenderer() {
   const rect = canvas.getBoundingClientRect();
-  width = Math.max(320, Math.floor(rect.width));
-  height = Math.max(420, Math.floor(rect.height));
-  canvas.width = Math.floor(width * pixelRatio);
-  canvas.height = Math.floor(height * pixelRatio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  const width = Math.max(320, Math.floor(rect.width));
+  const height = Math.max(420, Math.floor(rect.height));
+  renderer.setSize(width, height, false);
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
 }
 
-function randomBetween(min, max) { return min + Math.random() * (max - min); }
-function clamp(value, min, max) { return Math.min(Math.max(value, min), max); }
-function remember(action) {
-  history.push(action);
-  if (history.length > 24) history.shift();
-}
-
-function getPointerPosition(event) {
+function setMouseNDC(clientX, clientY) {
   const rect = canvas.getBoundingClientRect();
-  return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
 }
 
-function updatePointer(event) {
-  const position = getPointerPosition(event);
-  pointer.lastX = pointer.x;
-  pointer.lastY = pointer.y;
-  pointer.x = position.x;
-  pointer.y = position.y;
-  pointer.vx = pointer.x - pointer.lastX;
-  pointer.vy = pointer.y - pointer.lastY;
-  return position;
+function makeLeafGeometry(size) {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.bezierCurveTo(-size * 0.6, size * 0.2, -size * 0.5, size * 0.7, 0, size);
+  shape.bezierCurveTo(size * 0.5, size * 0.7, size * 0.6, size * 0.2, 0, 0);
+  return new THREE.ExtrudeGeometry(shape, { depth: 0.01, bevelEnabled: false });
 }
 
-class Stem2D {
-  constructor(x, y, angle, depth, maxDepth, thickness, targetLength = null) {
-    this.x = x;
-    this.y = y;
-    this.angle = angle;
-    this.depth = depth;
-    this.maxDepth = maxDepth;
-    this.thickness = thickness;
-    this.length = 0;
-    this.targetLength = targetLength ?? randomBetween(64, 136) * Math.pow(0.72, depth);
-    this.speed = randomBetween(0.16, 0.34) * (1 + depth * 0.08);
-    this.curve = randomBetween(-0.014, 0.014);
-    this.bendX = 0;
-    this.bendY = 0;
-    this.vx = 0;
-    this.vy = 0;
-    this.phase = Math.random() * Math.PI * 2;
-    this.done = false;
-    this.spawned = false;
-    this.removed = false;
-    this.children = [];
-    this.thorns = [];
-    this.lastThornAt = 0;
-    this.thornSpacing = randomBetween(15, 27);
-  }
+function makeFlower() {
+  const flower = new THREE.Group();
 
-  endPoint() {
-    const sway = Math.sin(frame * 0.018 + this.phase) * (2.6 - this.depth * 0.25);
-    return {
-      x: this.x + Math.cos(this.angle) * this.length + this.bendX + Math.cos(this.angle + Math.PI / 2) * sway,
-      y: this.y + Math.sin(this.angle) * this.length + this.bendY + Math.sin(this.angle + Math.PI / 2) * sway,
-    };
-  }
+  for (let i = 0; i < 12; i += 1) {
+    const phi = (i / 12) * Math.PI * 2;
+    const theta = Math.PI / 6 + (i % 3) * (Math.PI / 8);
+    const len = 0.35 + (i % 3) * 0.06;
 
-  pointAt(t) {
-    const ex = this.x + Math.cos(this.angle) * this.length * t + this.bendX * t;
-    const ey = this.y + Math.sin(this.angle) * this.length * t + this.bendY * t;
-    const wave = Math.sin(t * Math.PI + this.phase + frame * 0.014) * 18 * (1 - this.depth * 0.1);
-    return {
-      x: ex + Math.cos(this.angle + Math.PI / 2) * wave * t,
-      y: ey + Math.sin(this.angle + Math.PI / 2) * wave * t,
-    };
-  }
+    const shape = new THREE.Shape();
+    shape.moveTo(0, 0);
+    shape.lineTo(-0.03, len * 0.3);
+    shape.lineTo(0, len);
+    shape.lineTo(0.03, len * 0.3);
+    shape.closePath();
 
-  update() {
-    if (this.removed) return;
-    this.vx *= 0.82;
-    this.vy *= 0.82;
-    this.bendX += this.vx;
-    this.bendY += this.vy;
-
-    if (!this.done) {
-      this.angle += this.curve;
-      this.length = Math.min(this.length + this.speed, this.targetLength);
-      if (this.length - this.lastThornAt > this.thornSpacing && this.depth > 0) {
-        this.thorns.push({ t: this.length / this.targetLength, side: Math.random() < 0.5 ? -1 : 1, size: randomBetween(8, 16), removed: false });
-        this.lastThornAt = this.length;
-      }
-      if (this.length >= this.targetLength) {
-        this.done = true;
-        if (!this.spawned && this.depth < this.maxDepth) {
-          this.spawned = true;
-          this.spawnChildren();
-        }
-      }
-    }
-    this.children.forEach((child) => child.update());
-  }
-
-  spawnChildren() {
-    const end = this.endPoint();
-    const stress = Number(slider.value);
-    const childCount = this.depth < 2 && stress > 55 ? 3 : 2;
-    const baseAngle = 0.42 + stress * 0.003;
-    const shrink = randomBetween(0.62, 0.76);
-
-    for (let i = 0; i < childCount; i += 1) {
-      const side = childCount === 3 ? i - 1 : (i === 0 ? -1 : 1);
-      const angleOffset = side * randomBetween(baseAngle, baseAngle + 0.42) + randomBetween(-0.12, 0.12);
-      const childLength = Math.max(24, this.targetLength * shrink * randomBetween(0.86, 1.08));
-      const child = new Stem2D(
-        end.x,
-        end.y,
-        this.angle + angleOffset,
-        this.depth + 1,
-        this.maxDepth,
-        this.thickness * 0.68,
-        childLength
-      );
-      this.children.push(child);
-    }
-  }
-
-  collect(list) {
-    if (!this.removed) list.push(this);
-    this.children.forEach((child) => child.collect(list));
-  }
-}
-
-function collectStems() {
-  stems = [];
-  roots.forEach((root) => root.collect(stems));
-}
-
-function addRoot(x, y, angle = -Math.PI / 2, count = 1) {
-  const created = [];
-  const stress = Number(slider.value);
-  for (let i = 0; i < count; i += 1) {
-    const maxDepth = window.innerWidth < 700 ? 5 : 6;
-    const rootLength = randomBetween(82, 150) * (window.innerWidth < 700 ? 0.86 : 1);
-    const root = new Stem2D(
-      x + randomBetween(-12, 12),
-      y + randomBetween(-10, 10),
-      angle + randomBetween(-0.58, 0.58),
-      0,
-      maxDepth,
-      4.5 + stress * 0.025,
-      rootLength
+    const petal = new THREE.Mesh(
+      new THREE.ExtrudeGeometry(shape, { depth: 0.006, bevelEnabled: false }),
+      crystalMaterial.clone()
     );
-    roots.push(root);
-    created.push(root);
-  }
-  return created;
-}
 
-function seedScene() {
-  roots = [];
-  particles = [];
-  history = [];
-  autoTimer = 0;
-  addRoot(width * 0.42, height * 0.72, -Math.PI / 2 + randomBetween(-0.18, 0.18), 1);
-  addRoot(width * 0.5, height * 0.76, -Math.PI / 2 + randomBetween(-0.12, 0.12), 1);
-  addRoot(width * 0.58, height * 0.72, -Math.PI / 2 + randomBetween(-0.18, 0.18), 1);
-  updateStatus("Comb: click to grow, drag to sculpt.");
-}
+    const dir = new THREE.Vector3(
+      Math.sin(theta) * Math.cos(phi),
+      Math.cos(theta),
+      Math.sin(theta) * Math.sin(phi)
+    ).normalize();
 
-function drawBackground() {
-  ctx.clearRect(0, 0, width, height);
-
-  const wall = ctx.createLinearGradient(0, 0, 0, height);
-  wall.addColorStop(0, "#fbfbf8");
-  wall.addColorStop(0.52, "#f2f0eb");
-  wall.addColorStop(1, "#ebe8e2");
-  ctx.fillStyle = wall;
-  ctx.fillRect(0, 0, width, height);
-
-  const tileSize = Math.max(72, Math.min(138, width * 0.12));
-  for (let y = 0; y < height + tileSize; y += tileSize) {
-    for (let x = 0; x < width + tileSize; x += tileSize) {
-      ctx.fillStyle = "rgba(255,255,255,0.12)";
-      ctx.fillRect(x + 1, y + 1, tileSize - 2, tileSize - 2);
-      ctx.strokeStyle = "rgba(165, 165, 160, 0.34)";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x, y, tileSize, tileSize);
-      ctx.strokeStyle = "rgba(255,255,255,0.48)";
-      ctx.beginPath();
-      ctx.moveTo(x + 1, y + 1);
-      ctx.lineTo(x + tileSize - 1, y + 1);
-      ctx.moveTo(x + 1, y + 1);
-      ctx.lineTo(x + 1, y + tileSize - 1);
-      ctx.stroke();
-    }
+    petal.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    petal.position.copy(dir).multiplyScalar(0.05);
+    flower.add(petal);
   }
 
-  const glows = [
-    { x: width * 0.16, y: height * 0.18, r: width * 0.2, alpha: 0.32 },
-    { x: width * 0.82, y: height * 0.26, r: width * 0.18, alpha: 0.22 },
-    { x: width * 0.72, y: height * 0.62, r: width * 0.22, alpha: 0.14 },
-  ];
+  flower.add(
+    new THREE.Mesh(
+      new THREE.SphereGeometry(0.05, 8, 8),
+      new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 300 })
+    )
+  );
 
-  glows.forEach((glow) => {
-    const grad = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, glow.r);
-    grad.addColorStop(0, `rgba(255,255,255,${glow.alpha})`);
-    grad.addColorStop(0.42, "rgba(255,255,255,0.12)");
-    grad.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, width, height);
-  });
-
-  const trayTop = height * 0.84;
-  const trayHeight = Math.max(40, height * 0.09);
-  const trayGrad = ctx.createLinearGradient(0, trayTop, 0, trayTop + trayHeight);
-  trayGrad.addColorStop(0, "rgba(210, 210, 206, 0.9)");
-  trayGrad.addColorStop(0.46, "rgba(126, 126, 122, 0.55)");
-  trayGrad.addColorStop(1, "rgba(72, 72, 70, 0.62)");
-  ctx.fillStyle = trayGrad;
-  ctx.fillRect(width * 0.06, trayTop, width * 0.88, trayHeight);
-
-  ctx.strokeStyle = "rgba(248, 248, 245, 0.82)";
-  ctx.lineWidth = 1.5;
-  ctx.strokeRect(width * 0.06, trayTop, width * 0.88, trayHeight);
-
-  const dishX = width * 0.5;
-  const dishY = height * 0.79;
-  const dishW = Math.min(300, width * 0.28);
-  const dishH = Math.max(42, height * 0.06);
-
-  ctx.save();
-  ctx.strokeStyle = "rgba(110, 110, 106, 0.34)";
-  ctx.lineWidth = 1.4;
-  ctx.fillStyle = "rgba(255, 255, 255, 0.14)";
-  ctx.beginPath();
-  ctx.ellipse(dishX, dishY, dishW, dishH, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.ellipse(dishX, dishY + 18, dishW * 0.96, dishH * 0.88, 0, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.restore();
+  return flower;
 }
 
-function drawSmoothPath(points, lineWidth, color) {
-  if (points.length < 2) return;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = lineWidth;
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length - 1; i += 1) {
-    const midX = (points[i].x + points[i + 1].x) * 0.5;
-    const midY = (points[i].y + points[i + 1].y) * 0.5;
-    ctx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
-  }
-  const last = points[points.length - 1];
-  ctx.lineTo(last.x, last.y);
-  ctx.stroke();
-}
-
-function drawStem(stem) {
-  if (stem.removed) return;
-  const samples = [];
-  for (let i = 0; i <= 14; i += 1) samples.push(stem.pointAt(i / 14));
-  const alpha = Math.max(0.22, 1 - stem.depth * 0.14);
-  const widthBase = Math.max(0.5, stem.thickness * (1 - stem.depth * 0.12));
-  const start = samples[0];
-  const end = samples[samples.length - 1];
-  const chrome = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
-  chrome.addColorStop(0, "#575753");
-  chrome.addColorStop(0.18, "#f4f4f0");
-  chrome.addColorStop(0.34, "#9b9b97");
-  chrome.addColorStop(0.52, "#ffffff");
-  chrome.addColorStop(0.72, "#7a7a76");
-  chrome.addColorStop(1, "#3f3f3d");
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  drawSmoothPath(samples, widthBase + 5.6, "rgba(17, 17, 16, 0.12)");
-  drawSmoothPath(samples, widthBase + 1.8, chrome);
-  drawSmoothPath(samples, Math.max(0.7, widthBase * 0.26), "rgba(255, 255, 255, 0.58)");
+function clearStem(stem) {
+  group.remove(stem.mesh);
+  stem.mesh.geometry.dispose();
+  stem.mesh.material.dispose();
 
   stem.thorns.forEach((thorn) => {
-    if (thorn.removed || thorn.t > stem.length / stem.targetLength) return;
-    const base = stem.pointAt(thorn.t);
-    const ahead = stem.pointAt(Math.min(1, thorn.t + 0.04));
-    const angle = Math.atan2(ahead.y - base.y, ahead.x - base.x) + Math.PI / 2 * thorn.side;
-    const tip = { x: base.x + Math.cos(angle) * thorn.size, y: base.y + Math.sin(angle) * thorn.size };
-    const sideA = angle + Math.PI / 2;
-    const b = thorn.size * 0.28;
-    const thornGrad = ctx.createLinearGradient(base.x, base.y, tip.x, tip.y);
-    thornGrad.addColorStop(0, "#070707");
-    thornGrad.addColorStop(0.42, "#2e2e30");
-    thornGrad.addColorStop(0.78, "#0a0a0b");
-    thornGrad.addColorStop(1, "#000000");
-    ctx.fillStyle = thornGrad;
-    ctx.beginPath();
-    ctx.moveTo(base.x + Math.cos(sideA) * b, base.y + Math.sin(sideA) * b);
-    ctx.lineTo(tip.x, tip.y);
-    ctx.lineTo(base.x - Math.cos(sideA) * b, base.y - Math.sin(sideA) * b);
-    ctx.closePath();
-    ctx.fill();
+    group.remove(thorn);
+    thorn.geometry.dispose();
+    thorn.material.dispose();
   });
-  ctx.restore();
-  stem.children.forEach(drawStem);
-}
 
-function updateScene() {
-  roots.forEach((root) => root.update());
-  autoTimer += 1;
-  const stress = Number(slider.value);
-  const interval = Math.max(180, 380 - stress * 1.3);
-  if (autoTimer > interval && roots.length < 70) {
-    autoTimer = 0;
-    addRoot(
-      randomBetween(width * 0.42, width * 0.58),
-      randomBetween(height * 0.7, height * 0.8),
-      -Math.PI / 2 + randomBetween(-0.22, 0.22),
-      1
-    );
-  }
-  if (roots.length > 90) roots.splice(0, 8);
-}
-
-function plantAt(x, y) {
-  const angle = Math.atan2(-pointer.vy, pointer.vx || 0.001);
-  const created = addRoot(x, y, Number.isFinite(angle) ? angle : -Math.PI / 2, 1);
-  remember({ type: "plant", roots: created });
-  updateStatus("Growth planted from your click.");
-}
-
-function nearestTip(x, y) {
-  let best = null;
-  stems.forEach((stem) => {
-    if (stem.depth < 2 || stem.children.some((child) => !child.removed)) return;
-    const end = stem.endPoint();
-    const distance = Math.hypot(end.x - x, end.y - y);
-    const edgeBias = Math.min(end.x, width - end.x, end.y, height - end.y);
-    const score = distance + edgeBias * 0.1 - stem.depth * 12;
-    if (distance < 86 && (!best || score < best.score)) best = { stem, end, score };
+  stem.leaves.forEach((leaf) => {
+    group.remove(leaf);
+    leaf.geometry.dispose();
+    leaf.material.dispose();
   });
-  return best;
-}
 
-function cutAt(x, y) {
-  const hit = nearestTip(x, y);
-  if (!hit) return updateStatus("Cut the outer specimen tips.");
-  remember({ type: "cut", stem: hit.stem });
-  hit.stem.removed = true;
-  spawnParticles(hit.end.x, hit.end.y, 12);
-  updateStatus("Outer specimen tip clipped.");
-}
-
-function combAt(x, y) {
-  let touched = 0;
-  stems.forEach((stem) => {
-    const mid = stem.pointAt(0.55);
-    const distance = Math.hypot(mid.x - x, mid.y - y);
-    if (distance > 145) return;
-    const influence = Math.pow(1 - distance / 145, 2);
-    if (currentCombChanges && !currentCombChanges.has(stem)) {
-      currentCombChanges.set(stem, { x: stem.bendX, y: stem.bendY });
+  stem.flower.traverse((child) => {
+    if (child.isMesh) {
+      child.geometry.dispose();
+      child.material.dispose();
     }
-    stem.vx += pointer.vx * 0.02 * influence;
-    stem.vy += pointer.vy * 0.02 * influence;
-    stem.bendX = clamp(stem.bendX + pointer.vx * 0.5 * influence, -260, 260);
-    stem.bendY = clamp(stem.bendY + pointer.vy * 0.5 * influence, -260, 260);
-    touched += 1;
   });
-  updateStatus(touched ? "Chrome vines hold the dragged shape." : "Touch closer to the specimen.");
+  group.remove(stem.flower);
 }
 
-function pluckAt(x, y) {
-  let best = null;
-  stems.forEach((stem) => {
-    stem.thorns.forEach((thorn) => {
-      if (thorn.removed || thorn.t > stem.length / stem.targetLength) return;
-      const point = stem.pointAt(thorn.t);
-      const distance = Math.hypot(point.x - x, point.y - y);
-      if (distance < 58 && (!best || distance < best.distance)) best = { thorn, point, distance };
-    });
+function hideStem(stem) {
+  stem.removed = true;
+  stem.mesh.visible = false;
+  stem.thorns.forEach((thorn) => {
+    thorn.visible = false;
   });
-  if (!best) return updateStatus("Pick a visible crystal thorn.");
-  remember({ type: "pluck", thorn: best.thorn });
-  best.thorn.removed = true;
-  spawnParticles(best.point.x, best.point.y, 5);
-  updateStatus("Crystal thorn removed.");
+  stem.leaves.forEach((leaf) => {
+    leaf.visible = false;
+  });
+  stem.flower.visible = false;
 }
 
-function useToolAt(x, y) {
-  if (currentTool === "cut") cutAt(x, y);
-  if (currentTool === "comb") combAt(x, y);
-  if (currentTool === "pluck") pluckAt(x, y);
+function showStem(stem) {
+  stem.removed = false;
+  stem.mesh.visible = true;
+  stem.thorns.forEach((thorn) => {
+    thorn.visible = !thorn._removed && thorn._t <= stem.progress;
+  });
+  stem.leaves.forEach((leaf) => {
+    leaf.visible = leaf._t <= stem.progress * 0.9;
+  });
+  stem.flower.visible = true;
+  stem.flower.scale.setScalar(Math.max(0, (stem.progress - 0.85) / 0.15) * 0.7);
 }
 
-function spawnParticles(x, y, count) {
-  for (let i = 0; i < count; i += 1) {
-    particles.push({ x, y, vx: randomBetween(-1.8, 1.8), vy: randomBetween(-2.2, 0.7), size: randomBetween(1.5, 4.4), age: 0, life: randomBetween(360, 820) });
+function spawnStem(startX, startY, startZ) {
+  const stress = getStress();
+  const points = [];
+  let cx = startX;
+  let cy = startY;
+  let cz = startZ;
+  let vx = (Math.random() - 0.5) * (1.0 + stress * 0.003);
+  let vz = (Math.random() - 0.5) * (1.0 + stress * 0.003);
+
+  points.push(new THREE.Vector3(cx, cy, cz));
+
+  const segmentCount = 20 + Math.floor(stress * 0.04);
+  for (let i = 1; i <= segmentCount; i += 1) {
+    vx += (Math.random() - 0.5) * 0.4;
+    vz += (Math.random() - 0.5) * 0.4;
+    vx *= 0.78;
+    vz *= 0.78;
+    cx += vx;
+    cy += 0.22 + Math.random() * 0.06;
+    cz += vz;
+    points.push(new THREE.Vector3(cx, cy, cz));
   }
+
+  const curve = new THREE.CatmullRomCurve3(points);
+  const geo = new THREE.TubeGeometry(curve, 60, 0.07 + stress * 0.0004, 8, false);
+  geo.setDrawRange(0, 0);
+
+  const mesh = new THREE.Mesh(geo, stemMaterial.clone());
+  group.add(mesh);
+
+  const thorns = [];
+  const thornCount = 10 + Math.floor(stress * 0.05);
+  for (let i = 0; i < thornCount; i += 1) {
+    const t = (i + 0.5) / thornCount;
+    const pos = curve.getPoint(t);
+    const tan = curve.getTangent(t);
+    const up = new THREE.Vector3(0, 1, 0);
+    const perp = new THREE.Vector3().crossVectors(tan, up).normalize();
+    const angle = i * 2.618 * Math.PI;
+    const dir = new THREE.Vector3(
+      perp.x * Math.cos(angle) + up.x * Math.sin(angle),
+      perp.y * Math.cos(angle) + up.y * Math.sin(angle),
+      perp.z * Math.cos(angle) + up.z * Math.sin(angle)
+    ).normalize();
+
+    const thorn = new THREE.Mesh(
+      new THREE.ConeGeometry(0.035, 0.3, 5),
+      stemMaterial.clone()
+    );
+    thorn.position.copy(pos).addScaledVector(dir, 0.08);
+    thorn.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    thorn.visible = false;
+    thorn._t = t;
+    thorn._removed = false;
+    group.add(thorn);
+    thorns.push(thorn);
+  }
+
+  const leaves = [];
+  for (let i = 0; i < 5; i += 1) {
+    const t = (i + 0.4) / 5;
+    const pos = curve.getPoint(t);
+    const tan = curve.getTangent(t);
+    const size = 0.14 + Math.random() * 0.12;
+    const leaf = new THREE.Mesh(makeLeafGeometry(size), leafMaterial.clone());
+    const side = i % 2 === 0 ? 1 : -1;
+    const dir = new THREE.Vector3(
+      -tan.z * side + (Math.random() - 0.5) * 0.4,
+      0.5,
+      tan.x * side + (Math.random() - 0.5) * 0.4
+    ).normalize();
+
+    leaf.position.copy(pos).addScaledVector(dir, 0.14);
+    leaf.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    leaf.rotation.x += (Math.random() - 0.5) * 1.2;
+    leaf.rotation.y += (Math.random() - 0.5) * 1.2;
+    leaf.rotation.z += (Math.random() - 0.5) * 1.2;
+    leaf.visible = false;
+    leaf._t = t;
+    group.add(leaf);
+    leaves.push(leaf);
+  }
+
+  const flower = makeFlower();
+  flower.position.copy(curve.getPoint(1));
+  flower.scale.setScalar(0);
+  flower.rotation.y = Math.random() * Math.PI * 2;
+  group.add(flower);
+
+  const stem = {
+    mesh,
+    geo,
+    total: geo.index ? geo.index.count : geo.attributes.position.count,
+    thorns,
+    leaves,
+    flower,
+    progress: 0,
+    speed: 0.008 + stress * 0.00005,
+    growing: true,
+    removed: false,
+  };
+
+  stems.push(stem);
+  return stem;
 }
 
-function drawParticles() {
-  particles = particles.filter((particle) => {
-    particle.age += 16;
-    particle.vy += 0.07;
-    particle.x += particle.vx;
-    particle.y += particle.vy;
-    const alpha = 1 - particle.age / particle.life;
-    if (alpha <= 0) return false;
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = "#111412";
-    ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
-    ctx.restore();
-    return true;
-  });
+function buildInitialStems() {
+  spawnStem(-0.1, 0, -0.1);
+  spawnStem(0, 0, 0.1);
+  spawnStem(0.1, 0, -0.05);
+}
+
+function activeStemCount() {
+  return stems.filter((stem) => !stem.removed).length;
 }
 
 function updateStatus(message) {
-  const growth = Math.min(100, Math.round((stems.length / 260) * 100));
-  const stress = Number(slider.value);
+  const stress = getStress();
   const label = stress < 31 ? "LOW TENSION" : stress < 66 ? "CHRONIC TENSION" : "OVERGROWTH";
-  statusText.textContent = `${message} | ${label} | Sample ${growth}%`;
+  const density = Math.min(100, Math.round((activeStemCount() / 30) * 100));
+  if (statusText) {
+    statusText.textContent = `${message} | ${label} | Density ${density}%`;
+  }
+}
+
+function seedScene() {
+  stems.forEach(clearStem);
+  stems.length = 0;
+  history.length = 0;
+  targetRY = 0;
+  targetRX = 0;
+  currentRY = 0;
+  currentRX = 0;
+  buildInitialStems();
+  updateStatus("Comb: click to grow, drag to rotate.");
+}
+
+function plantAt(clientX, clientY) {
+  setMouseNDC(clientX, clientY);
+  raycaster.setFromCamera(mouse, camera);
+  const target = new THREE.Vector3();
+  raycaster.ray.intersectPlane(plane, target);
+
+  const inv = new THREE.Matrix4().copy(group.matrixWorld).invert();
+  target.applyMatrix4(inv);
+
+  const stem = spawnStem(target.x, Math.max(target.y - 1, -0.5), target.z);
+  history.push({ type: "plant", stem });
+  updateStatus("Branch planted.");
+}
+
+function cutAt(clientX, clientY) {
+  setMouseNDC(clientX, clientY);
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(
+    stems.filter((stem) => !stem.removed).map((stem) => stem.mesh)
+  );
+
+  if (!hits.length) {
+    updateStatus("Cut: click directly on a vine stem.");
+    return;
+  }
+
+  const stem = stems.find((item) => item.mesh === hits[0].object);
+  if (!stem) return;
+  hideStem(stem);
+  history.push({ type: "cut", stem });
+  updateStatus("Vine stem clipped.");
+}
+
+function pluckAt(clientX, clientY) {
+  setMouseNDC(clientX, clientY);
+  raycaster.setFromCamera(mouse, camera);
+  const visibleThorns = stems.flatMap((stem) =>
+    stem.removed ? [] : stem.thorns.filter((thorn) => thorn.visible && !thorn._removed)
+  );
+  const hits = raycaster.intersectObjects(visibleThorns);
+
+  if (!hits.length) {
+    updateStatus("Pluck: click on a visible thorn.");
+    return;
+  }
+
+  const thorn = hits[0].object;
+  thorn.visible = false;
+  thorn._removed = true;
+  history.push({ type: "pluck", thorn });
+  updateStatus("Thorn removed.");
+}
+
+function performClickAction(clientX, clientY) {
+  if (currentTool === "cut") cutAt(clientX, clientY);
+  if (currentTool === "comb") plantAt(clientX, clientY);
+  if (currentTool === "pluck") pluckAt(clientX, clientY);
 }
 
 function undoLastAction() {
   const action = history.pop();
-  if (!action) return updateStatus("Nothing to undo.");
-  if (action.type === "cut") action.stem.removed = false;
-  if (action.type === "pluck") action.thorn.removed = false;
-  if (action.type === "plant") roots = roots.filter((root) => !action.roots.includes(root));
-  if (action.type === "comb") {
-    action.changes.forEach((bend, stem) => {
-      stem.bendX = bend.x;
-      stem.bendY = bend.y;
-      stem.vx = 0;
-      stem.vy = 0;
-    });
+  if (!action) {
+    updateStatus("Nothing to undo.");
+    return;
   }
-  collectStems();
+
+  if (action.type === "cut") {
+    showStem(action.stem);
+  }
+
+  if (action.type === "pluck") {
+    action.thorn._removed = false;
+    action.thorn.visible = true;
+  }
+
+  if (action.type === "plant") {
+    hideStem(action.stem);
+  }
+
   updateStatus("Last action undone.");
 }
 
 function resetView() {
-  updateStatus("Studio view is already aligned.");
+  targetRY = 0;
+  targetRX = 0;
+  updateStatus("View reset.");
 }
 
 function saveSpecimen() {
+  renderer.render(scene, camera);
   const link = document.createElement("a");
   link.download = `stress-gardening-flat-${Date.now()}.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
-  updateStatus("Specimen image saved.");
-}
-
-function loop() {
-  requestAnimationFrame(loop);
-  frame += 1;
-  collectStems();
-  updateScene();
-  drawBackground();
-  roots.forEach(drawStem);
-  drawParticles();
+  updateStatus("Specimen saved.");
 }
 
 toolButtons.forEach((button) => {
   button.addEventListener("click", () => {
     currentTool = button.dataset.tool;
     toolButtons.forEach((item) => item.classList.toggle("active", item === button));
+
     const labels = {
-      cut: "Cut: trim outer specimen tips.",
-      comb: "Comb: click to grow, drag to sculpt.",
-      pluck: "Pluck: remove crystal thorns.",
+      cut: "Cut: click on a vine stem to remove it.",
+      comb: "Comb: click to grow, drag to rotate.",
+      pluck: "Pluck: click on a thorn to remove it.",
     };
     updateStatus(labels[currentTool]);
   });
 });
 
-canvas.addEventListener("pointerdown", (event) => {
-  isPointerDown = true;
-  canvas.setPointerCapture(event.pointerId);
-  const position = updatePointer(event);
-  pointerDownX = position.x;
-  pointerDownY = position.y;
-  pointerMoved = false;
-  currentCombChanges = currentTool === "comb" ? new Map() : null;
-  if (currentTool !== "comb") useToolAt(position.x, position.y);
+canvas.addEventListener("mousedown", (event) => {
+  isDrag = true;
+  isDragged = false;
+  dragPX = event.clientX;
+  dragPY = event.clientY;
 });
 
-canvas.addEventListener("pointermove", (event) => {
-  const position = updatePointer(event);
-  if (!isPointerDown) return;
-  const dragDistance = Math.hypot(position.x - pointerDownX, position.y - pointerDownY);
-  if (dragDistance > 6) pointerMoved = true;
-  if (currentTool === "comb") combAt(position.x, position.y);
-  else useToolAt(position.x, position.y);
+window.addEventListener("mousemove", (event) => {
+  if (!isDrag) return;
+  const dx = event.clientX - dragPX;
+  const dy = event.clientY - dragPY;
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) isDragged = true;
+  targetRY += dx * 0.007;
+  targetRX += dy * 0.004;
+  targetRX = Math.max(-0.5, Math.min(0.5, targetRX));
+  dragPX = event.clientX;
+  dragPY = event.clientY;
 });
 
-canvas.addEventListener("pointerup", (event) => {
-  const position = updatePointer(event);
-  if (currentTool === "comb" && !pointerMoved) plantAt(position.x, position.y);
-  if (currentTool === "comb" && pointerMoved && currentCombChanges && currentCombChanges.size) remember({ type: "comb", changes: currentCombChanges });
-  isPointerDown = false;
-  currentCombChanges = null;
-  pointer.vx = 0;
-  pointer.vy = 0;
+window.addEventListener("mouseup", (event) => {
+  if (!isDragged) performClickAction(event.clientX, event.clientY);
+  isDrag = false;
+  isDragged = false;
 });
 
-canvas.addEventListener("pointercancel", () => {
-  isPointerDown = false;
-  pointerMoved = false;
-  currentCombChanges = null;
-  pointer.vx = 0;
-  pointer.vy = 0;
+canvas.addEventListener(
+  "touchstart",
+  (event) => {
+    const touch = event.touches[0];
+    isDrag = true;
+    isDragged = false;
+    dragPX = touch.clientX;
+    dragPY = touch.clientY;
+    event.preventDefault();
+  },
+  { passive: false }
+);
+
+canvas.addEventListener(
+  "touchmove",
+  (event) => {
+    if (!isDrag) return;
+    const touch = event.touches[0];
+    const dx = touch.clientX - dragPX;
+    const dy = touch.clientY - dragPY;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDragged = true;
+    targetRY += dx * 0.007;
+    targetRX += dy * 0.004;
+    targetRX = Math.max(-0.5, Math.min(0.5, targetRX));
+    dragPX = touch.clientX;
+    dragPY = touch.clientY;
+    event.preventDefault();
+  },
+  { passive: false }
+);
+
+canvas.addEventListener("touchend", (event) => {
+  if (!isDragged && event.changedTouches.length) {
+    const touch = event.changedTouches[0];
+    performClickAction(touch.clientX, touch.clientY);
+  }
+  isDrag = false;
+  isDragged = false;
 });
 
-slider.addEventListener("input", () => updateStatus("Stress growth changed."));
-regrowButton.addEventListener("click", seedScene);
+slider?.addEventListener("input", () => updateStatus("Stress level changed."));
+regrowButton?.addEventListener("click", seedScene);
 undoButton?.addEventListener("click", undoLastAction);
 resetViewButton?.addEventListener("click", resetView);
 saveButton?.addEventListener("click", saveSpecimen);
-window.addEventListener("resize", resizeCanvas);
 
-resizeCanvas();
+window.addEventListener("keydown", (event) => {
+  if (event.key === "r" || event.key === "R") seedScene();
+});
+
+window.addEventListener("resize", resizeRenderer);
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  currentRY += (targetRY - currentRY) * 0.08;
+  currentRX += (targetRX - currentRX) * 0.08;
+  group.rotation.y = currentRY;
+  group.rotation.x = currentRX;
+
+  stems.forEach((stem) => {
+    if (!stem.growing || stem.removed) return;
+    stem.progress = Math.min(1, stem.progress + stem.speed);
+    stem.geo.setDrawRange(0, Math.floor(stem.progress * stem.total));
+    stem.thorns.forEach((thorn) => {
+      thorn.visible = !thorn._removed && thorn._t <= stem.progress;
+    });
+    stem.leaves.forEach((leaf) => {
+      leaf.visible = leaf._t <= stem.progress * 0.9;
+    });
+    const flowerProgress = Math.max(0, (stem.progress - 0.85) / 0.15);
+    stem.flower.scale.setScalar(flowerProgress * 0.7);
+    if (stem.progress >= 1) stem.growing = false;
+  });
+
+  renderer.render(scene, camera);
+}
+
+resizeRenderer();
 seedScene();
-loop();
+animate();

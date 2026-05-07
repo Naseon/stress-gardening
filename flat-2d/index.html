@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stress Gardening | Flat 2D Lab Edition</title>
+    <title>Stress Gardening | Live Lab Edition</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -56,7 +56,7 @@
             <div class="lab-stage-head">
               <div>
                 <p class="micro-label">Interactive specimen interface</p>
-                <h3>Flat 2D stress sample</h3>
+                <h3>Live stress specimen</h3>
               </div>
               <section class="toolbox" aria-label="Tool selection">
                 <button class="tool-button active" type="button" data-tool="cut">Cut</button>
@@ -68,7 +68,7 @@
             </div>
 
             <div class="canvas-shell">
-              <canvas id="thornCanvas" width="1280" height="720" aria-label="Stress Gardening flat 2D specimen canvas"></canvas>
+              <canvas id="thornCanvas" width="1280" height="720" aria-label="Stress Gardening live specimen canvas"></canvas>
               <div class="specimen-plinth" aria-hidden="true">
                 <span class="plinth-rim"></span>
                 <span class="plinth-label">CHROME-THORN / LIVE SAMPLE</span>
@@ -80,7 +80,7 @@
                 <span>Stress Level</span>
                 <input id="stressSlider" type="range" min="0" max="100" value="62" />
               </label>
-              <output id="statusText">Comb: click to grow, drag to sculpt.</output>
+              <output id="statusText">Comb: click to grow, drag to rotate.</output>
               <button id="regrowButton" type="button">Regrow</button>
               <button id="saveButton" type="button">Save</button>
             </section>
@@ -159,7 +159,7 @@
           <article class="system-card">
             <p class="micro-label">Interaction rules</p>
             <h3>Cut / Comb / Pluck</h3>
-            <p>The game can update, but the interface language remains stable and easy to extend.</p>
+            <p>The game can update, but the interaction language remains stable and easy to extend.</p>
           </article>
           <article class="system-card">
             <p class="micro-label">Object rules</p>
@@ -177,8 +177,8 @@
 
         <ol class="process-list">
           <li><span>01</span><strong>Measure</strong><p>Read stress and HRV values as the starting condition.</p></li>
-          <li><span>02</span><strong>Generate</strong><p>Grow a new 2D chrome-thorn specimen in the lab stage.</p></li>
-          <li><span>03</span><strong>Sculpt</strong><p>Click to plant, drag to shape, and trim the visible thicket.</p></li>
+          <li><span>02</span><strong>Generate</strong><p>Grow a new chrome-thorn specimen in the lab stage.</p></li>
+          <li><span>03</span><strong>Sculpt</strong><p>Click to plant, drag to rotate, and trim the visible thicket.</p></li>
           <li><span>04</span><strong>Preserve</strong><p>Save the resulting sample as a collectible fake goods record.</p></li>
         </ol>
       </section>
@@ -189,6 +189,7 @@
       </footer>
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>
