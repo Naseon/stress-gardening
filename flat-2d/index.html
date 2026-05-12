@@ -19,15 +19,71 @@
           </div>
         </nav>
 
-        <div class="hero-stage">
-          <div class="hero-copy">
-            <p class="eyebrow">Brand-Based Design Studio II</p>
-            <h1>Stress Gardening.</h1>
-            <p class="description">
-              Stress gardening, right at your fingertips. A modular web skeleton for future game logic,
-              changing visuals, and collectible fake goods, wrapped in a quiet laboratory mood.
-            </p>
-            <a class="hero-cta" href="#live-lab">Discover stress gardening</a>
+        <div class="hero-stage hybrid-stage">
+          <div class="intro-bg" id="mainBg"></div>
+
+          <div class="screen active" id="screenIntro">
+            <div class="hero-copy">
+              <p class="eyebrow">Brand-Based Design Studio II</p>
+              <h1>Stress Gardening.</h1>
+              <p class="description">
+                A hybrid stress analysis lab for measuring tension, recording the day, and translating
+                that state into a collectible specimen ritual.
+              </p>
+              <button class="hero-cta hero-cta-fill" id="btnBegin" type="button">측정 시작하기</button>
+            </div>
+          </div>
+
+          <div class="screen" id="screenScan">
+            <div class="scan-layout">
+              <div class="scan-left">
+                <div class="status-row">
+                  <div class="cam-wrap">
+                    <video id="video2" playsinline muted></video>
+                    <div class="scan-line-anim"></div>
+                    <div class="scan-corners">
+                      <div class="sc sc-tl"></div>
+                      <div class="sc sc-tr"></div>
+                      <div class="sc sc-bl"></div>
+                      <div class="sc sc-br"></div>
+                    </div>
+                  </div>
+                  <div class="live-indicator">
+                    <div class="live-left">
+                      <span class="dot"></span>
+                      <span class="live-label">Live Scanning...</span>
+                    </div>
+                    <div class="time-elapsed" id="timeElapsed">경과 시간: 0s</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="scan-right">
+                <div class="typing-area">
+                  <div class="question-box">
+                    <p>오늘 하루는 어땠나요? 가장 스트레스를 받았던 일은 무엇이었나요?</p>
+                  </div>
+                  <textarea id="stressInput" placeholder="이곳에 자유롭게 마음을 기록해 주세요..."></textarea>
+                  <div class="char-count"><span id="currentChar">0</span> / 300자 권장</div>
+                </div>
+                <button class="hero-cta hero-cta-fill btn-finish" id="btnFinish" type="button">이제 모든 스트레스를 정리하고 싶어</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen" id="screenResult">
+            <div class="result-wrap">
+              <p class="eyebrow">Hybrid Stress Analysis Lab</p>
+              <h2 class="result-title">Analysis Result.</h2>
+              <p class="result-desc" id="resDesc"></p>
+              <div class="result-data">
+                <div class="rd"><div class="rd-label">Analysis Time</div><div class="rd-val" id="resTime">--</div></div>
+                <div class="rd"><div class="rd-label">Typing Speed</div><div class="rd-val" id="resWPM">--</div></div>
+                <div class="rd"><div class="rd-label">Error Rate</div><div class="rd-val" id="resErr">--</div></div>
+                <div class="rd"><div class="rd-label">Stress Index</div><div class="rd-val" id="resTotal">--</div></div>
+              </div>
+              <button class="hero-cta" id="btnRetry" type="button">새로 측정하기</button>
+            </div>
           </div>
         </div>
       </section>
@@ -178,5 +234,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="./app.js"></script>
+    <script src="./intro-flow.js"></script>
   </body>
 </html>
