@@ -3,6 +3,7 @@ const mainBg = document.getElementById("mainBg");
 const btnBegin = document.getElementById("btnBegin");
 const btnFinish = document.getElementById("btnFinish");
 const btnRetry = document.getElementById("btnRetry");
+const btnEnterLab = document.getElementById("btnEnterLab");
 const video = document.getElementById("video2");
 const stressInput = document.getElementById("stressInput");
 const currentChar = document.getElementById("currentChar");
@@ -12,6 +13,7 @@ const resTime = document.getElementById("resTime");
 const resWPM = document.getElementById("resWPM");
 const resErr = document.getElementById("resErr");
 const resTotal = document.getElementById("resTotal");
+const liveLabSection = document.getElementById("live-lab");
 
 let stream = null;
 let rafId = 0;
@@ -164,6 +166,11 @@ function retryMeasurement() {
   goTo("screenIntro");
 }
 
+function enterLiveLab() {
+  liveLabSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 btnBegin?.addEventListener("click", beginMeasurement);
 btnFinish?.addEventListener("click", finishMeasurement);
 btnRetry?.addEventListener("click", retryMeasurement);
+btnEnterLab?.addEventListener("click", enterLiveLab);
