@@ -62,6 +62,7 @@ a {
 }
 
 .brand-mark,
+.nav-state,
 .nav-links,
 .eyebrow,
 .micro-label,
@@ -80,6 +81,27 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 18px;
+}
+
+.nav-state {
+  margin: 0;
+  color: var(--muted);
+}
+
+.page-screen[hidden] {
+  display: none !important;
+}
+
+.lab-page {
+  min-height: 100vh;
+}
+
+.lab-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(244, 243, 239, 0.88);
+  backdrop-filter: blur(18px);
 }
 
 .hero-stage,

@@ -5,6 +5,8 @@ const btnFinish = document.getElementById("btnFinish");
 const btnRetry = document.getElementById("btnRetry");
 const btnEnterLab = document.getElementById("btnEnterLab");
 const video = document.getElementById("video2");
+const introPage = document.getElementById("introPage");
+const labPage = document.getElementById("labPage");
 const stressInput = document.getElementById("stressInput");
 const currentChar = document.getElementById("currentChar");
 const timeElapsed = document.getElementById("timeElapsed");
@@ -13,8 +15,6 @@ const resTime = document.getElementById("resTime");
 const resWPM = document.getElementById("resWPM");
 const resErr = document.getElementById("resErr");
 const resTotal = document.getElementById("resTotal");
-const liveLabSection = document.getElementById("live-lab");
-
 let stream = null;
 let rafId = 0;
 let scanStart = 0;
@@ -35,6 +35,13 @@ function goTo(id) {
 
   if (id === "screenIntro") mainBg?.classList.remove("hide");
   else mainBg?.classList.add("hide");
+}
+
+function showPage(pageName) {
+  const showIntro = pageName === "intro";
+  if (introPage) introPage.hidden = !showIntro;
+  if (labPage) labPage.hidden = showIntro;
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 }
 
 function resetTypingData() {
@@ -128,6 +135,8 @@ function showResult(duration) {
 }
 
 async function beginMeasurement() {
+  showPage("intro");
+
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     window.alert("현재 브라우저에서는 카메라 기능을 지원하지 않음.");
     return;
@@ -163,11 +172,13 @@ function retryMeasurement() {
   currentChar.style.color = "var(--muted)";
   btnFinish.style.display = "none";
   timeElapsed.textContent = "경과 시간: 0s";
+  showPage("intro");
   goTo("screenIntro");
 }
 
 function enterLiveLab() {
-  liveLabSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  stopScan();
+  showPage("lab");
 }
 
 btnBegin?.addEventListener("click", beginMeasurement);

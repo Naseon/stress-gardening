@@ -8,15 +8,10 @@
   </head>
   <body>
     <main class="app-shell">
-      <section class="hero-shell">
+      <section class="hero-shell page-screen" id="introPage">
         <nav class="site-nav" aria-label="Primary">
           <p class="brand-mark">Fake Goods Company / Stress Gardening</p>
-          <div class="nav-links">
-            <a href="#live-lab">Lab</a>
-            <a href="#collection">Collection</a>
-            <a href="#tools">System</a>
-            <a href="#process">Process</a>
-          </div>
+          <p class="nav-state">Hybrid Stress Analysis Lab</p>
         </nav>
 
         <div class="hero-stage hybrid-stage">
@@ -90,6 +85,17 @@
           </div>
         </div>
       </section>
+
+      <div class="lab-page page-screen" id="labPage" hidden>
+      <nav class="site-nav lab-nav" aria-label="Lab navigation">
+        <p class="brand-mark">Fake Goods Company / Stress Gardening</p>
+        <div class="nav-links">
+          <a href="#live-lab">Lab</a>
+          <a href="#collection">Collection</a>
+          <a href="#tools">System</a>
+          <a href="#process">Process</a>
+        </div>
+      </nav>
 
       <section class="live-lab" id="live-lab">
         <div class="section-heading">
@@ -233,6 +239,7 @@
         <p>Fake Goods Company</p>
         <p>Stress Gardening / Flat 2D Lab Edition / 2026</p>
       </footer>
+      </div>
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
