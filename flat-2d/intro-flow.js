@@ -39,9 +39,21 @@ function goTo(id) {
 
 function showPage(pageName) {
   const showIntro = pageName === "intro";
-  if (introPage) introPage.hidden = !showIntro;
-  if (labPage) labPage.hidden = showIntro;
+  if (introPage) {
+    introPage.hidden = !showIntro;
+    introPage.classList.toggle("is-active", showIntro);
+  }
+  if (labPage) {
+    labPage.hidden = showIntro;
+    labPage.classList.toggle("is-active", !showIntro);
+  }
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+  if (!showIntro) {
+    requestAnimationFrame(() => {
+      window.dispatchEvent(new Event("resize"));
+    });
+  }
 }
 
 function resetTypingData() {
@@ -180,6 +192,8 @@ function enterLiveLab() {
   stopScan();
   showPage("lab");
 }
+
+window.__stressLabEnter = enterLiveLab;
 
 btnBegin?.addEventListener("click", beginMeasurement);
 btnFinish?.addEventListener("click", finishMeasurement);

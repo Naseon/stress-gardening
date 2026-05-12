@@ -92,6 +92,14 @@ a {
   display: none !important;
 }
 
+.page-screen {
+  display: none;
+}
+
+.page-screen.is-active {
+  display: block;
+}
+
 .lab-page {
   min-height: 100vh;
 }
