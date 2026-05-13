@@ -195,7 +195,8 @@ function enterLiveLab() {
   showPage("lab");
 }
 
-function goHome() {
+function goHome(event) {
+  event?.preventDefault();
   retryMeasurement();
 }
 
