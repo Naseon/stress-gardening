@@ -80,6 +80,8 @@ a {
   flex-wrap: wrap;
   gap: 18px;
   align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
 }
 
 .nav-actions {
@@ -531,7 +533,7 @@ a {
 
 .lab-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  grid-template-columns: 1fr;
   gap: clamp(18px, 3vw, 28px);
 }
 
@@ -541,7 +543,7 @@ a {
 
 .lab-stage-head {
   display: grid;
-  grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
+  grid-template-columns: 1fr;
   gap: 14px;
   align-items: start;
   margin-bottom: 14px;
@@ -557,11 +559,25 @@ a {
   letter-spacing: -0.03em;
 }
 
+.lab-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: clamp(14px, 2vw, 24px);
+  align-items: stretch;
+}
+
+.control-sidebar {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+}
+
 .toolbox,
 .panel {
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
+  align-items: stretch;
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -570,13 +586,13 @@ a {
 }
 
 .toolbox {
-  justify-content: stretch;
-  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .tool-button,
 .panel button {
-  min-height: 40px;
+  width: 100%;
+  min-height: 42px;
   padding: 0 14px;
   border: 1px solid rgba(20, 20, 20, 0.14);
   border-radius: 14px;
@@ -589,11 +605,11 @@ a {
 }
 
 .tool-button {
-  flex: 1 1 92px;
+  flex: 0 0 auto;
 }
 
 .tool-button.utility {
-  flex-basis: 74px;
+  flex-basis: auto;
 }
 
 .tool-button.active,
@@ -604,7 +620,7 @@ a {
 }
 
 .canvas-shell {
-  min-height: min(78vh, 820px);
+  min-height: min(82vh, 900px);
   padding: 0;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 240, 236, 0.88)),
@@ -662,12 +678,11 @@ canvas {
 }
 
 .panel {
-  margin-top: 14px;
+  margin-top: 0;
 }
 
 .control {
   display: grid;
-  flex: 1;
   gap: 8px;
   color: var(--muted);
   font-size: 11px;
@@ -687,24 +702,6 @@ input[type="range"] {
   font-weight: 900;
   line-height: 1.45;
   text-transform: uppercase;
-}
-
-.lab-notes {
-  display: grid;
-  gap: 18px;
-}
-
-.note-card {
-  min-height: 220px;
-  background: rgba(255, 255, 255, 0.82);
-}
-
-.note-card.image-card img {
-  object-fit: cover;
-}
-
-.note-card.wide {
-  min-height: 280px;
 }
 
 .text-card {
@@ -835,13 +832,12 @@ input[type="range"] {
   .collection-grid,
   .system-grid,
   .process-list,
-  .lab-stage-head,
   .section-heading {
     grid-template-columns: 1fr;
   }
 
-  .panel {
-    flex-wrap: wrap;
+  .lab-workspace {
+    grid-template-columns: 1fr;
   }
 
   .result-data {
@@ -850,15 +846,7 @@ input[type="range"] {
 
   #statusText,
   .control {
-    flex-basis: 100%;
-  }
-
-  .lab-notes {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .note-card.wide {
-    grid-column: 1 / -1;
+    flex-basis: auto;
   }
 }
 
@@ -871,7 +859,7 @@ input[type="range"] {
   .nav-actions,
   .nav-links {
     width: 100%;
-    justify-content: flex-start;
+    justify-content: flex-end;
     flex-wrap: wrap;
     gap: 12px;
   }
@@ -906,7 +894,7 @@ input[type="range"] {
   }
 
   .canvas-shell {
-    min-height: 620px;
+    min-height: 680px;
   }
 
   .specimen-plinth {
@@ -922,11 +910,7 @@ input[type="range"] {
   .tool-button,
   .tool-button.utility,
   .panel button {
-    flex: 1 1 calc(50% - 8px);
-  }
-
-  .lab-notes {
-    grid-template-columns: 1fr;
+    flex: 0 0 auto;
   }
 
   .collection-card {

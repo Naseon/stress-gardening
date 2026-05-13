@@ -110,50 +110,38 @@
                 <p class="micro-label">Interactive specimen interface</p>
                 <h3>Live stress specimen</h3>
               </div>
-              <section class="toolbox" aria-label="Tool selection">
-                <button class="tool-button active" type="button" data-tool="cut">Cut</button>
-                <button class="tool-button" type="button" data-tool="comb">Comb</button>
-                <button class="tool-button" type="button" data-tool="pluck">Pluck</button>
-                <button class="tool-button utility" id="undoButton" type="button">Undo</button>
-                <button class="tool-button utility" id="resetViewButton" type="button">View</button>
-              </section>
             </div>
 
-            <div class="canvas-shell">
-              <canvas id="thornCanvas" width="1280" height="720" aria-label="Stress Gardening live specimen canvas"></canvas>
-              <div class="specimen-plinth" aria-hidden="true">
-                <span class="plinth-rim"></span>
-                <span class="plinth-label">CHROME-THORN / LIVE SAMPLE</span>
+            <div class="lab-workspace">
+              <div class="canvas-shell">
+                <canvas id="thornCanvas" width="1280" height="720" aria-label="Stress Gardening live specimen canvas"></canvas>
+                <div class="specimen-plinth" aria-hidden="true">
+                  <span class="plinth-rim"></span>
+                  <span class="plinth-label">CHROME-THORN / LIVE SAMPLE</span>
+                </div>
               </div>
+
+              <aside class="control-sidebar" aria-label="Live Lab tools">
+                <section class="toolbox" aria-label="Tool selection">
+                  <button class="tool-button active" type="button" data-tool="cut">Cut</button>
+                  <button class="tool-button" type="button" data-tool="comb">Comb</button>
+                  <button class="tool-button" type="button" data-tool="pluck">Pluck</button>
+                  <button class="tool-button utility" id="undoButton" type="button">Undo</button>
+                  <button class="tool-button utility" id="resetViewButton" type="button">View</button>
+                </section>
+
+                <section class="panel" aria-label="Interaction controls">
+                  <label class="control">
+                    <span>Stress Level</span>
+                    <input id="stressSlider" type="range" min="0" max="100" value="62" />
+                  </label>
+                  <output id="statusText">Comb: click to grow, drag to rotate.</output>
+                  <button id="regrowButton" type="button">Regrow</button>
+                  <button id="saveButton" type="button">Save</button>
+                </section>
+              </aside>
             </div>
-
-            <section class="panel" aria-label="Interaction controls">
-              <label class="control">
-                <span>Stress Level</span>
-                <input id="stressSlider" type="range" min="0" max="100" value="62" />
-              </label>
-              <output id="statusText">Comb: click to grow, drag to rotate.</output>
-              <button id="regrowButton" type="button">Regrow</button>
-              <button id="saveButton" type="button">Save</button>
-            </section>
           </article>
-
-          <aside class="lab-notes" id="archive">
-            <article class="note-card image-card">
-              <img src="./assets/lab-rose.png" alt="Chrome rose laboratory reference" />
-            </article>
-            <article class="note-card text-card">
-              <p class="micro-label">Design direction</p>
-              <h3>White tile studio, chrome stems, dark crystal points.</h3>
-              <p>
-                The page frame stays fixed while the internal game, copy, objects, and current featured
-                goods can change over time.
-              </p>
-            </article>
-            <article class="note-card image-card wide">
-              <img src="./assets/lab-rose-full.png" alt="Specimen on laboratory tray" />
-            </article>
-          </aside>
         </div>
       </section>
 
