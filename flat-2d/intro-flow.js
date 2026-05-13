@@ -4,6 +4,8 @@ const btnBegin = document.getElementById("btnBegin");
 const btnFinish = document.getElementById("btnFinish");
 const btnRetry = document.getElementById("btnRetry");
 const btnEnterLab = document.getElementById("btnEnterLab");
+const introHomeButton = document.getElementById("introHomeButton");
+const labHomeButton = document.getElementById("labHomeButton");
 const video = document.getElementById("video2");
 const introPage = document.getElementById("introPage");
 const labPage = document.getElementById("labPage");
@@ -193,9 +195,16 @@ function enterLiveLab() {
   showPage("lab");
 }
 
+function goHome() {
+  retryMeasurement();
+}
+
 window.__stressLabEnter = enterLiveLab;
+window.__stressLabHome = goHome;
 
 btnBegin?.addEventListener("click", beginMeasurement);
 btnFinish?.addEventListener("click", finishMeasurement);
 btnRetry?.addEventListener("click", retryMeasurement);
 btnEnterLab?.addEventListener("click", enterLiveLab);
+introHomeButton?.addEventListener("click", goHome);
+labHomeButton?.addEventListener("click", goHome);
