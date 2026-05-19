@@ -11,6 +11,7 @@ const video = document.getElementById("video2");
 const introPage = document.getElementById("introPage");
 const labPage = document.getElementById("labPage");
 const bagPage = document.getElementById("bagPage");
+const liveLabSection = document.getElementById("gardening-lab");
 const stressInput = document.getElementById("stressInput");
 const currentChar = document.getElementById("currentChar");
 const timeElapsed = document.getElementById("timeElapsed");
@@ -23,6 +24,7 @@ let stream = null;
 let rafId = 0;
 let scanStart = 0;
 let typingBound = false;
+let labUnlocked = false;
 
 const typingData = {
   dwell: [],
@@ -32,6 +34,10 @@ const typingData = {
   total: 0,
   starts: {},
 };
+
+function syncLabAccess() {
+  liveLabSection?.classList.toggle("lab-locked", !labUnlocked);
+}
 
 function goTo(id) {
   screens.forEach((screen) => screen.classList.remove("active"));
@@ -199,6 +205,8 @@ function finishMeasurement() {
 
 function retryMeasurement() {
   stopScan();
+  labUnlocked = false;
+  syncLabAccess();
   resetTypingData();
   stressInput.value = "";
   currentChar.textContent = "0";
@@ -211,6 +219,8 @@ function retryMeasurement() {
 
 function enterLiveLab() {
   stopScan();
+  labUnlocked = true;
+  syncLabAccess();
   showPage("lab");
 }
 
@@ -220,6 +230,7 @@ function openBagPage() {
 }
 
 function openLabSection(targetId) {
+  syncLabAccess();
   showPage("lab");
   requestAnimationFrame(() => {
     const target = document.getElementById(targetId);
@@ -234,6 +245,8 @@ function goHome(event) {
 
 window.__stressLabEnter = enterLiveLab;
 window.__stressLabHome = goHome;
+
+syncLabAccess();
 
 btnBegin?.addEventListener("click", beginMeasurement);
 btnFinish?.addEventListener("click", finishMeasurement);

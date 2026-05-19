@@ -562,6 +562,10 @@ a {
   scroll-margin-top: 24px;
 }
 
+.live-lab.lab-locked {
+  display: none;
+}
+
 .section-heading {
   display: grid;
   grid-template-columns: minmax(120px, 0.22fr) minmax(0, 1fr);
