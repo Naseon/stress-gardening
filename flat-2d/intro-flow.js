@@ -6,6 +6,7 @@ const btnRetry = document.getElementById("btnRetry");
 const btnEnterLab = document.getElementById("btnEnterLab");
 const introHomeButton = document.getElementById("introHomeButton");
 const labHomeButton = document.getElementById("labHomeButton");
+const topbarSectionLinks = document.querySelectorAll(".topbar__link[data-nav-target]");
 const video = document.getElementById("video2");
 const introPage = document.getElementById("introPage");
 const labPage = document.getElementById("labPage");
@@ -206,6 +207,14 @@ function enterLiveLab() {
   showPage("lab");
 }
 
+function openLabSection(targetId) {
+  showPage("lab");
+  requestAnimationFrame(() => {
+    const target = document.getElementById(targetId);
+    target?.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+  });
+}
+
 function goHome(event) {
   event?.preventDefault();
   retryMeasurement();
@@ -220,3 +229,11 @@ btnRetry?.addEventListener("click", retryMeasurement);
 btnEnterLab?.addEventListener("click", enterLiveLab);
 introHomeButton?.addEventListener("click", goHome);
 labHomeButton?.addEventListener("click", goHome);
+topbarSectionLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    const targetId = link.dataset.navTarget;
+    if (!targetId) return;
+    openLabSection(targetId);
+  });
+});
