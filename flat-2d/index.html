@@ -101,13 +101,22 @@
             <div class="lab-workspace">
               <div class="canvas-shell canvas-shell-lab">
                 <canvas id="thornCanvas" width="1280" height="720" aria-label="Stress Gardening live specimen canvas"></canvas>
+                <div class="lab-tool-art" aria-hidden="true">
+                  <span class="lab-tool lab-tool-loop"></span>
+                  <span class="lab-tool lab-tool-rod"></span>
+                  <span class="lab-tool lab-tool-needle"></span>
+                </div>
+                <div class="specimen-plinth" aria-hidden="true">
+                  <span class="plinth-rim"></span>
+                  <span class="plinth-label">CHROME-THORN / LIVE SAMPLE</span>
+                </div>
                 <div class="lab-score" aria-live="polite">
                   <span class="lab-score-label">Stress Vine</span>
                   <span class="lab-score-reading"><strong id="labStressValue">62</strong><span>/100</span></span>
                 </div>
                 <div class="lab-actions" aria-label="Live Lab actions">
-                  <button id="regrowButton" type="button">Regrow</button>
-                  <button id="saveButton" type="button">Save</button>
+                  <div class="lab-action-frame"><button id="regrowButton" type="button">Regrow</button></div>
+                  <div class="lab-action-frame"><button id="saveButton" type="button">Save</button></div>
                 </div>
               </div>
             </div>

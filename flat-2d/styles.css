@@ -567,20 +567,110 @@ canvas {
   touch-action: none;
 }
 
+.lab-tool-art {
+  position: absolute;
+  top: 29%;
+  right: 7.6%;
+  z-index: 1;
+  width: 16.5%;
+  height: 33%;
+  pointer-events: none;
+}
+
+.lab-tool {
+  position: absolute;
+  display: block;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(176, 176, 173, 0.95) 42%, rgba(83, 83, 81, 0.96) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.84),
+    0 16px 24px rgba(17, 17, 16, 0.12);
+  opacity: 0.94;
+}
+
+.lab-tool::before,
+.lab-tool::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+}
+
+.lab-tool-loop {
+  top: 0;
+  right: 4%;
+  width: 46%;
+  height: 8px;
+  transform: rotate(34deg);
+}
+
+.lab-tool-loop::before,
+.lab-tool-loop::after {
+  top: -10px;
+  width: 44px;
+  height: 18px;
+  border: 4px solid rgba(105, 105, 103, 0.88);
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.lab-tool-loop::before {
+  left: -2px;
+}
+
+.lab-tool-loop::after {
+  left: 24px;
+}
+
+.lab-tool-rod {
+  top: 33%;
+  right: -2%;
+  width: 56%;
+  height: 11px;
+  transform: rotate(27deg);
+}
+
+.lab-tool-rod::before {
+  right: -6px;
+  top: -3px;
+  width: 42px;
+  height: 17px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(138, 138, 135, 0.96), rgba(82, 82, 79, 0.98));
+}
+
+.lab-tool-needle {
+  bottom: 4%;
+  right: 21%;
+  width: 50%;
+  height: 6px;
+  transform: rotate(50deg);
+}
+
+.lab-tool-needle::before {
+  left: -4px;
+  top: -2px;
+  width: 30px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(235, 235, 233, 0.95), rgba(127, 127, 124, 0.96));
+}
+
 .lab-score {
   position: absolute;
-  left: clamp(22px, 4vw, 42px);
-  bottom: clamp(20px, 3vw, 30px);
+  left: clamp(28px, 4vw, 54px);
+  bottom: clamp(18px, 2.2vw, 28px);
   z-index: 3;
   display: flex;
   align-items: flex-end;
-  gap: clamp(10px, 1.4vw, 18px);
+  gap: clamp(12px, 1.8vw, 24px);
   color: #111111;
 }
 
 .lab-score-label {
-  padding-bottom: 8px;
-  font-size: clamp(24px, 3vw, 34px);
+  padding-bottom: 10px;
+  font-size: clamp(26px, 3vw, 44px);
   font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -594,35 +684,84 @@ canvas {
 }
 
 .lab-score-reading strong {
-  font-size: clamp(82px, 11vw, 138px);
+  font-size: clamp(104px, 13vw, 188px);
   font-weight: 900;
   letter-spacing: -0.08em;
 }
 
 .lab-score-reading span {
-  font-size: clamp(28px, 3vw, 46px);
+  font-size: clamp(32px, 3vw, 58px);
   font-weight: 700;
   letter-spacing: -0.06em;
 }
 
+.specimen-plinth {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  z-index: 1;
+  width: min(39vw, 560px);
+  aspect-ratio: 1 / 0.28;
+  transform: translateX(-50%);
+}
+
+.plinth-rim {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(168, 168, 164, 0.38);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.42) 58%, rgba(231, 230, 224, 0.28) 100%);
+  box-shadow:
+    inset 0 0 18px rgba(255, 255, 255, 0.65),
+    0 20px 36px rgba(17, 17, 16, 0.08);
+}
+
+.plinth-label {
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  min-width: 280px;
+  padding: 18px 28px;
+  border: 1px solid rgba(174, 174, 170, 0.4);
+  border-radius: 28px;
+  background: rgba(247, 247, 244, 0.96);
+  box-shadow:
+    0 18px 34px rgba(17, 17, 16, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
 .lab-actions {
   position: absolute;
-  right: clamp(22px, 4vw, 42px);
-  bottom: clamp(20px, 3vw, 30px);
+  right: clamp(24px, 3.2vw, 40px);
+  bottom: clamp(18px, 2vw, 28px);
   z-index: 3;
   display: flex;
-  gap: clamp(10px, 1.6vw, 16px);
+  gap: 0;
+}
+
+.lab-action-frame {
+  padding: 14px 14px 12px;
+  border: 1px solid rgba(218, 218, 214, 0.92);
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .lab-actions button {
-  min-width: clamp(126px, 11vw, 164px);
-  min-height: 26px;
+  min-width: clamp(210px, 12.8vw, 260px);
+  min-height: 38px;
   padding: 0 18px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #111111;
   color: #f6f6f2;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 900;
   line-height: 1;
   text-transform: uppercase;
@@ -877,6 +1016,13 @@ canvas {
     min-height: calc(100svh - 120px);
   }
 
+  .lab-tool-art {
+    top: 22%;
+    right: 6%;
+    width: 24%;
+    height: 24%;
+  }
+
   .lab-score {
     left: 18px;
     bottom: 18px;
@@ -889,11 +1035,22 @@ canvas {
   }
 
   .lab-score-reading strong {
-    font-size: 72px;
+    font-size: 88px;
   }
 
   .lab-score-reading span {
     font-size: 24px;
+  }
+
+  .specimen-plinth {
+    width: min(64vw, 360px);
+    bottom: 72px;
+  }
+
+  .plinth-label {
+    min-width: 220px;
+    padding: 14px 18px;
+    font-size: 10px;
   }
 
   .lab-actions {
@@ -903,8 +1060,13 @@ canvas {
     align-items: stretch;
   }
 
+  .lab-action-frame {
+    padding: 8px;
+  }
+
   .lab-actions button {
-    min-width: 108px;
+    min-width: 132px;
+    min-height: 34px;
   }
 
   .collection-card {
