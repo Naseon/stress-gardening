@@ -103,10 +103,16 @@
             <div class="lab-workspace">
               <div class="canvas-shell canvas-shell-lab">
                 <canvas id="thornCanvas" width="1280" height="720" aria-label="Stress Gardening live specimen canvas"></canvas>
-                <div class="lab-tool-art" aria-hidden="true">
-                  <span class="lab-tool lab-tool-loop"></span>
-                  <span class="lab-tool lab-tool-rod"></span>
-                  <span class="lab-tool lab-tool-needle"></span>
+                <div class="lab-toolbox" aria-label="Live Lab tools">
+                  <button class="tool-button lab-icon-button" type="button" data-tool="cut" aria-label="Cut" title="Cut">
+                    <img src="./assets/tool-scissors.png" alt="" />
+                  </button>
+                  <button class="tool-button lab-icon-button" type="button" data-tool="pluck" aria-label="Pluck thorn" title="Pluck thorn">
+                    <img src="./assets/tool-tweezers.png" alt="" />
+                  </button>
+                  <button class="tool-button lab-icon-button active" type="button" data-tool="comb" aria-label="Comb vines" title="Comb vines">
+                    <img src="./assets/tool-comb.png" alt="" />
+                  </button>
                 </div>
                 <div class="specimen-plinth" aria-hidden="true">
                   <span class="plinth-rim"></span>
