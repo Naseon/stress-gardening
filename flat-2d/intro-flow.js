@@ -282,7 +282,7 @@ topbarRouteLinks.forEach((link) => {
     event.preventDefault();
     const route = link.dataset.navRoute;
     if (route === "shop") {
-      if (labUnlocked) openLabSection("recommend-shop");
+      if (labUnlocked) openLabSection("shop-intro");
       else openShopPageSection("shop-only-total");
       return;
     }
