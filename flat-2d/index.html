@@ -87,20 +87,17 @@
       </section>
 
       <div class="lab-page page-screen" id="labPage" hidden>
-      <nav class="site-nav lab-nav" aria-label="Lab navigation">
-        <div class="nav-links">
-          <a class="nav-home-link" id="labHomeButton" href="#">Home</a>
-          <a href="#live-lab">Lab</a>
-          <a href="#collection">Collection</a>
-          <a href="#tools">System</a>
-          <a href="#process">Process</a>
-        </div>
+      <nav class="catalog-nav" aria-label="Lab navigation">
+        <a class="catalog-link" id="labHomeButton" href="#">Stress Gardening</a>
+        <a class="catalog-link" href="#recommend-shop">Recommend Shop</a>
+        <a class="catalog-link" href="#total-shop">Total Shop</a>
+        <a class="catalog-link" href="#about-project">About Project</a>
       </nav>
 
-      <section class="live-lab" id="live-lab">
+      <section class="live-lab showcase-section" id="gardening-lab">
         <div class="section-heading">
-          <p>Live Lab</p>
-          <h2>Keep the structure. Let the specimen evolve.</h2>
+          <p>Gardening Lab</p>
+          <h2>Grow, trim, and preserve your current stress specimen.</h2>
         </div>
 
         <div class="lab-grid">
@@ -145,10 +142,10 @@
         </div>
       </section>
 
-      <section class="collection-section" id="collection">
+      <section class="collection-section recommend-section" id="recommend-shop">
         <div class="section-heading">
-          <p>Collection</p>
-          <h2>A luxury specimen board for changing objects.</h2>
+          <p>Recommend Shop</p>
+          <h2>Featured fake goods matched to the current lab mood.</h2>
         </div>
 
         <div class="collection-grid">
@@ -157,9 +154,9 @@
               <img src="./assets/specimen-archive.jpg" alt="Stress Gardening specimen archive" />
             </div>
             <div class="collection-copy">
-              <p>Sample board</p>
-              <h3>Archive objects</h3>
-              <span>Replaceable visual slot</span>
+              <p>Featured archive</p>
+              <h3>Specimen board</h3>
+              <span>Curated object set for the current stress profile.</span>
             </div>
           </article>
 
@@ -168,59 +165,80 @@
               <img src="./assets/thorn-mug-reference.png" alt="Thorn Mug product reference" />
             </div>
             <div class="collection-copy">
-              <p>Hero object</p>
+              <p>Recommended goods</p>
               <h3>Thorn Mug</h3>
-              <span>Swappable campaign asset</span>
+              <span>A tactile daily object selected for subtle release.</span>
             </div>
           </article>
 
           <article class="collection-card collection-card-text">
             <div class="collection-copy text-only">
-              <p>System note</p>
-              <h3>Fixed skeleton, flexible internals.</h3>
-              <span>Images, text, goods, and game rules can all update without changing the page frame.</span>
+              <p>Recommended set</p>
+              <h3>Chrome-thorn bundle.</h3>
+              <span>Rotating combinations of tools, objects, and archive items.</span>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="system-section" id="tools">
-        <div class="section-heading inverse">
-          <p>System</p>
-          <h2>Quiet, clean, and collectible.</h2>
+      <section class="total-shop-section" id="total-shop">
+        <div class="section-heading">
+          <p>Total Shop</p>
+          <h2>The full archive of experimental goods and specimen forms.</h2>
         </div>
 
-        <div class="system-grid">
-          <article class="system-card">
-            <p class="micro-label">Base rules</p>
-            <h3>Tile wall laboratory</h3>
-            <p>Three-dimensional white tiles, soft reflections, chrome trays, and museum-like spacing.</p>
+        <div class="shop-index-grid">
+          <article class="shop-item">
+            <div class="shop-thumb"><img src="./assets/specimen-archive.jpg" alt="Specimen archive" /></div>
+            <div class="shop-meta"><p>Archive</p><h3>Specimen Board</h3><span>01</span></div>
           </article>
-          <article class="system-card">
-            <p class="micro-label">Interaction rules</p>
-            <h3>Cut / Comb / Pluck</h3>
-            <p>The game can update, but the interaction language remains stable and easy to extend.</p>
+          <article class="shop-item">
+            <div class="shop-thumb"><img src="./assets/thorn-mug-reference.png" alt="Thorn Mug" /></div>
+            <div class="shop-meta"><p>Goods</p><h3>Thorn Mug</h3><span>02</span></div>
           </article>
-          <article class="system-card">
-            <p class="micro-label">Object rules</p>
-            <h3>Luxury fake goods</h3>
-            <p>Each season can feature a new hero object while keeping the same premium visual system.</p>
+          <article class="shop-item">
+            <div class="shop-thumb"><img src="./assets/lab-rose.png" alt="Chrome rose" /></div>
+            <div class="shop-meta"><p>Specimen</p><h3>Rose Stem</h3><span>03</span></div>
+          </article>
+          <article class="shop-item">
+            <div class="shop-thumb"><img src="./assets/lab-rose-full.png" alt="Lab tray specimen" /></div>
+            <div class="shop-meta"><p>Display</p><h3>Tray Study</h3><span>04</span></div>
+          </article>
+          <article class="shop-item">
+            <div class="shop-thumb shop-thumb-type"><div>Chrome-Thorn Set</div></div>
+            <div class="shop-meta"><p>Set</p><h3>Tool Bundle</h3><span>05</span></div>
+          </article>
+          <article class="shop-item">
+            <div class="shop-thumb shop-thumb-type"><div>Crystal Weed Mix</div></div>
+            <div class="shop-meta"><p>Archive</p><h3>Growth Pack</h3><span>06</span></div>
           </article>
         </div>
       </section>
 
-      <section class="process-section" id="process">
+      <section class="about-project-section" id="about-project">
         <div class="section-heading">
-          <p>Process</p>
-          <h2>From stress signal to preserved specimen.</h2>
+          <p>About Project</p>
+          <h2>Stress Gardening turns personal tension into a collectible laboratory fiction.</h2>
         </div>
 
-        <ol class="process-list">
-          <li><span>01</span><strong>Measure</strong><p>Read stress and HRV values as the starting condition.</p></li>
-          <li><span>02</span><strong>Generate</strong><p>Grow a new chrome-thorn specimen in the lab stage.</p></li>
-          <li><span>03</span><strong>Sculpt</strong><p>Click to plant, drag to rotate, and trim the visible thicket.</p></li>
-          <li><span>04</span><strong>Preserve</strong><p>Save the resulting sample as a collectible fake goods record.</p></li>
-        </ol>
+        <div class="about-grid">
+          <article class="about-card about-copy">
+            <p class="micro-label">Project Story</p>
+            <h3>A speculative shop for stress-shaped objects.</h3>
+            <p>
+              The project begins with analysis, shifts into a gardening lab, then reframes emotional
+              residue as curated goods, archived specimens, and an expandable fake commerce system.
+            </p>
+          </article>
+          <article class="about-card">
+            <ol class="process-list compact">
+              <li><span>01</span><strong>Analysis</strong><p>Measure mood, language, and friction.</p></li>
+              <li><span>02</span><strong>Gardening Lab</strong><p>Grow and sculpt a live chrome-thorn specimen.</p></li>
+              <li><span>03</span><strong>Recommend Shop</strong><p>Surface featured objects tied to the result.</p></li>
+              <li><span>04</span><strong>Total Shop</strong><p>Browse the larger project archive and goods index.</p></li>
+            </ol>
+          </article>
+        </div>
       </section>
 
       <footer class="footer">
