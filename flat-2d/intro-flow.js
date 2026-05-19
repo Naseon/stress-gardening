@@ -58,6 +58,9 @@ function showPage(pageName) {
   if (labPage) {
     labPage.hidden = !showLab;
     labPage.classList.toggle("is-active", showLab);
+    if (!showLab) {
+      labPage.classList.remove("shop-only");
+    }
   }
   if (bagPage) {
     bagPage.hidden = !showBag;
@@ -222,6 +225,7 @@ function enterLiveLab() {
   labUnlocked = true;
   syncLabAccess();
   showPage("lab");
+  labPage?.classList.remove("shop-only");
 }
 
 function openBagPage() {
@@ -232,6 +236,11 @@ function openBagPage() {
 function openLabSection(targetId) {
   syncLabAccess();
   showPage("lab");
+  if (!labUnlocked) {
+    labPage?.classList.add("shop-only");
+  } else {
+    labPage?.classList.remove("shop-only");
+  }
   requestAnimationFrame(() => {
     const target = document.getElementById(targetId);
     target?.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });

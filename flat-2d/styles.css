@@ -566,6 +566,10 @@ a {
   display: none;
 }
 
+.lab-page.shop-only .live-lab {
+  display: none !important;
+}
+
 .section-heading {
   display: grid;
   grid-template-columns: minmax(120px, 0.22fr) minmax(0, 1fr);
