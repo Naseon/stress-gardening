@@ -649,7 +649,7 @@ canvas {
 .lab-toolbox {
   position: absolute;
   right: clamp(40px, 4vw, 72px);
-  bottom: clamp(116px, 13vw, 178px);
+  bottom: clamp(82px, 9vw, 124px);
   z-index: 4;
   display: flex;
   align-items: flex-end;
@@ -750,13 +750,13 @@ canvas {
     0 20px 36px rgba(17, 17, 16, 0.08);
 }
 
-  .lab-actions {
-    position: absolute;
-    right: clamp(24px, 3.2vw, 40px);
-    bottom: clamp(18px, 2vw, 28px);
+.lab-actions {
+  position: absolute;
+  right: clamp(24px, 3.2vw, 40px);
+  bottom: clamp(18px, 2vw, 28px);
   z-index: 3;
   display: flex;
-  gap: 0;
+  gap: 12px;
 }
 
 .lab-action-frame {
@@ -1019,7 +1019,7 @@ canvas {
 
   .lab-toolbox {
     right: 20px;
-    bottom: 92px;
+    bottom: 74px;
     gap: 14px;
   }
 
@@ -1052,6 +1052,7 @@ canvas {
     bottom: 18px;
     flex-direction: column;
     align-items: stretch;
+    gap: 8px;
   }
 
   .tool-button.lab-icon-button[data-tool="cut"] img {
