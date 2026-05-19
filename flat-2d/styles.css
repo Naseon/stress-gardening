@@ -97,11 +97,11 @@ a {
   top: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(260px, 1.56fr) minmax(260px, 1.54fr) minmax(96px, 0.4fr) minmax(140px, 0.52fr);
   min-height: 60px;
   border-top: 1px solid rgba(23, 23, 21, 0.18);
   border-bottom: 1px solid rgba(23, 23, 21, 0.18);
-  background: rgba(255, 255, 255, 0.98);
+  background: #ffffff;
 }
 
 .intro-nav {
@@ -114,12 +114,15 @@ a {
   justify-content: center;
   min-height: 60px;
   border-right: 1px solid rgba(23, 23, 21, 0.18);
-  font-size: 11px;
+  padding: 0 14px;
+  font-size: 10px;
   font-weight: 900;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
+  line-height: 1;
   text-transform: none;
   color: var(--ink);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .catalog-link:last-child {
