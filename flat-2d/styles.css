@@ -806,9 +806,9 @@ canvas {
 }
 
 .lab-action-frame {
-  padding: 14px 14px 12px;
-  border: 1px solid rgba(218, 218, 214, 0.92);
-  background: rgba(255, 255, 255, 0.92);
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .lab-actions button {
@@ -1102,7 +1102,7 @@ canvas {
   }
 
   .lab-action-frame {
-    padding: 8px;
+    padding: 0;
   }
 
   .lab-actions button {
