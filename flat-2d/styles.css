@@ -58,6 +58,11 @@ a {
   padding-inline: 0;
 }
 
+.bag-page {
+  min-height: 100vh;
+  padding-inline: 0;
+}
+
 .topbar {
   position: sticky;
   top: 0;
@@ -146,6 +151,40 @@ a {
 
 .lab-page {
   min-height: 100vh;
+}
+
+.bag-section {
+  min-height: calc(100vh - 62px);
+  display: grid;
+  place-items: center;
+  padding: 40px;
+}
+
+.bag-shell {
+  width: min(720px, calc(100% - 40px));
+  padding: clamp(28px, 4vw, 52px);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 18px 40px rgba(17, 17, 16, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  text-align: center;
+}
+
+.bag-shell h2 {
+  margin: 8px 0 18px;
+  font-size: clamp(44px, 7vw, 92px);
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+}
+
+.bag-shell p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.65;
+  font-weight: 700;
 }
 
 .intro-nav {

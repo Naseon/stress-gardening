@@ -4,12 +4,13 @@ const btnBegin = document.getElementById("btnBegin");
 const btnFinish = document.getElementById("btnFinish");
 const btnRetry = document.getElementById("btnRetry");
 const btnEnterLab = document.getElementById("btnEnterLab");
-const introHomeButton = document.getElementById("introHomeButton");
-const labHomeButton = document.getElementById("labHomeButton");
+const homeButtons = document.querySelectorAll(".topbar__link[data-nav-home='true']");
 const topbarSectionLinks = document.querySelectorAll(".topbar__link[data-nav-target]");
+const topbarPageLinks = document.querySelectorAll(".topbar__link[data-nav-page]");
 const video = document.getElementById("video2");
 const introPage = document.getElementById("introPage");
 const labPage = document.getElementById("labPage");
+const bagPage = document.getElementById("bagPage");
 const stressInput = document.getElementById("stressInput");
 const currentChar = document.getElementById("currentChar");
 const timeElapsed = document.getElementById("timeElapsed");
@@ -42,13 +43,19 @@ function goTo(id) {
 
 function showPage(pageName) {
   const showIntro = pageName === "intro";
+  const showLab = pageName === "lab";
+  const showBag = pageName === "bag";
   if (introPage) {
     introPage.hidden = !showIntro;
     introPage.classList.toggle("is-active", showIntro);
   }
   if (labPage) {
-    labPage.hidden = showIntro;
-    labPage.classList.toggle("is-active", !showIntro);
+    labPage.hidden = !showLab;
+    labPage.classList.toggle("is-active", showLab);
+  }
+  if (bagPage) {
+    bagPage.hidden = !showBag;
+    bagPage.classList.toggle("is-active", showBag);
   }
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
@@ -207,6 +214,11 @@ function enterLiveLab() {
   showPage("lab");
 }
 
+function openBagPage() {
+  stopScan();
+  showPage("bag");
+}
+
 function openLabSection(targetId) {
   showPage("lab");
   requestAnimationFrame(() => {
@@ -227,13 +239,19 @@ btnBegin?.addEventListener("click", beginMeasurement);
 btnFinish?.addEventListener("click", finishMeasurement);
 btnRetry?.addEventListener("click", retryMeasurement);
 btnEnterLab?.addEventListener("click", enterLiveLab);
-introHomeButton?.addEventListener("click", goHome);
-labHomeButton?.addEventListener("click", goHome);
+homeButtons.forEach((button) => button.addEventListener("click", goHome));
 topbarSectionLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
     const targetId = link.dataset.navTarget;
     if (!targetId) return;
     openLabSection(targetId);
+  });
+});
+topbarPageLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    const pageName = link.dataset.navPage;
+    if (pageName === "bag") openBagPage();
   });
 });
