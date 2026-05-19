@@ -12,9 +12,9 @@
         <nav class="topbar intro-nav" aria-label="Primary">
           <img src="./assets/Group 29.png" alt="Stress Gardening top bar" class="topbar__image" />
           <a class="topbar__link topbar__link--brand" id="introHomeButton" href="#" aria-label="Stress Gardening" data-nav-home="true"></a>
-          <a class="topbar__link topbar__link--shop" href="#recommend-shop" aria-label="Shop" data-nav-target="recommend-shop"></a>
+          <a class="topbar__link topbar__link--shop" href="#shop-only-total" aria-label="Shop" data-nav-route="shop"></a>
           <a class="topbar__link topbar__link--bag" href="#bag-page" aria-label="Bag" data-nav-page="bag"></a>
-          <a class="topbar__link topbar__link--about" href="#about-project" aria-label="About Project" data-nav-target="about-project"></a>
+          <a class="topbar__link topbar__link--about" href="#shop-only-about" aria-label="About Project" data-nav-route="about"></a>
         </nav>
 
         <div class="hero-stage hybrid-stage">
@@ -92,9 +92,9 @@
       <nav class="topbar" aria-label="Lab navigation">
         <img src="./assets/Group 29.png" alt="Stress Gardening top bar" class="topbar__image" />
         <a class="topbar__link topbar__link--brand" id="labHomeButton" href="#" aria-label="Stress Gardening" data-nav-home="true"></a>
-        <a class="topbar__link topbar__link--shop" href="#recommend-shop" aria-label="Shop" data-nav-target="recommend-shop"></a>
+        <a class="topbar__link topbar__link--shop" href="#recommend-shop" aria-label="Shop" data-nav-route="shop"></a>
         <a class="topbar__link topbar__link--bag" href="#bag-page" aria-label="Bag" data-nav-page="bag"></a>
-        <a class="topbar__link topbar__link--about" href="#about-project" aria-label="About Project" data-nav-target="about-project"></a>
+        <a class="topbar__link topbar__link--about" href="#about-project" aria-label="About Project" data-nav-route="about"></a>
       </nav>
 
       <section class="live-lab showcase-section" id="gardening-lab">
@@ -225,13 +225,83 @@
       </footer>
       </div>
 
+      <div class="shop-page page-screen" id="shopPage" hidden>
+        <nav class="topbar" aria-label="Shop navigation">
+          <img src="./assets/Group 29.png" alt="Stress Gardening top bar" class="topbar__image" />
+          <a class="topbar__link topbar__link--brand" id="shopHomeButton" href="#" aria-label="Stress Gardening" data-nav-home="true"></a>
+          <a class="topbar__link topbar__link--shop" href="#shop-only-total" aria-label="Shop" data-nav-route="shop"></a>
+          <a class="topbar__link topbar__link--bag" href="#bag-page" aria-label="Bag" data-nav-page="bag"></a>
+          <a class="topbar__link topbar__link--about" href="#shop-only-about" aria-label="About Project" data-nav-route="about"></a>
+        </nav>
+
+        <section class="shop-catalog-section shop-catalog-section--secondary" id="shop-only-total">
+          <div class="shop-catalog-grid">
+            <article class="shop-product-card">
+              <div class="shop-product-visual shop-product-visual--wide">
+                <img src="./assets/lab-rose-full.png" alt="Tray study display" />
+              </div>
+              <div class="shop-product-bar">
+                <strong>TRAY STUDY DISPLAY -</strong>
+                <span>ONE SIZE</span>
+              </div>
+            </article>
+
+            <article class="shop-product-card">
+              <div class="shop-product-visual shop-product-visual--bottle">
+                <img src="./assets/lab-rose.png" alt="Rose stem bottle object" />
+              </div>
+              <div class="shop-product-bar">
+                <strong>ROSE STEM OBJECT -</strong>
+                <span>0.40L</span>
+              </div>
+            </article>
+
+            <article class="shop-product-card">
+              <div class="shop-product-visual shop-product-visual--bottle">
+                <img src="./assets/thorn-mug-reference.png" alt="Chrome thorn bottle object" />
+              </div>
+              <div class="shop-product-bar">
+                <strong>CHROME-THORN BOTTLE -</strong>
+                <span>0.60L</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="about-project-section" id="shop-only-about">
+          <div class="section-heading">
+            <p>About Project</p>
+            <h2>Stress Gardening turns personal tension into a collectible laboratory fiction.</h2>
+          </div>
+
+          <div class="about-grid">
+            <article class="about-card about-copy">
+              <p class="micro-label">Project Story</p>
+              <h3>A speculative shop for stress-shaped objects.</h3>
+              <p>
+                The project begins with analysis, shifts into a gardening lab, then reframes emotional
+                residue as curated goods, archived specimens, and an expandable fake commerce system.
+              </p>
+            </article>
+            <article class="about-card">
+              <ol class="process-list compact">
+                <li><span>01</span><strong>Analysis</strong><p>Measure mood, language, and friction.</p></li>
+                <li><span>02</span><strong>Gardening Lab</strong><p>Grow and sculpt a live chrome-thorn specimen.</p></li>
+                <li><span>03</span><strong>Recommend Shop</strong><p>Surface featured objects tied to the result.</p></li>
+                <li><span>04</span><strong>Total Shop</strong><p>Browse the larger project archive and goods index.</p></li>
+              </ol>
+            </article>
+          </div>
+        </section>
+      </div>
+
       <div class="bag-page page-screen" id="bagPage" hidden>
         <nav class="topbar" aria-label="Bag navigation">
           <img src="./assets/Group 29.png" alt="Stress Gardening top bar" class="topbar__image" />
           <a class="topbar__link topbar__link--brand" id="bagHomeButton" href="#" aria-label="Stress Gardening" data-nav-home="true"></a>
-          <a class="topbar__link topbar__link--shop" href="#recommend-shop" aria-label="Shop" data-nav-target="recommend-shop"></a>
+          <a class="topbar__link topbar__link--shop" href="#shop-only-total" aria-label="Shop" data-nav-route="shop"></a>
           <a class="topbar__link topbar__link--bag" href="#bag-page" aria-label="Bag" data-nav-page="bag"></a>
-          <a class="topbar__link topbar__link--about" href="#about-project" aria-label="About Project" data-nav-target="about-project"></a>
+          <a class="topbar__link topbar__link--about" href="#shop-only-about" aria-label="About Project" data-nav-route="about"></a>
         </nav>
 
         <section class="bag-section" id="bag-page">

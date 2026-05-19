@@ -5,11 +5,12 @@ const btnFinish = document.getElementById("btnFinish");
 const btnRetry = document.getElementById("btnRetry");
 const btnEnterLab = document.getElementById("btnEnterLab");
 const homeButtons = document.querySelectorAll(".topbar__link[data-nav-home='true']");
-const topbarSectionLinks = document.querySelectorAll(".topbar__link[data-nav-target]");
+const topbarRouteLinks = document.querySelectorAll(".topbar__link[data-nav-route]");
 const topbarPageLinks = document.querySelectorAll(".topbar__link[data-nav-page]");
 const video = document.getElementById("video2");
 const introPage = document.getElementById("introPage");
 const labPage = document.getElementById("labPage");
+const shopPage = document.getElementById("shopPage");
 const bagPage = document.getElementById("bagPage");
 const liveLabSection = document.getElementById("gardening-lab");
 const stressInput = document.getElementById("stressInput");
@@ -50,6 +51,7 @@ function goTo(id) {
 function showPage(pageName) {
   const showIntro = pageName === "intro";
   const showLab = pageName === "lab";
+  const showShop = pageName === "shop";
   const showBag = pageName === "bag";
   if (introPage) {
     introPage.hidden = !showIntro;
@@ -61,6 +63,10 @@ function showPage(pageName) {
     if (!showLab) {
       labPage.classList.remove("shop-only");
     }
+  }
+  if (shopPage) {
+    shopPage.hidden = !showShop;
+    shopPage.classList.toggle("is-active", showShop);
   }
   if (bagPage) {
     bagPage.hidden = !showBag;
@@ -233,6 +239,15 @@ function openBagPage() {
   showPage("bag");
 }
 
+function openShopPageSection(targetId) {
+  stopScan();
+  showPage("shop");
+  requestAnimationFrame(() => {
+    const target = document.getElementById(targetId);
+    target?.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+  });
+}
+
 function openLabSection(targetId) {
   syncLabAccess();
   showPage("lab");
@@ -262,12 +277,19 @@ btnFinish?.addEventListener("click", finishMeasurement);
 btnRetry?.addEventListener("click", retryMeasurement);
 btnEnterLab?.addEventListener("click", enterLiveLab);
 homeButtons.forEach((button) => button.addEventListener("click", goHome));
-topbarSectionLinks.forEach((link) => {
+topbarRouteLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
-    const targetId = link.dataset.navTarget;
-    if (!targetId) return;
-    openLabSection(targetId);
+    const route = link.dataset.navRoute;
+    if (route === "shop") {
+      if (labUnlocked) openLabSection("recommend-shop");
+      else openShopPageSection("shop-only-total");
+      return;
+    }
+    if (route === "about") {
+      if (labUnlocked) openLabSection("about-project");
+      else openShopPageSection("shop-only-about");
+    }
   });
 });
 topbarPageLinks.forEach((link) => {
