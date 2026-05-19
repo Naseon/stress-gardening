@@ -139,6 +139,17 @@ function showResult(duration) {
   let stressScore = 75 + Math.floor(errRate * 1.5) + Math.floor(avgDwell / 15);
   stressScore = Math.min(99, stressScore);
 
+  window.localStorage.setItem(
+    "stressAnalysisResult",
+    JSON.stringify({
+      stressScore,
+      wpm,
+      errRate: Number(errRate.toFixed(1)),
+      duration: Math.round(duration),
+    })
+  );
+  window.dispatchEvent(new Event("stress-analysis-updated"));
+
   goTo("screenResult");
 
   resTime.textContent = `${Math.round(duration)}s`;

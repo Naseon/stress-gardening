@@ -6,6 +6,7 @@ const toolButtons = document.querySelectorAll(".tool-button[data-tool]");
 const undoButton = document.querySelector("#undoButton");
 const resetViewButton = document.querySelector("#resetViewButton");
 const saveButton = document.querySelector("#saveButton");
+const labStressValue = document.querySelector("#labStressValue");
 
 let currentTool = "comb";
 let history = [];
@@ -78,8 +79,27 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
+function getSavedAnalysis() {
+  try {
+    return JSON.parse(window.localStorage.getItem("stressAnalysisResult") || "null");
+  } catch {
+    return null;
+  }
+}
+
 function getStress() {
+  const saved = getSavedAnalysis();
+  const savedScore = Number(saved?.stressScore);
+  if (Number.isFinite(savedScore)) {
+    return Math.max(0, Math.min(100, Math.round(savedScore)));
+  }
   return Number(slider?.value || 62);
+}
+
+function syncStressValue() {
+  if (labStressValue) {
+    labStressValue.textContent = String(getStress());
+  }
 }
 
 function resizeRenderer() {
@@ -330,6 +350,7 @@ function seedScene() {
   targetRX = 0;
   currentRY = 0;
   currentRX = 0;
+  syncStressValue();
   buildInitialStems();
   updateStatus("Comb: click to grow, drag to rotate.");
 }
@@ -515,6 +536,7 @@ regrowButton?.addEventListener("click", seedScene);
 undoButton?.addEventListener("click", undoLastAction);
 resetViewButton?.addEventListener("click", resetView);
 saveButton?.addEventListener("click", saveSpecimen);
+window.addEventListener("stress-analysis-updated", syncStressValue);
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "r" || event.key === "R") seedScene();

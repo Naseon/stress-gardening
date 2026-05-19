@@ -96,48 +96,20 @@
       </nav>
 
       <section class="live-lab showcase-section" id="gardening-lab">
-        <div class="section-heading">
-          <p>Gardening Lab</p>
-          <h2>Grow, trim, and preserve your current stress specimen.</h2>
-        </div>
-
         <div class="lab-grid">
           <article class="lab-stage">
-            <div class="lab-stage-head">
-              <div>
-                <p class="micro-label">Interactive specimen interface</p>
-                <h3>Live stress specimen</h3>
-              </div>
-            </div>
-
             <div class="lab-workspace">
-              <div class="canvas-shell">
+              <div class="canvas-shell canvas-shell-lab">
                 <canvas id="thornCanvas" width="1280" height="720" aria-label="Stress Gardening live specimen canvas"></canvas>
-                <div class="specimen-plinth" aria-hidden="true">
-                  <span class="plinth-rim"></span>
-                  <span class="plinth-label">CHROME-THORN / LIVE SAMPLE</span>
+                <div class="lab-score" aria-live="polite">
+                  <span class="lab-score-label">Stress Vine</span>
+                  <span class="lab-score-reading"><strong id="labStressValue">62</strong><span>/100</span></span>
                 </div>
-              </div>
-
-              <aside class="control-sidebar" aria-label="Live Lab tools">
-                <section class="toolbox" aria-label="Tool selection">
-                  <button class="tool-button active" type="button" data-tool="cut">Cut</button>
-                  <button class="tool-button" type="button" data-tool="comb">Comb</button>
-                  <button class="tool-button" type="button" data-tool="pluck">Pluck</button>
-                  <button class="tool-button utility" id="undoButton" type="button">Undo</button>
-                  <button class="tool-button utility" id="resetViewButton" type="button">View</button>
-                </section>
-
-                <section class="panel" aria-label="Interaction controls">
-                  <label class="control">
-                    <span>Stress Level</span>
-                    <input id="stressSlider" type="range" min="0" max="100" value="62" />
-                  </label>
-                  <output id="statusText">Comb: click to grow, drag to rotate.</output>
+                <div class="lab-actions" aria-label="Live Lab actions">
                   <button id="regrowButton" type="button">Regrow</button>
                   <button id="saveButton" type="button">Save</button>
-                </section>
-              </aside>
+                </div>
+              </div>
             </div>
           </article>
         </div>
