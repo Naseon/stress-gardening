@@ -690,6 +690,8 @@ a {
   border-right: 0;
   border-radius: 0;
   box-shadow: none;
+  --lab-action-gap: 12px;
+  --lab-action-bottom: clamp(18px, 2vw, 28px);
 }
 
 canvas {
@@ -706,7 +708,7 @@ canvas {
 .lab-toolbox {
   position: absolute;
   right: clamp(24px, 3.2vw, 40px);
-  bottom: clamp(28px, 3.8vw, 46px);
+  bottom: calc(var(--lab-action-bottom) + var(--lab-action-gap));
   z-index: 4;
   display: flex;
   align-items: flex-end;
@@ -810,10 +812,10 @@ canvas {
 .lab-actions {
   position: absolute;
   right: clamp(24px, 3.2vw, 40px);
-  bottom: clamp(18px, 2vw, 28px);
+  bottom: var(--lab-action-bottom);
   z-index: 3;
   display: flex;
-  gap: 12px;
+  gap: var(--lab-action-gap);
 }
 
 .lab-action-frame {
@@ -1074,9 +1076,14 @@ canvas {
     min-height: calc(100svh - 120px);
   }
 
+  .canvas-shell-lab {
+    --lab-action-gap: 8px;
+    --lab-action-bottom: 18px;
+  }
+
   .lab-toolbox {
     right: 18px;
-    bottom: 42px;
+    bottom: calc(var(--lab-action-bottom) + var(--lab-action-gap));
     gap: 14px;
   }
 
@@ -1106,7 +1113,7 @@ canvas {
 
   .lab-actions {
     right: 18px;
-    bottom: 18px;
+    bottom: var(--lab-action-bottom);
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
