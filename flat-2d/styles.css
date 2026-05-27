@@ -173,6 +173,15 @@ a {
   text-align: center;
 }
 
+.bag-status {
+  margin: 10px 0 0;
+  color: rgba(17, 17, 17, 0.46);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .bag-shell h2 {
   margin: 8px 0 18px;
   font-size: clamp(44px, 7vw, 92px);
@@ -180,12 +189,12 @@ a {
   letter-spacing: -0.05em;
 }
 
-.bag-shell p:last-child {
+.bag-message {
   margin: 0;
   color: var(--muted);
   font-size: 18px;
   line-height: 1.65;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .intro-nav {
