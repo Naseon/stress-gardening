@@ -156,45 +156,206 @@ a {
 
 .bag-section {
   min-height: calc(100vh - 62px);
-  display: grid;
-  place-items: center;
-  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  background:
+    radial-gradient(circle at 28% 28%, rgba(255, 255, 255, 0.96), transparent 24%),
+    radial-gradient(circle at 72% 26%, rgba(255, 255, 255, 0.82), transparent 20%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(249, 249, 246, 0.96));
+  position: relative;
+  overflow: hidden;
 }
 
-.bag-shell {
-  width: min(720px, calc(100% - 40px));
-  padding: clamp(28px, 4vw, 52px);
-  border: 1px solid var(--line);
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow:
-    0 18px 40px rgba(17, 17, 16, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+.bag-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(180, 180, 176, 0.14) 0 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(180, 180, 176, 0.14) 0 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px;
+  pointer-events: none;
+}
+
+.topbar--bag-active .topbar__link--bag::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(17, 17, 17, 0.82);
+}
+
+.bag-board {
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 180px 1fr 180px;
+  align-items: center;
+  padding: clamp(36px, 5vw, 72px) clamp(24px, 3vw, 56px);
+  z-index: 1;
+}
+
+.bag-core {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 0;
   text-align: center;
 }
 
 .bag-status {
-  margin: 10px 0 0;
-  color: rgba(17, 17, 17, 0.46);
-  font-size: 14px;
+  margin: 28px 0 0;
+  color: rgba(17, 17, 17, 0.9);
+  font-size: clamp(28px, 2.8vw, 44px);
   font-weight: 400;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
-.bag-shell h2 {
-  margin: 8px 0 18px;
-  font-size: clamp(44px, 7vw, 92px);
-  line-height: 0.94;
-  letter-spacing: -0.05em;
+.bag-divider {
+  display: block;
+  width: 1px;
+  height: 34px;
+  margin: 28px 0 24px;
+  background: rgba(17, 17, 17, 0.24);
 }
 
 .bag-message {
   margin: 0;
-  color: var(--muted);
-  font-size: 18px;
-  line-height: 1.65;
+  color: rgba(17, 17, 17, 0.76);
+  font-size: clamp(18px, 1.4vw, 30px);
+  line-height: 1.8;
   font-weight: 500;
+}
+
+.bag-tag {
+  margin-top: 46px;
+  min-width: min(100%, 460px);
+  padding: 18px 28px;
+  border: 1px solid rgba(23, 23, 21, 0.24);
+  color: rgba(17, 17, 17, 0.82);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+.bag-ornament {
+  display: grid;
+  align-content: center;
+  gap: 24px;
+  color: rgba(17, 17, 17, 0.24);
+}
+
+.bag-ornament--left {
+  justify-items: start;
+}
+
+.bag-ornament--right {
+  justify-items: end;
+}
+
+.bag-plus {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 300;
+}
+
+.bag-barcode {
+  width: 26px;
+  height: 112px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(17, 17, 17, 0.22) 0 1px,
+      transparent 1px 4px
+    );
+}
+
+.bag-vertical-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  line-height: 1.7;
+}
+
+.bag-chip {
+  width: 34px;
+  min-height: 56px;
+  border: 1px solid rgba(17, 17, 17, 0.24);
+  display: grid;
+  place-items: center;
+  padding: 8px 0;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(17, 17, 17, 0.74);
+}
+
+.bag-chip strong {
+  font-weight: 700;
+}
+
+.bag-dash {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.bag-ruler {
+  width: 30px;
+  height: 116px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 15px,
+      rgba(17, 17, 17, 0.2) 15px 16px
+    );
+}
+
+.bag-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 26px clamp(24px, 3vw, 56px) 18px;
+  border-top: 1px solid rgba(23, 23, 21, 0.16);
+}
+
+.bag-footer-copy,
+.bag-footer-meta {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(18px, 2vw, 44px);
+  flex-wrap: wrap;
+}
+
+.bag-footer p {
+  margin: 0;
+  color: rgba(17, 17, 17, 0.76);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.bag-footer-marks {
+  display: block;
+  width: 84px;
+  height: 24px;
+  background:
+    repeating-linear-gradient(
+      to right,
+      transparent 0 16px,
+      rgba(17, 17, 17, 0.24) 16px 17px
+    );
 }
 
 .intro-nav {
@@ -1151,6 +1312,52 @@ canvas {
 
   .shop-product-card {
     min-height: auto;
+  }
+
+  .bag-board {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 28px 18px 22px;
+  }
+
+  .bag-ornament--left,
+  .bag-ornament--right {
+    display: none;
+  }
+
+  .bag-status {
+    margin-top: 22px;
+    font-size: 24px;
+    letter-spacing: 0.16em;
+  }
+
+  .bag-divider {
+    margin: 22px 0 18px;
+    height: 26px;
+  }
+
+  .bag-message {
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  .bag-tag {
+    margin-top: 30px;
+    min-width: 100%;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+  }
+
+  .bag-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px;
+  }
+
+  .bag-footer-copy,
+  .bag-footer-meta {
+    gap: 10px 18px;
   }
 
   .shop-intro-section {

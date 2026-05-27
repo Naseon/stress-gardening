@@ -314,7 +314,7 @@
       </div>
 
       <div class="bag-page page-screen" id="bagPage" hidden>
-        <nav class="topbar" aria-label="Bag navigation">
+        <nav class="topbar topbar--bag-active" aria-label="Bag navigation">
           <img src="./assets/Group 29.png" alt="Stress Gardening top bar" class="topbar__image" />
           <a class="topbar__link topbar__link--brand" id="bagHomeButton" href="#" aria-label="Stress Gardening" data-nav-home="true"></a>
           <a class="topbar__link topbar__link--shop" href="#shop-only-total" aria-label="Shop" data-nav-route="shop"></a>
@@ -323,16 +323,46 @@
         </nav>
 
         <section class="bag-section" id="bag-page">
-          <div class="bag-shell">
-            <p class="micro-label">Bag</p>
-            <p class="bag-status">Purchase Unavailable</p>
-            <h2>Bag (0)</h2>
-            <p class="bag-message">
-              현재 이 페이지의 굿즈는 실제 구매가 불가능한 전시용 아카이브입니다.
-              <br />
-              Stress Gardening의 표본과 오브제는 프로젝트 감상을 위한 가상 컬렉션으로만 제공됩니다.
-            </p>
+          <div class="bag-board">
+            <div class="bag-ornament bag-ornament--left" aria-hidden="true">
+              <span class="bag-plus">+</span>
+              <span class="bag-barcode"></span>
+              <span class="bag-vertical-label">EXPERIMENTAL PROJECT<br />SIMULATED GOODS ONLY</span>
+              <span class="bag-chip"><strong>SG</strong><strong>01</strong></span>
+              <span class="bag-dash">—</span>
+            </div>
+
+            <div class="bag-core">
+              <p class="micro-label">[ BAG ]</p>
+              <p class="bag-status">Purchase Unavailable</p>
+              <span class="bag-divider" aria-hidden="true"></span>
+              <p class="bag-message">
+                현재 이 페이지의 굿즈는 실제 구매가 불가능한 전시용 아카이브입니다.
+                <br />
+                Stress Gardening의 표본과 오브제는 프로젝트 감상을 위한
+                <br />
+                가상 컬렉션으로만 제공됩니다.
+              </p>
+              <div class="bag-tag">SIMULATED GOODS ONLY&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;NOT FOR PURCHASE</div>
+            </div>
+
+            <div class="bag-ornament bag-ornament--right" aria-hidden="true">
+              <span class="bag-ruler"></span>
+              <span class="bag-plus">+</span>
+            </div>
           </div>
+
+          <footer class="bag-footer">
+            <div class="bag-footer-copy">
+              <p>STRESS GARDENING LABORATORY</p>
+              <p>SEOUL, KOR</p>
+            </div>
+            <div class="bag-footer-meta">
+              <p>© STRESS GARDENING LAB</p>
+              <p>ARCHIVE ONLY</p>
+              <span class="bag-footer-marks" aria-hidden="true"></span>
+            </div>
+          </footer>
         </section>
       </div>
     </main>
