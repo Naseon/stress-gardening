@@ -207,10 +207,15 @@ a {
   text-align: center;
 }
 
+.bag-core .micro-label {
+  font-size: 6px;
+  letter-spacing: 0.12em;
+}
+
 .bag-status {
   margin: 28px 0 0;
   color: rgba(17, 17, 17, 0.9);
-  font-size: clamp(28px, 2.8vw, 44px);
+  font-size: clamp(14px, 1.4vw, 22px);
   font-weight: 400;
   letter-spacing: 0.22em;
   text-transform: uppercase;
@@ -227,7 +232,7 @@ a {
 .bag-message {
   margin: 0;
   color: rgba(17, 17, 17, 0.76);
-  font-size: clamp(18px, 1.4vw, 30px);
+  font-size: clamp(9px, 0.7vw, 15px);
   line-height: 1.8;
   font-weight: 500;
 }
@@ -238,7 +243,7 @@ a {
   padding: 18px 28px;
   border: 1px solid rgba(23, 23, 21, 0.24);
   color: rgba(17, 17, 17, 0.82);
-  font-size: 12px;
+  font-size: 6px;
   font-weight: 500;
   letter-spacing: 0.18em;
   text-align: center;
@@ -260,7 +265,7 @@ a {
 }
 
 .bag-plus {
-  font-size: 30px;
+  font-size: 15px;
   line-height: 1;
   font-weight: 300;
 }
@@ -279,7 +284,7 @@ a {
 .bag-vertical-label {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-size: 11px;
+  font-size: 6px;
   font-weight: 500;
   letter-spacing: 0.16em;
   line-height: 1.7;
@@ -293,7 +298,7 @@ a {
   place-items: center;
   padding: 8px 0;
   gap: 4px;
-  font-size: 12px;
+  font-size: 6px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: rgba(17, 17, 17, 0.74);
@@ -304,7 +309,7 @@ a {
 }
 
 .bag-dash {
-  font-size: 22px;
+  font-size: 11px;
   line-height: 1;
 }
 
@@ -341,7 +346,7 @@ a {
 .bag-footer p {
   margin: 0;
   color: rgba(17, 17, 17, 0.76);
-  font-size: 11px;
+  font-size: 6px;
   font-weight: 700;
   letter-spacing: 0.16em;
 }
@@ -1327,7 +1332,7 @@ canvas {
 
   .bag-status {
     margin-top: 22px;
-    font-size: 24px;
+    font-size: 12px;
     letter-spacing: 0.16em;
   }
 
@@ -1337,14 +1342,14 @@ canvas {
   }
 
   .bag-message {
-    font-size: 16px;
+    font-size: 8px;
     line-height: 1.75;
   }
 
   .bag-tag {
     margin-top: 30px;
     min-width: 100%;
-    font-size: 11px;
+    font-size: 6px;
     letter-spacing: 0.12em;
   }
 
