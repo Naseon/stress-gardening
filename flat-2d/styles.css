@@ -1054,7 +1054,7 @@ canvas {
 }
 
 .shop-filter-row {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 28px;
   min-height: 74px;
@@ -1212,11 +1212,7 @@ canvas {
 }
 
 .shop-archive-plus {
-  position: absolute;
-  color: rgba(17, 17, 17, 0.22);
-  font-size: 36px;
-  font-weight: 300;
-  line-height: 1;
+  display: none;
 }
 
 .shop-archive-plus--top {
