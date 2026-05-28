@@ -1055,7 +1055,7 @@ canvas {
 
 .shop-catalog-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0;
   border-top: 1px solid rgba(23, 23, 21, 0.18);
   border-bottom: 1px solid rgba(23, 23, 21, 0.18);
@@ -1076,7 +1076,7 @@ canvas {
 .shop-product-card {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
-  min-height: 760px;
+  min-height: 600px;
 }
 
 .shop-product-visual {
