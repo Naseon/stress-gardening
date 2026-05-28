@@ -1013,7 +1013,7 @@ canvas {
 }
 
 .lab-actions button {
-  min-width: clamp(210px, 12.8vw, 260px);
+  min-width: clamp(158px, 9.6vw, 195px);
   min-height: 38px;
   padding: 0 18px;
   border: 0;
@@ -1324,7 +1324,7 @@ canvas {
   }
 
   .lab-actions button {
-    min-width: 132px;
+    min-width: 99px;
     min-height: 34px;
   }
 
