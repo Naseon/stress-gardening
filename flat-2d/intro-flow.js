@@ -4,6 +4,7 @@ const btnBegin = document.getElementById("btnBegin");
 const btnFinish = document.getElementById("btnFinish");
 const btnRetry = document.getElementById("btnRetry");
 const btnEnterLab = document.getElementById("btnEnterLab");
+const nextPageButton = document.getElementById("nextPageButton");
 const homeButtons = document.querySelectorAll(".topbar__link[data-nav-home='true']");
 const topbarRouteLinks = document.querySelectorAll(".topbar__link[data-nav-route]");
 const topbarPageLinks = document.querySelectorAll(".topbar__link[data-nav-page]");
@@ -40,6 +41,12 @@ function syncLabAccess() {
   liveLabSection?.classList.toggle("lab-locked", !labUnlocked);
 }
 
+function syncShopMode() {
+  if (!shopPage) return;
+  shopPage.classList.toggle("full-mode", labUnlocked);
+  shopPage.classList.toggle("preview-mode", !labUnlocked);
+}
+
 function goTo(id) {
   screens.forEach((screen) => screen.classList.remove("active"));
   document.getElementById(id)?.classList.add("active");
@@ -67,6 +74,7 @@ function showPage(pageName) {
   if (shopPage) {
     shopPage.hidden = !showShop;
     shopPage.classList.toggle("is-active", showShop);
+    if (showShop) syncShopMode();
   }
   if (bagPage) {
     bagPage.hidden = !showBag;
@@ -248,20 +256,6 @@ function openShopPageSection(targetId) {
   });
 }
 
-function openLabSection(targetId) {
-  syncLabAccess();
-  showPage("lab");
-  if (!labUnlocked) {
-    labPage?.classList.add("shop-only");
-  } else {
-    labPage?.classList.remove("shop-only");
-  }
-  requestAnimationFrame(() => {
-    const target = document.getElementById(targetId);
-    target?.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
-  });
-}
-
 function goHome(event) {
   event?.preventDefault();
   retryMeasurement();
@@ -276,18 +270,19 @@ btnBegin?.addEventListener("click", beginMeasurement);
 btnFinish?.addEventListener("click", finishMeasurement);
 btnRetry?.addEventListener("click", retryMeasurement);
 btnEnterLab?.addEventListener("click", enterLiveLab);
+nextPageButton?.addEventListener("click", () => openShopPageSection("shop-intro"));
 homeButtons.forEach((button) => button.addEventListener("click", goHome));
 topbarRouteLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
     const route = link.dataset.navRoute;
     if (route === "shop") {
-      if (labUnlocked) openLabSection("shop-intro");
+      if (labUnlocked) openShopPageSection("shop-intro");
       else openShopPageSection("shop-only-total");
       return;
     }
     if (route === "about") {
-      if (labUnlocked) openLabSection("about-project");
+      if (labUnlocked) openShopPageSection("about-project");
       else openShopPageSection("shop-only-about");
     }
   });

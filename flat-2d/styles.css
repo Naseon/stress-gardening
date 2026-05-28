@@ -64,6 +64,19 @@ a {
   padding-inline: 0;
 }
 
+.shop-flow--full,
+.shop-flow--preview {
+  display: block;
+}
+
+.shop-page.preview-mode .shop-flow--full {
+  display: none;
+}
+
+.shop-page.full-mode .shop-flow--preview {
+  display: none;
+}
+
 .topbar {
   position: sticky;
   top: 0;
