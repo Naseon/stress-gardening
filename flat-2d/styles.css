@@ -770,7 +770,7 @@ a {
   margin: 0;
   width: 100%;
   white-space: nowrap;
-  font-size: clamp(80px, 11.8vw, 200px);
+  font-size: clamp(40px, 5.9vw, 100px);
   font-weight: 900;
   line-height: 0.9;
   letter-spacing: -0.095em;
@@ -780,7 +780,7 @@ a {
   margin: 5px 0 0;
   max-width: 980px;
   color: rgba(17, 17, 17, 0.74);
-  font-size: clamp(15px, 1.05vw, 18px);
+  font-size: clamp(10px, 0.7vw, 12px);
   font-weight: 400;
   line-height: 1.6;
   letter-spacing: -0.02em;
@@ -1384,11 +1384,11 @@ canvas {
 
   .shop-intro-copy h2 {
     white-space: normal;
-    font-size: clamp(50px, 12vw, 90px);
+    font-size: clamp(32px, 8vw, 56px);
   }
 
   .shop-intro-description {
-    font-size: 14px;
+    font-size: 10px;
     line-height: 1.7;
   }
 
