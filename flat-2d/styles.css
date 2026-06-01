@@ -1231,13 +1231,13 @@ canvas {
 }
 
 .shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_pen_03.png"] {
-  max-width: 42%;
-  max-height: 78%;
+  max-width: 34%;
+  max-height: 64%;
 }
 
 .shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_ruler_03.png"] {
-  max-width: 38%;
-  max-height: 74%;
+  max-width: 30%;
+  max-height: 60%;
 }
 
 .shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_massage_ball_03.png"] {
