@@ -1220,6 +1220,56 @@ canvas {
   max-height: 100%;
 }
 
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_mug_03.png"] {
+  max-width: 86%;
+  max-height: 74%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_incense_holder_03.png"] {
+  max-width: 56%;
+  max-height: 92%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_pen_03.png"] {
+  max-width: 52%;
+  max-height: 92%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_ruler_03.png"] {
+  max-width: 50%;
+  max-height: 90%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_massage_ball_03.png"] {
+  max-width: 72%;
+  max-height: 66%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_binder_clip_03.png"] {
+  max-width: 68%;
+  max-height: 66%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_paper_clip_03.png"] {
+  max-width: 50%;
+  max-height: 84%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_tray_03.png"] {
+  max-width: 94%;
+  max-height: 62%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_mirror_03.png"] {
+  max-width: 70%;
+  max-height: 68%;
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_vine_objet_03.png"] {
+  max-width: 82%;
+  max-height: 78%;
+}
+
 .shop-archive-footer {
   display: flex;
   align-items: flex-end;
