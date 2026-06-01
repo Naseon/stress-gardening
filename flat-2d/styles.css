@@ -1085,6 +1085,10 @@ canvas {
   align-items: stretch;
 }
 
+.shop-catalog-grid--ten {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .shop-archive-column {
   min-height: 760px;
   padding: 112px 30px 26px;
@@ -1099,6 +1103,11 @@ canvas {
 
 .shop-archive-column:last-child {
   border-right: 0;
+}
+
+.shop-catalog-grid--ten .shop-archive-column {
+  min-height: 640px;
+  padding: 78px 22px 22px;
 }
 
 .shop-archive-meta {
@@ -1141,6 +1150,10 @@ canvas {
   grid-template-rows: auto 1fr auto;
 }
 
+.shop-catalog-grid--ten .shop-archive-poster-inner {
+  width: min(100%, 220px);
+}
+
 .shop-archive-copy {
   display: flex;
   justify-content: space-between;
@@ -1160,6 +1173,10 @@ canvas {
   color: #111111;
 }
 
+.shop-catalog-grid--ten .shop-archive-copy h3 {
+  font-size: 14px;
+}
+
 .shop-archive-copy p {
   margin: 0;
   max-width: 32%;
@@ -1169,6 +1186,11 @@ canvas {
   letter-spacing: 0;
   color: rgba(17, 17, 17, 0.9);
   text-align: left;
+}
+
+.shop-catalog-grid--ten .shop-archive-copy p {
+  font-size: 6px;
+  max-width: 36%;
 }
 
 .shop-archive-visual {
@@ -1183,6 +1205,10 @@ canvas {
   max-height: 320px;
   object-fit: contain;
   filter: drop-shadow(0 18px 16px rgba(17, 17, 16, 0.1));
+}
+
+.shop-catalog-grid--ten .shop-archive-visual img {
+  max-height: 244px;
 }
 
 .shop-archive-footer {
@@ -1323,6 +1349,7 @@ canvas {
 
   .shop-catalog-grid,
   .shop-catalog-grid--archive,
+  .shop-catalog-grid--ten,
   .shop-archive-bottomline {
     grid-template-columns: 1fr;
   }
