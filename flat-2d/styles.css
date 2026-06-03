@@ -519,6 +519,191 @@ a {
   color: #111111;
 }
 
+.product-detail-simple {
+  display: grid;
+  gap: 0;
+  background: #ffffff;
+}
+
+.product-simple-hero,
+.product-simple-views,
+.product-simple-detail,
+.product-simple-editorials,
+.product-simple-related,
+.product-simple-nav {
+  border-bottom: 1px solid rgba(23, 23, 21, 0.14);
+}
+
+.product-simple-hero {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.78fr) minmax(0, 1.22fr);
+  min-height: 520px;
+}
+
+.product-simple-copy {
+  padding: 34px 32px;
+  border-right: 1px solid rgba(23, 23, 21, 0.14);
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.product-simple-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.product-simple-index {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.62);
+}
+
+.product-simple-copy h1 {
+  margin: 0;
+  font-size: clamp(34px, 4.2vw, 58px);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+
+.product-simple-lead,
+.product-simple-detail-copy > p:last-of-type {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 16px;
+  line-height: 1.72;
+  color: rgba(17, 17, 17, 0.82);
+}
+
+.product-simple-hero-media,
+.product-simple-detail-media {
+  display: grid;
+  place-items: center;
+  padding: 26px;
+}
+
+.product-simple-hero-media img,
+.product-simple-detail-media img,
+.product-editorial-card img,
+.product-blueprint-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.product-simple-hero-media img {
+  max-width: min(92%, 760px);
+  max-height: 430px;
+  filter: drop-shadow(0 18px 24px rgba(17, 17, 16, 0.1));
+}
+
+.product-simple-views {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+}
+
+.product-simple-step {
+  border-right: 1px solid rgba(23, 23, 21, 0.14);
+  padding: 26px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(17, 17, 17, 0.82);
+}
+
+.product-simple-views .product-object-grid,
+.product-simple-related .product-related-grid {
+  padding: 24px 28px;
+}
+
+.product-simple-detail {
+  display: grid;
+  grid-template-columns: 72px minmax(320px, 0.88fr) minmax(0, 1.12fr);
+}
+
+.product-simple-detail-media {
+  border-right: 1px solid rgba(23, 23, 21, 0.14);
+  min-height: 360px;
+}
+
+.product-simple-detail-media img {
+  max-width: 100%;
+  max-height: 320px;
+}
+
+.product-simple-detail-copy {
+  padding: 30px 32px;
+  display: grid;
+  align-content: start;
+  gap: 18px;
+}
+
+.product-simple-dimensions {
+  display: grid;
+  gap: 16px;
+}
+
+.product-simple-blueprints {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.product-blueprint-card {
+  display: grid;
+  gap: 8px;
+}
+
+.product-blueprint-figure {
+  min-height: 130px;
+  padding: 12px;
+  border: 1px solid rgba(23, 23, 21, 0.12);
+  background: #ffffff;
+}
+
+.product-blueprint-card span {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(17, 17, 17, 0.7);
+}
+
+.product-simple-editorials {
+  display: grid;
+  gap: 0;
+}
+
+.product-editorial-card {
+  min-height: 340px;
+  padding: 0 0 1px;
+}
+
+.product-editorial-card img {
+  max-height: 460px;
+}
+
+.product-simple-related {
+  display: grid;
+  gap: 0;
+}
+
+.product-simple-related-head {
+  padding: 24px 28px 0;
+}
+
+.product-simple-nav {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 18px 28px;
+}
+
 .product-detail-nav {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;

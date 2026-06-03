@@ -384,15 +384,7 @@ function renderProductDetail(productId) {
   const prevId = index > 0 ? productOrder[index - 1] : null;
   const nextId = index < productOrder.length - 1 ? productOrder[index + 1] : null;
   const related = product.related.filter((id) => productCatalog[id]).slice(0, 4);
-
-  pdCollectionLabel.textContent = "THORN COLLECTION";
-  pdTitle.textContent = product.title;
-  pdSubtitle.textContent = product.subtitle;
-  pdLead.textContent = product.lead;
-  pdHeroImage.src = product.heroImage;
-  pdHeroImage.alt = product.title;
-
-  pdFacts.innerHTML = product.facts
+  const factMarkup = product.facts
     .map(
       ([label, value]) => `
         <div class="product-fact">
@@ -403,26 +395,11 @@ function renderProductDetail(productId) {
     )
     .join("");
 
-  pdObjectGrid.innerHTML = defaultObjectViews
+  const objectViewMarkup = ["Front", "Side", "Top", "Detail"]
     .map((caption) => buildImageCard(product.heroImage, `${product.title} ${caption}`, caption))
     .join("");
 
-  pdConceptText.innerHTML = product.concept.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("");
-  pdConceptMedia.innerHTML = `
-    <div class="product-concept-strip">
-      <div class="product-concept-tile"><img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)}" /></div>
-      <div class="product-concept-tile"><img src="${escapeHtml(productCatalog[related[0]]?.heroImage || product.heroImage)}" alt="${escapeHtml(product.title)} related object" /></div>
-    </div>
-  `;
-
-  pdDetailImage.src = product.heroImage;
-  pdDetailImage.alt = `${product.title} detail`;
-  pdDetailTitle.textContent = product.detailTitle;
-  pdDetailText.textContent = product.detailText;
-
-  pdMaterialList.innerHTML = product.materials.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
-
-  pdDimensionList.innerHTML = product.dimensions
+  const dimensionMarkup = product.dimensions
     .map(
       ([label, value]) => `
         <div>
@@ -433,34 +410,97 @@ function renderProductDetail(productId) {
     )
     .join("");
 
-  pdDimensionVisuals.innerHTML = Array.from({ length: 3 }, (_, visualIndex) => `
-    <div class="product-dimension-figure">
-      <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} dimension view ${visualIndex + 1}" />
+  const blueprintMarkup = ["Front View", "Side View", "Top View"]
+    .map(
+      (caption, visualIndex) => `
+        <article class="product-blueprint-card">
+          <div class="product-blueprint-figure">
+            <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} ${escapeHtml(caption)}" />
+          </div>
+          <span>${escapeHtml(caption)}</span>
+        </article>
+      `
+    )
+    .join("");
+
+  const editorialSources = [
+    product.heroImage,
+    productCatalog[related[0]]?.heroImage || product.heroImage,
+    productCatalog[related[1]]?.heroImage || product.heroImage,
+  ];
+
+  const editorialMarkup = editorialSources
+    .map(
+      (src, editorialIndex) => `
+        <article class="product-editorial-card">
+          <img src="${escapeHtml(src)}" alt="${escapeHtml(product.title)} editorial ${editorialIndex + 1}" />
+        </article>
+      `
+    )
+    .join("");
+
+  const relatedMarkup = related.map((id) => buildRelatedCard(id)).join("");
+
+  productDetailView.innerHTML = `
+    <div class="product-detail-simple">
+      <section class="product-simple-hero">
+        <div class="product-simple-copy">
+          <p class="product-detail-kicker">THORN COLLECTION</p>
+          <div class="product-simple-heading">
+            <div>
+              <p class="product-simple-index">${escapeHtml(product.subtitle)}</p>
+              <h1>${escapeHtml(product.title)}</h1>
+            </div>
+            <button class="product-back-link" type="button" data-product-back>Back to Shop</button>
+          </div>
+          <p class="product-simple-lead">${escapeHtml(product.lead)}</p>
+          <dl class="product-detail-facts">${factMarkup}</dl>
+        </div>
+        <div class="product-simple-hero-media">
+          <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)}" />
+        </div>
+      </section>
+
+      <section class="product-simple-views">
+        <div class="product-simple-step">02</div>
+        <div class="product-object-grid">${objectViewMarkup}</div>
+      </section>
+
+      <section class="product-simple-detail">
+        <div class="product-simple-step">04</div>
+        <div class="product-simple-detail-media">
+          <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} detail view" />
+        </div>
+        <div class="product-simple-detail-copy">
+          <p class="product-section-label">${escapeHtml(product.detailTitle)}</p>
+          <p>${escapeHtml(product.detailText)}</p>
+          <div class="product-simple-dimensions">
+            <div class="product-simple-dimension-copy">
+              <p class="product-section-label">Dimension</p>
+              <dl class="product-dimension-list">${dimensionMarkup}</dl>
+            </div>
+            <div class="product-simple-blueprints">${blueprintMarkup}</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="product-simple-editorials">
+        ${editorialMarkup}
+      </section>
+
+      <section class="product-simple-related">
+        <div class="product-simple-related-head">
+          <p class="product-section-label">Related Objects</p>
+        </div>
+        <div class="product-related-grid">${relatedMarkup}</div>
+      </section>
+
+      <section class="product-simple-nav">
+        <button class="product-nav-link" type="button" ${prevId ? `data-product-nav="${escapeHtml(prevId)}"` : "disabled"}>${escapeHtml(prevId ? `Previous: ${productCatalog[prevId].title}` : "")}</button>
+        <span class="product-nav-current">${escapeHtml(product.subtitle)} / THORN COLLECTION</span>
+        <button class="product-nav-link product-nav-link--next" type="button" ${nextId ? `data-product-nav="${escapeHtml(nextId)}"` : "disabled"}>${escapeHtml(nextId ? `Next: ${productCatalog[nextId].title}` : "")}</button>
+      </section>
     </div>
-  `).join("");
-
-  pdRelatedGrid.innerHTML = related.map((id) => buildRelatedCard(id)).join("");
-
-  pdStoryText.innerHTML = `
-    <p>${escapeHtml(`${product.title} belongs to a collection that turns familiar desk rituals into speculative stress objects.`)}</p>
-    <p>${escapeHtml("Each piece keeps a practical silhouette while redistributing tension through material, spike rhythm, and careful scale.")}</p>
-  `;
-  pdStoryMedia.innerHTML = `
-    <div class="product-story-strip">
-      <div class="product-story-tile"><img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} story view" /></div>
-      <div class="product-story-tile"><img src="${escapeHtml(productCatalog[related[1]]?.heroImage || product.heroImage)}" alt="${escapeHtml(product.title)} collection view" /></div>
-      <div class="product-story-tile"><img src="${escapeHtml(productCatalog[related[2]]?.heroImage || product.heroImage)}" alt="${escapeHtml(product.title)} collection view" /></div>
-    </div>
-  `;
-
-  const prevLabel = prevId ? `Previous: ${productCatalog[prevId].title}` : "";
-  const nextLabel = nextId ? `Next: ${productCatalog[nextId].title}` : "";
-
-  pdNav.innerHTML = `
-    <button class="product-nav-link" type="button" ${prevId ? `data-product-nav="${escapeHtml(prevId)}"` : "disabled"}>${escapeHtml(prevLabel)}</button>
-    <span class="product-nav-current">${escapeHtml(product.subtitle)} / THORN COLLECTION</span>
-    <button class="product-nav-link product-nav-link--next" type="button" ${nextId ? `data-product-nav="${escapeHtml(nextId)}"` : "disabled"}>${escapeHtml(nextLabel)}</button>
-    <button class="product-nav-back" type="button" data-product-back>Back to Shop</button>
   `;
 }
 
