@@ -525,6 +525,43 @@ a {
   background: #ffffff;
 }
 
+.product-detail-empty-state {
+  min-height: calc(100vh - 86px);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 48px 24px;
+  text-align: center;
+  background: #ffffff;
+}
+
+.product-detail-empty-state__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #111111;
+}
+
+.product-detail-empty-state h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: #111111;
+}
+
+.product-detail-empty-state__copy {
+  max-width: 440px;
+  margin: 0;
+  color: rgba(17, 17, 17, 0.72);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
 .product-simple-hero,
 .product-simple-views,
 .product-simple-detail,
@@ -1720,6 +1757,9 @@ canvas {
     inset 0 0 0 1px rgba(255, 255, 255, 0.62);
   display: grid;
   grid-template-rows: auto 1fr auto;
+  --visual-scale-w: 78%;
+  --visual-scale-h: 72%;
+  --visual-shift-y: 0px;
 }
 
 .shop-archive-poster-inner.is-clickable {
@@ -1779,94 +1819,90 @@ canvas {
 }
 
 .shop-archive-visual {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 344px;
   min-height: 344px;
   padding: 10px 0 4px;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .shop-archive-visual img {
   width: auto;
   height: auto;
-  max-width: 100%;
-  max-height: 100%;
+  max-width: var(--visual-scale-w);
+  max-height: var(--visual-scale-h);
   object-fit: contain;
   display: block;
+  transform: translateY(var(--visual-shift-y));
+  mix-blend-mode: multiply;
   filter: drop-shadow(0 18px 16px rgba(17, 17, 16, 0.1));
 }
 
 .shop-catalog-grid--ten .shop-archive-visual {
+  height: 296px;
   min-height: 296px;
   padding: 6px 0 0;
 }
 
 .shop-catalog-grid--ten .shop-archive-visual img {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: var(--visual-scale-w);
+  max-height: var(--visual-scale-h);
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_mug_03.png"] {
-  max-width: 78%;
-  max-height: 66%;
+.shop-archive-poster-inner[data-product-id="thorn-mug"] {
+  --visual-scale-w: 84%;
+  --visual-scale-h: 70%;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_incense_holder_03.png"] {
-  max-width: 20%;
-  max-height: 30%;
-  transform: translateY(0);
+.shop-archive-poster-inner[data-product-id="thorn-incense-holder"] {
+  --visual-scale-w: 28%;
+  --visual-scale-h: 42%;
+  --visual-shift-y: 18px;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_pen_03.png"] {
-  max-width: 11%;
-  max-height: 20%;
-  transform: translateY(0);
+.shop-archive-poster-inner[data-product-id="thorn-pen"] {
+  --visual-scale-w: 17%;
+  --visual-scale-h: 36%;
+  --visual-shift-y: 6px;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_ruler_03.png"] {
-  max-width: 10%;
-  max-height: 20%;
-  transform: translateY(0);
+.shop-archive-poster-inner[data-product-id="thorn-ruler"] {
+  --visual-scale-w: 16%;
+  --visual-scale-h: 34%;
+  --visual-shift-y: 6px;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_massage_ball_03.png"] {
-  max-width: 60%;
-  max-height: 56%;
+.shop-archive-poster-inner[data-product-id="thorn-massage-ball"] {
+  --visual-scale-w: 58%;
+  --visual-scale-h: 52%;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_binder_clip_03.png"] {
-  max-width: 56%;
-  max-height: 54%;
+.shop-archive-poster-inner[data-product-id="thorn-binder-clip"] {
+  --visual-scale-w: 36%;
+  --visual-scale-h: 34%;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_paper_clip_03.png"] {
-  max-width: 28%;
-  max-height: 38%;
+.shop-archive-poster-inner[data-product-id="thorn-paper-clip"] {
+  --visual-scale-w: 16%;
+  --visual-scale-h: 24%;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_mug_03.png"],
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_massage_ball_03.png"],
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_binder_clip_03.png"],
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_mirror_03.png"],
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_tray_03.png"],
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_vine_objet_03.png"],
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_paper_clip_03.png"] {
-  transform: translateY(0);
+.shop-archive-poster-inner[data-product-id="thorn-tray"] {
+  --visual-scale-w: 88%;
+  --visual-scale-h: 28%;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_tray_03.png"] {
-  max-width: 88%;
-  max-height: 54%;
+.shop-archive-poster-inner[data-product-id="thorn-mirror"] {
+  --visual-scale-w: 46%;
+  --visual-scale-h: 42%;
 }
 
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_mirror_03.png"] {
-  max-width: 58%;
-  max-height: 56%;
-}
-
-.shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_vine_objet_03.png"] {
-  max-width: 72%;
-  max-height: 62%;
+.shop-archive-poster-inner[data-product-id="thorn-vine-objet"] {
+  --visual-scale-w: 54%;
+  --visual-scale-h: 48%;
 }
 
 .shop-archive-footer {
