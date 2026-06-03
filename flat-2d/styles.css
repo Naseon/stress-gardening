@@ -1627,20 +1627,20 @@ canvas {
 }
 
 .shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_incense_holder_03.png"] {
-  max-width: 24%;
-  max-height: 36%;
+  max-width: 20%;
+  max-height: 30%;
   transform: translateY(0);
 }
 
 .shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_pen_03.png"] {
-  max-width: 15%;
-  max-height: 28%;
+  max-width: 11%;
+  max-height: 20%;
   transform: translateY(0);
 }
 
 .shop-catalog-grid--ten .shop-archive-visual img[src$="thorn_ruler_03.png"] {
-  max-width: 13%;
-  max-height: 26%;
+  max-width: 10%;
+  max-height: 20%;
   transform: translateY(0);
 }
 
