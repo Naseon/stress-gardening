@@ -1,4 +1,4 @@
-const screens = document.querySelectorAll(".screen");
+﻿const screens = document.querySelectorAll(".screen");
 const mainBg = document.getElementById("mainBg");
 const btnBegin = document.getElementById("btnBegin");
 const btnFinish = document.getElementById("btnFinish");
@@ -12,8 +12,31 @@ const video = document.getElementById("video2");
 const introPage = document.getElementById("introPage");
 const labPage = document.getElementById("labPage");
 const shopPage = document.getElementById("shopPage");
+const productPage = document.getElementById("productPage");
 const bagPage = document.getElementById("bagPage");
 const liveLabSection = document.getElementById("gardening-lab");
+const productCards = document.querySelectorAll(".shop-archive-poster-inner");
+const productBackButtons = document.querySelectorAll("[data-product-back]");
+const productDetailView = document.getElementById("productDetailView");
+const pdCollectionLabel = document.getElementById("pdCollectionLabel");
+const pdTitle = document.getElementById("pdTitle");
+const pdSubtitle = document.getElementById("pdSubtitle");
+const pdLead = document.getElementById("pdLead");
+const pdFacts = document.getElementById("pdFacts");
+const pdHeroImage = document.getElementById("pdHeroImage");
+const pdObjectGrid = document.getElementById("pdObjectGrid");
+const pdConceptText = document.getElementById("pdConceptText");
+const pdConceptMedia = document.getElementById("pdConceptMedia");
+const pdDetailImage = document.getElementById("pdDetailImage");
+const pdDetailTitle = document.getElementById("pdDetailTitle");
+const pdDetailText = document.getElementById("pdDetailText");
+const pdMaterialList = document.getElementById("pdMaterialList");
+const pdDimensionList = document.getElementById("pdDimensionList");
+const pdDimensionVisuals = document.getElementById("pdDimensionVisuals");
+const pdRelatedGrid = document.getElementById("pdRelatedGrid");
+const pdStoryText = document.getElementById("pdStoryText");
+const pdStoryMedia = document.getElementById("pdStoryMedia");
+const pdNav = document.getElementById("pdNav");
 const stressInput = document.getElementById("stressInput");
 const currentChar = document.getElementById("currentChar");
 const timeElapsed = document.getElementById("timeElapsed");
@@ -27,6 +50,419 @@ let rafId = 0;
 let scanStart = 0;
 let typingBound = false;
 let labUnlocked = false;
+let lastShopAnchor = "shop-only-total";
+
+const productTitleMap = {
+  "thorn mug.": "thorn-mug",
+  "thorn incense holder.": "thorn-incense-holder",
+  "thorn pen.": "thorn-pen",
+  "thorn ruler.": "thorn-ruler",
+  "thorn massage ball.": "thorn-massage-ball",
+  "thorn binder clip.": "thorn-binder-clip",
+  "thorn paper clip.": "thorn-paper-clip",
+  "thorn tray.": "thorn-tray",
+  "thorn mirror.": "thorn-mirror",
+  "thorn vine objet.": "thorn-vine-objet",
+};
+
+const productOrder = [
+  "thorn-mug",
+  "thorn-incense-holder",
+  "thorn-pen",
+  "thorn-ruler",
+  "thorn-massage-ball",
+  "thorn-binder-clip",
+  "thorn-paper-clip",
+  "thorn-tray",
+  "thorn-mirror",
+  "thorn-vine-objet",
+];
+
+const defaultObjectViews = ["Front", "Profile", "Detail", "Context"];
+
+const productCatalog = {
+  "thorn-mug": {
+    code: "SG-01",
+    title: "Thorn Mug",
+    subtitle: "01 / 10",
+    heroImage: "./assets/thorn_mug_03.png",
+    lead: "A familiar vessel translated into a quiet chrome tension.",
+    facts: [
+      ["Category", "Table Object"],
+      ["Finish", "Brushed Steel"],
+      ["Scale", "One Size"],
+      ["Use", "Desk Ritual"],
+    ],
+    concept: [
+      "The mug keeps its everyday silhouette while the handle and skin introduce a subtle defensive edge.",
+      "It frames stress as an object to hold, inspect, and briefly negotiate with."
+    ],
+    detailTitle: "Handle + Thorn Detail",
+    detailText: "Polished spikes wrap the body and handle to shift a familiar grip into a reflective, careful interaction.",
+    materials: ["Stainless steel", "Brushed finish", "Cold touch surface"],
+    dimensions: [
+      ["Height", "95 mm"],
+      ["Width", "85 mm"],
+      ["Capacity", "350 ml"],
+    ],
+    related: ["thorn-tray", "thorn-pen", "thorn-mirror", "thorn-vine-objet"],
+  },
+  "thorn-incense-holder": {
+    code: "SG-02",
+    title: "Thorn Incense Holder",
+    subtitle: "02 / 10",
+    heroImage: "./assets/thorn_incense_holder_03.png",
+    lead: "A slow-burning object that turns stillness into a small ritual specimen.",
+    facts: [
+      ["Category", "Ambient Object"],
+      ["Finish", "Brushed Steel + Wood"],
+      ["Scale", "One Size"],
+      ["Use", "Incense Ritual"],
+    ],
+    concept: [
+      "A compact spiked dome grounds the incense stick in a way that feels ceremonial rather than decorative.",
+      "Its scale stays quiet while the form keeps the project?셲 controlled discomfort intact."
+    ],
+    detailTitle: "Object Base Detail",
+    detailText: "The dome holds dense thorn spacing around a soft metallic body, balancing calm fragrance with tactile alertness.",
+    materials: ["Steel cap", "Wood incense stick", "Mirror-polished spikes"],
+    dimensions: [
+      ["Height", "132 mm"],
+      ["Width", "68 mm"],
+      ["Type", "Incense Holder"],
+    ],
+    related: ["thorn-massage-ball", "thorn-tray", "thorn-paper-clip", "thorn-vine-objet"],
+  },
+  "thorn-pen": {
+    code: "SG-03",
+    title: "Thorn Pen",
+    subtitle: "03 / 10",
+    heroImage: "./assets/thorn_pen_03.png",
+    lead: "An office tool recast as a sharply attentive writing instrument.",
+    facts: [
+      ["Category", "Writing Tool"],
+      ["Finish", "Brushed Steel"],
+      ["Scale", "One Size"],
+      ["Use", "Desk Writing"],
+    ],
+    concept: [
+      "The pen holds a clear cylindrical profile while thorn details interrupt the ease of a routine gesture.",
+      "It turns note-taking into a more deliberate, slower movement."
+    ],
+    detailTitle: "Grip Detail",
+    detailText: "A narrow metal body carries evenly spaced spikes so the grip feels precise, restrained, and slightly tense.",
+    materials: ["Steel body", "Clip detail", "Brushed finish"],
+    dimensions: [
+      ["Length", "142 mm"],
+      ["Width", "14 mm"],
+      ["Type", "Ballpoint"],
+    ],
+    related: ["thorn-ruler", "thorn-binder-clip", "thorn-paper-clip", "thorn-mug"],
+  },
+  "thorn-ruler": {
+    code: "SG-04",
+    title: "Thorn Ruler",
+    subtitle: "04 / 10",
+    heroImage: "./assets/thorn_ruler_03.png",
+    lead: "A measuring tool that makes precision feel slightly guarded.",
+    facts: [
+      ["Category", "Desk Measure"],
+      ["Finish", "Steel Etching"],
+      ["Scale", "One Size"],
+      ["Use", "Measurement"],
+    ],
+    concept: [
+      "Linear markings and edge spikes coexist to create a contrast between utility and controlled threat.",
+      "The object suggests that measuring can also be a form of scrutiny."
+    ],
+    detailTitle: "Edge Detail",
+    detailText: "Sharp side spikes run along the ruler?셲 edge while engraved numbers preserve its technical clarity.",
+    materials: ["Etched steel", "Precision markings", "Matte sheen"],
+    dimensions: [
+      ["Length", "100 mm"],
+      ["Width", "18 mm"],
+      ["Scale", "10 cm"],
+    ],
+    related: ["thorn-pen", "thorn-binder-clip", "thorn-paper-clip", "thorn-tray"],
+  },
+  "thorn-massage-ball": {
+    code: "SG-05",
+    title: "Thorn Massage Ball",
+    subtitle: "05 / 10",
+    heroImage: "./assets/thorn_massage_ball_03.png",
+    lead: "A stress object that literalizes pressure, release, and tactile resistance.",
+    facts: [
+      ["Category", "Pressure Object"],
+      ["Finish", "Polished Steel"],
+      ["Scale", "One Size"],
+      ["Use", "Grip + Massage"],
+    ],
+    concept: [
+      "The sphere makes stress tangible through repeated spikes and a compact palm-sized weight.",
+      "It suggests comfort and tension as the same object, approached from different grips."
+    ],
+    detailTitle: "Surface Detail",
+    detailText: "Rounded metal volume meets dense spike placement to create an object that feels both playful and defensive.",
+    materials: ["Cast steel", "Polished points", "Weighted core"],
+    dimensions: [
+      ["Diameter", "62 mm"],
+      ["Weight", "420 g"],
+      ["Type", "Hand Object"],
+    ],
+    related: ["thorn-incense-holder", "thorn-mirror", "thorn-vine-objet", "thorn-mug"],
+  },
+  "thorn-binder-clip": {
+    code: "SG-06",
+    title: "Thorn Binder Clip",
+    subtitle: "06 / 10",
+    heroImage: "./assets/thorn_binder_clip_03.png",
+    lead: "A fastening object that sharpens the logic of office restraint.",
+    facts: [
+      ["Category", "Desk Fastener"],
+      ["Finish", "Brushed Steel"],
+      ["Scale", "One Size"],
+      ["Use", "Paper Hold"],
+    ],
+    concept: [
+      "The familiar clip form is preserved, while spikes turn compression into a visible warning.",
+      "It reframes paper organization as a tiny mechanical performance."
+    ],
+    detailTitle: "Clip Detail",
+    detailText: "The looped handles and folded metal shell stay legible, but the outer skin is fully armored with thorn studs.",
+    materials: ["Folded steel", "Wire handle", "Stamped spikes"],
+    dimensions: [
+      ["Height", "46 mm"],
+      ["Width", "34 mm"],
+      ["Type", "Office Clip"],
+    ],
+    related: ["thorn-paper-clip", "thorn-pen", "thorn-ruler", "thorn-tray"],
+  },
+  "thorn-paper-clip": {
+    code: "SG-07",
+    title: "Thorn Paper Clip",
+    subtitle: "07 / 10",
+    heroImage: "./assets/thorn_paper_clip_03.png",
+    lead: "A tiny graphic object where order and discomfort meet in one line.",
+    facts: [
+      ["Category", "Paper Accessory"],
+      ["Finish", "Polished Steel"],
+      ["Scale", "One Size"],
+      ["Use", "Document Hold"],
+    ],
+    concept: [
+      "The paper clip stays almost diagrammatic, with thorns inserted along its otherwise smooth path.",
+      "Its smallness makes the interruption feel surprisingly direct."
+    ],
+    detailTitle: "Wire Detail",
+    detailText: "A continuous metal loop is punctuated with miniature spikes that keep the object thin, graphic, and sharp.",
+    materials: ["Steel wire", "Polished edge", "Miniature spikes"],
+    dimensions: [
+      ["Height", "48 mm"],
+      ["Width", "20 mm"],
+      ["Type", "Clip"],
+    ],
+    related: ["thorn-binder-clip", "thorn-pen", "thorn-ruler", "thorn-tray"],
+  },
+  "thorn-tray": {
+    code: "SG-08",
+    title: "Thorn Tray",
+    subtitle: "08 / 10",
+    heroImage: "./assets/thorn_tray_03.png",
+    lead: "A flat utility surface edged with a perimeter of small interruptions.",
+    facts: [
+      ["Category", "Desk Tray"],
+      ["Finish", "Brushed Steel"],
+      ["Scale", "One Size"],
+      ["Use", "Object Display"],
+    ],
+    concept: [
+      "The tray frames curation and containment while spikes gather around the rim like a controlled fence.",
+      "It functions as a platform for the rest of the collection."
+    ],
+    detailTitle: "Rim Detail",
+    detailText: "The tray stays minimal and shallow, while thorn density increases around the edge to define its border condition.",
+    materials: ["Pressed steel", "Raised lip", "Stamped spikes"],
+    dimensions: [
+      ["Width", "230 mm"],
+      ["Depth", "130 mm"],
+      ["Height", "22 mm"],
+    ],
+    related: ["thorn-mug", "thorn-binder-clip", "thorn-paper-clip", "thorn-vine-objet"],
+  },
+  "thorn-mirror": {
+    code: "SG-09",
+    title: "Thorn Mirror",
+    subtitle: "09 / 10",
+    heroImage: "./assets/thorn_mirror_03.png",
+    lead: "A reflective object whose soft oval edge is wrapped in defensive texture.",
+    facts: [
+      ["Category", "Reflective Object"],
+      ["Finish", "Mirror + Steel"],
+      ["Scale", "One Size"],
+      ["Use", "Desk Reflection"],
+    ],
+    concept: [
+      "The mirror literalizes self-inspection, placing a calm reflective surface inside a thorned shell.",
+      "Its shape remains elegant while the perimeter suggests caution."
+    ],
+    detailTitle: "Frame Detail",
+    detailText: "The mirror ring keeps a smooth front face, while conical studs build tension around the rounded outer body.",
+    materials: ["Polished mirror", "Steel shell", "Conical spikes"],
+    dimensions: [
+      ["Diameter", "108 mm"],
+      ["Depth", "38 mm"],
+      ["Type", "Table Mirror"],
+    ],
+    related: ["thorn-massage-ball", "thorn-mug", "thorn-vine-objet", "thorn-tray"],
+  },
+  "thorn-vine-objet": {
+    code: "SG-10",
+    title: "Thorn Vine Objet",
+    subtitle: "10 / 10",
+    heroImage: "./assets/thorn_vine_objet_03.png",
+    lead: "A freestanding chrome tangle that visualizes growth, tension, and ornamental restraint.",
+    facts: [
+      ["Category", "Specimen Objet"],
+      ["Finish", "Mirror Steel"],
+      ["Scale", "One Size"],
+      ["Use", "Display Object"],
+    ],
+    concept: [
+      "The vine objet abstracts the project?셲 core form into a looping self-supporting knot.",
+      "It carries the most direct relation to the live lab growth system."
+    ],
+    detailTitle: "Loop Detail",
+    detailText: "Continuous chrome tubes fold through space while small spikes punctuate the curves like a coded stress map.",
+    materials: ["Mirror steel", "Tubular frame", "Integrated spikes"],
+    dimensions: [
+      ["Height", "124 mm"],
+      ["Width", "136 mm"],
+      ["Type", "Display Objet"],
+    ],
+    related: ["thorn-tray", "thorn-mirror", "thorn-massage-ball", "thorn-mug"],
+  },
+};
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildImageCard(src, alt, caption) {
+  return `
+    <article class="product-object-card">
+      <div class="product-object-figure">
+        <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" />
+      </div>
+      <span class="product-object-caption">${escapeHtml(caption)}</span>
+    </article>
+  `;
+}
+
+function buildRelatedCard(productId) {
+  const product = productCatalog[productId];
+  if (!product) return "";
+  return `
+    <button class="product-related-card" type="button" data-related-product="${escapeHtml(productId)}">
+      <div class="product-related-card-media">
+        <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)}" />
+      </div>
+      <span class="product-related-card-title">${escapeHtml(product.title)}</span>
+    </button>
+  `;
+}
+
+function renderProductDetail(productId) {
+  const product = productCatalog[productId];
+  if (!product || !productDetailView) return;
+
+  const index = productOrder.indexOf(productId);
+  const prevId = index > 0 ? productOrder[index - 1] : null;
+  const nextId = index < productOrder.length - 1 ? productOrder[index + 1] : null;
+  const related = product.related.filter((id) => productCatalog[id]).slice(0, 4);
+
+  pdCollectionLabel.textContent = "THORN COLLECTION";
+  pdTitle.textContent = product.title;
+  pdSubtitle.textContent = product.subtitle;
+  pdLead.textContent = product.lead;
+  pdHeroImage.src = product.heroImage;
+  pdHeroImage.alt = product.title;
+
+  pdFacts.innerHTML = product.facts
+    .map(
+      ([label, value]) => `
+        <div class="product-fact">
+          <dt>${escapeHtml(label)}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </div>
+      `
+    )
+    .join("");
+
+  pdObjectGrid.innerHTML = defaultObjectViews
+    .map((caption) => buildImageCard(product.heroImage, `${product.title} ${caption}`, caption))
+    .join("");
+
+  pdConceptText.innerHTML = product.concept.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("");
+  pdConceptMedia.innerHTML = `
+    <div class="product-concept-strip">
+      <div class="product-concept-tile"><img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)}" /></div>
+      <div class="product-concept-tile"><img src="${escapeHtml(productCatalog[related[0]]?.heroImage || product.heroImage)}" alt="${escapeHtml(product.title)} related object" /></div>
+    </div>
+  `;
+
+  pdDetailImage.src = product.heroImage;
+  pdDetailImage.alt = `${product.title} detail`;
+  pdDetailTitle.textContent = product.detailTitle;
+  pdDetailText.textContent = product.detailText;
+
+  pdMaterialList.innerHTML = product.materials.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+
+  pdDimensionList.innerHTML = product.dimensions
+    .map(
+      ([label, value]) => `
+        <div>
+          <dt>${escapeHtml(label)}</dt>
+          <dd>${escapeHtml(value)}</dd>
+        </div>
+      `
+    )
+    .join("");
+
+  pdDimensionVisuals.innerHTML = Array.from({ length: 3 }, (_, visualIndex) => `
+    <div class="product-dimension-figure">
+      <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} dimension view ${visualIndex + 1}" />
+    </div>
+  `).join("");
+
+  pdRelatedGrid.innerHTML = related.map((id) => buildRelatedCard(id)).join("");
+
+  pdStoryText.innerHTML = `
+    <p>${escapeHtml(`${product.title} belongs to a collection that turns familiar desk rituals into speculative stress objects.`)}</p>
+    <p>${escapeHtml("Each piece keeps a practical silhouette while redistributing tension through material, spike rhythm, and careful scale.")}</p>
+  `;
+  pdStoryMedia.innerHTML = `
+    <div class="product-story-strip">
+      <div class="product-story-tile"><img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} story view" /></div>
+      <div class="product-story-tile"><img src="${escapeHtml(productCatalog[related[1]]?.heroImage || product.heroImage)}" alt="${escapeHtml(product.title)} collection view" /></div>
+      <div class="product-story-tile"><img src="${escapeHtml(productCatalog[related[2]]?.heroImage || product.heroImage)}" alt="${escapeHtml(product.title)} collection view" /></div>
+    </div>
+  `;
+
+  const prevLabel = prevId ? `Previous: ${productCatalog[prevId].title}` : "";
+  const nextLabel = nextId ? `Next: ${productCatalog[nextId].title}` : "";
+
+  pdNav.innerHTML = `
+    <button class="product-nav-link" type="button" ${prevId ? `data-product-nav="${escapeHtml(prevId)}"` : "disabled"}>${escapeHtml(prevLabel)}</button>
+    <span class="product-nav-current">${escapeHtml(product.subtitle)} / THORN COLLECTION</span>
+    <button class="product-nav-link product-nav-link--next" type="button" ${nextId ? `data-product-nav="${escapeHtml(nextId)}"` : "disabled"}>${escapeHtml(nextLabel)}</button>
+    <button class="product-nav-back" type="button" data-product-back>Back to Shop</button>
+  `;
+}
 
 const typingData = {
   dwell: [],
@@ -59,6 +495,7 @@ function showPage(pageName) {
   const showIntro = pageName === "intro";
   const showLab = pageName === "lab";
   const showShop = pageName === "shop";
+  const showProduct = pageName === "product";
   const showBag = pageName === "bag";
   if (introPage) {
     introPage.hidden = !showIntro;
@@ -75,6 +512,10 @@ function showPage(pageName) {
     shopPage.hidden = !showShop;
     shopPage.classList.toggle("is-active", showShop);
     if (showShop) syncShopMode();
+  }
+  if (productPage) {
+    productPage.hidden = !showProduct;
+    productPage.classList.toggle("is-active", showProduct);
   }
   if (bagPage) {
     bagPage.hidden = !showBag;
@@ -133,7 +574,7 @@ function bindTyping() {
 
 function tickScan() {
   const elapsed = Math.floor((performance.now() - scanStart) / 1000);
-  timeElapsed.textContent = `경과 시간: ${elapsed}s`;
+  timeElapsed.textContent = `寃쎄낵 ?쒓컙: ${elapsed}s`;
   rafId = requestAnimationFrame(tickScan);
 }
 
@@ -148,16 +589,16 @@ function stopScan() {
 
 function comfortMessage(text, stressScore) {
   if (text.trim().length < 10) {
-    return "측정 데이터가 짧아 기본 위로 메시지를 보여줌. 잠시 멈추고 호흡을 고르는 시간이 필요해 보임.";
+    return "痢≪젙 ?곗씠?곌? 吏㏃븘 湲곕낯 ?꾨줈 硫붿떆吏瑜?蹂댁뿬以? ?좎떆 硫덉텛怨??명씉??怨좊Ⅴ???쒓컙???꾩슂??蹂댁엫.";
   }
 
   if (stressScore >= 90) {
-    return "아주 높은 긴장 상태로 보임. 지금은 결과를 해결하려 하기보다 감각을 천천히 진정시키는 일이 더 중요해 보임.";
+    return "?꾩＜ ?믪? 湲댁옣 ?곹깭濡?蹂댁엫. 吏湲덉? 寃곌낵瑜??닿껐?섎젮 ?섍린蹂대떎 媛먭컖??泥쒖쿇??吏꾩젙?쒗궎???쇱씠 ??以묒슂??蹂댁엫.";
   }
   if (stressScore >= 82) {
-    return "피로와 긴장이 꽤 누적된 상태임. 오늘은 스스로를 다그치기보다 작은 정리부터 해보길 바람.";
+    return "?쇰줈? 湲댁옣??苑??꾩쟻???곹깭?? ?ㅻ뒛? ?ㅼ뒪濡쒕? ?ㅺ렇移섍린蹂대떎 ?묒? ?뺣━遺???대낫湲?諛붾엺.";
   }
-  return "피로가 쌓여 있지만 아직 회복할 여지가 충분해 보임. 지금의 마음을 가볍게 해주는 시간을 꼭 챙기길 바람.";
+  return "?쇰줈媛 ?볦뿬 ?덉?留??꾩쭅 ?뚮났???ъ?媛 異⑸텇??蹂댁엫. 吏湲덉쓽 留덉쓬??媛蹂띻쾶 ?댁＜???쒓컙??瑗?梨숆린湲?諛붾엺.";
 }
 
 function showResult(duration) {
@@ -194,7 +635,7 @@ async function beginMeasurement() {
   showPage("intro");
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    window.alert("현재 브라우저에서는 카메라 기능을 지원하지 않음.");
+    window.alert("?꾩옱 釉뚮씪?곗??먯꽌??移대찓??湲곕뒫??吏?먰븯吏 ?딆쓬.");
     return;
   }
 
@@ -210,7 +651,7 @@ async function beginMeasurement() {
     scanStart = performance.now();
     tickScan();
   } catch (error) {
-    window.alert("카메라 권한을 허용해야 측정이 시작됨.");
+    window.alert("移대찓??沅뚰븳???덉슜?댁빞 痢≪젙???쒖옉??");
   }
 }
 
@@ -229,7 +670,7 @@ function retryMeasurement() {
   currentChar.textContent = "0";
   currentChar.style.color = "var(--muted)";
   btnFinish.style.display = "none";
-  timeElapsed.textContent = "경과 시간: 0s";
+  timeElapsed.textContent = "寃쎄낵 ?쒓컙: 0s";
   showPage("intro");
   goTo("screenIntro");
 }
@@ -249,10 +690,56 @@ function openBagPage() {
 
 function openShopPageSection(targetId) {
   stopScan();
+  lastShopAnchor = targetId;
   showPage("shop");
   requestAnimationFrame(() => {
     const target = document.getElementById(targetId);
     target?.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+  });
+}
+
+function openProductPage(productId, sourceId) {
+  stopScan();
+  lastShopAnchor = sourceId || (labUnlocked ? "shop-intro" : "shop-only-total");
+  renderProductDetail(productId);
+  showPage("product");
+}
+
+function openProductPageFromElement(element) {
+  if (!element) return;
+  const title = element.querySelector("h3")?.textContent.trim().toLowerCase();
+  const productId = title ? productTitleMap[title] : null;
+  if (!productId) return;
+  const sourceSection = element.closest("section[id]")?.id || "shop-only-total";
+  openProductPage(productId, sourceSection);
+}
+
+function bindProductCards() {
+  productCards.forEach((card) => {
+    const title = card.querySelector("h3")?.textContent.trim().toLowerCase();
+    const productId = title ? productTitleMap[title] : null;
+    if (!productId) return;
+
+    const sourceSection = card.closest("section[id]")?.id || "shop-only-total";
+    card.dataset.productId = productId;
+    card.classList.add("is-clickable");
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("aria-label", `${card.querySelector("h3")?.textContent.trim()} detail page`);
+    card.setAttribute("onclick", "window.__openProductPageFromElement && window.__openProductPageFromElement(this)");
+    card.setAttribute(
+      "onkeydown",
+      "if(event.key==='Enter'||event.key===' '){event.preventDefault();window.__openProductPageFromElement && window.__openProductPageFromElement(this);}"
+    );
+
+    const openCurrentProduct = () => openProductPage(productId, sourceSection);
+    card.addEventListener("click", openCurrentProduct);
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openCurrentProduct();
+      }
+    });
   });
 }
 
@@ -263,6 +750,8 @@ function goHome(event) {
 
 window.__stressLabEnter = enterLiveLab;
 window.__stressLabHome = goHome;
+window.__openProductPage = openProductPage;
+window.__openProductPageFromElement = openProductPageFromElement;
 
 syncLabAccess();
 
@@ -294,3 +783,44 @@ topbarPageLinks.forEach((link) => {
     if (pageName === "bag") openBagPage();
   });
 });
+
+document.addEventListener("click", (event) => {
+  const card = event.target.closest(".shop-archive-poster-inner");
+  if (!card || !document.body.contains(card)) return;
+  const isInsideProductPage = card.closest("#productPage");
+  if (isInsideProductPage) return;
+  openProductPageFromElement(card);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  const card = event.target.closest(".shop-archive-poster-inner");
+  if (!card || !document.body.contains(card)) return;
+  const isInsideProductPage = card.closest("#productPage");
+  if (isInsideProductPage) return;
+  event.preventDefault();
+  openProductPageFromElement(card);
+});
+
+productPage?.addEventListener("click", (event) => {
+  const backButton = event.target.closest("[data-product-back]");
+  if (backButton) {
+    openShopPageSection(lastShopAnchor);
+    return;
+  }
+
+  const relatedCard = event.target.closest("[data-related-product]");
+  if (relatedCard) {
+    openProductPage(relatedCard.dataset.relatedProduct, lastShopAnchor);
+    return;
+  }
+
+  const navButton = event.target.closest("[data-product-nav]");
+  if (navButton) {
+    openProductPage(navButton.dataset.productNav, lastShopAnchor);
+  }
+});
+
+renderProductDetail("thorn-mug");
+bindProductCards();
+
