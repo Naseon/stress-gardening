@@ -49,7 +49,7 @@ let stream = null;
 let rafId = 0;
 let scanStart = 0;
 let typingBound = false;
-let labUnlocked = false;
+let labUnlocked = localStorage.getItem("sgLabUnlocked") === "true";
 let lastShopAnchor = "shop-only-total";
 
 const productTitleMap = {
@@ -79,6 +79,19 @@ const productOrder = [
 ];
 
 const defaultObjectViews = ["Front", "Profile", "Detail", "Context"];
+
+const productPageHrefMap = {
+  "thorn-mug": "./thorn-mug.html",
+  "thorn-incense-holder": "./thorn-incense-holder.html",
+  "thorn-pen": "./thorn-pen.html",
+  "thorn-ruler": "./thorn-ruler.html",
+  "thorn-massage-ball": "./thorn-massage-ball.html",
+  "thorn-binder-clip": "./thorn-binder-clip.html",
+  "thorn-paper-clip": "./thorn-paper-clip.html",
+  "thorn-tray": "./thorn-tray.html",
+  "thorn-mirror": "./thorn-mirror.html",
+  "thorn-vine-objet": "./thorn-vine-objet.html",
+};
 
 const productCatalog = {
   "thorn-mug": {
@@ -376,132 +389,157 @@ function buildRelatedCard(productId) {
   `;
 }
 
-function renderProductDetail(productId) {
-  const product = productCatalog[productId];
-  if (!product || !productDetailView) return;
-
-  const index = productOrder.indexOf(productId);
-  const prevId = index > 0 ? productOrder[index - 1] : null;
-  const nextId = index < productOrder.length - 1 ? productOrder[index + 1] : null;
-  const related = product.related.filter((id) => productCatalog[id]).slice(0, 4);
-  const factMarkup = product.facts
-    .map(
-      ([label, value]) => `
-        <div class="product-fact">
-          <dt>${escapeHtml(label)}</dt>
-          <dd>${escapeHtml(value)}</dd>
-        </div>
-      `
-    )
-    .join("");
-
-  const objectViewMarkup = ["Front", "Side", "Top", "Detail"]
-    .map((caption) => buildImageCard(product.heroImage, `${product.title} ${caption}`, caption))
-    .join("");
-
-  const dimensionMarkup = product.dimensions
-    .map(
-      ([label, value]) => `
-        <div>
-          <dt>${escapeHtml(label)}</dt>
-          <dd>${escapeHtml(value)}</dd>
-        </div>
-      `
-    )
-    .join("");
-
-  const blueprintMarkup = ["Front View", "Side View", "Top View"]
-    .map(
-      (caption, visualIndex) => `
-        <article class="product-blueprint-card">
-          <div class="product-blueprint-figure">
-            <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} ${escapeHtml(caption)}" />
-          </div>
-          <span>${escapeHtml(caption)}</span>
-        </article>
-      `
-    )
-    .join("");
-
-  const editorialSources = [
-    product.heroImage,
-    productCatalog[related[0]]?.heroImage || product.heroImage,
-    productCatalog[related[1]]?.heroImage || product.heroImage,
-  ];
-
-  const editorialMarkup = editorialSources
-    .map(
-      (src, editorialIndex) => `
-        <article class="product-editorial-card">
-          <img src="${escapeHtml(src)}" alt="${escapeHtml(product.title)} editorial ${editorialIndex + 1}" />
-        </article>
-      `
-    )
-    .join("");
-
-  const relatedMarkup = related.map((id) => buildRelatedCard(id)).join("");
-
+function renderProductErrorState(message) {
+  if (!productDetailView) return;
   productDetailView.innerHTML = `
-    <div class="product-detail-simple">
-      <section class="product-simple-hero">
-        <div class="product-simple-copy">
-          <p class="product-detail-kicker">THORN COLLECTION</p>
-          <div class="product-simple-heading">
-            <div>
-              <p class="product-simple-index">${escapeHtml(product.subtitle)}</p>
-              <h1>${escapeHtml(product.title)}</h1>
-            </div>
-            <button class="product-back-link" type="button" data-product-back>Back to Shop</button>
-          </div>
-          <p class="product-simple-lead">${escapeHtml(product.lead)}</p>
-          <dl class="product-detail-facts">${factMarkup}</dl>
-        </div>
-        <div class="product-simple-hero-media">
-          <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)}" />
-        </div>
-      </section>
-
-      <section class="product-simple-views">
-        <div class="product-simple-step">02</div>
-        <div class="product-object-grid">${objectViewMarkup}</div>
-      </section>
-
-      <section class="product-simple-detail">
-        <div class="product-simple-step">04</div>
-        <div class="product-simple-detail-media">
-          <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} detail view" />
-        </div>
-        <div class="product-simple-detail-copy">
-          <p class="product-section-label">${escapeHtml(product.detailTitle)}</p>
-          <p>${escapeHtml(product.detailText)}</p>
-          <div class="product-simple-dimensions">
-            <div class="product-simple-dimension-copy">
-              <p class="product-section-label">Dimension</p>
-              <dl class="product-dimension-list">${dimensionMarkup}</dl>
-            </div>
-            <div class="product-simple-blueprints">${blueprintMarkup}</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="product-simple-editorials">
-        ${editorialMarkup}
-      </section>
-
-      <section class="product-simple-related">
-        <div class="product-simple-related-head">
-          <p class="product-section-label">Related Objects</p>
-        </div>
-        <div class="product-related-grid">${relatedMarkup}</div>
-      </section>
-
-      <section class="product-simple-nav">
-        <button class="product-nav-link" type="button" ${prevId ? `data-product-nav="${escapeHtml(prevId)}"` : "disabled"}>${escapeHtml(prevId ? `Previous: ${productCatalog[prevId].title}` : "")}</button>
-        <span class="product-nav-current">${escapeHtml(product.subtitle)} / THORN COLLECTION</span>
-        <button class="product-nav-link product-nav-link--next" type="button" ${nextId ? `data-product-nav="${escapeHtml(nextId)}"` : "disabled"}>${escapeHtml(nextId ? `Next: ${productCatalog[nextId].title}` : "")}</button>
-      </section>
-    </div>
+    <section class="product-detail-empty-state">
+      <p class="product-detail-empty-state__eyebrow">THORN COLLECTION</p>
+      <h1>Product Detail Unavailable</h1>
+      <p class="product-detail-empty-state__copy">${escapeHtml(message)}</p>
+      <button class="product-back-link" type="button" data-product-back>Back to Shop</button>
+    </section>
   `;
+}
+
+function renderProductDetail(productId) {
+  try {
+    const product = productCatalog[productId];
+    if (!productDetailView) return;
+    if (!product) {
+      renderProductErrorState("The selected product could not be found.");
+      return;
+    }
+
+    const index = productOrder.indexOf(productId);
+    const prevId = index > 0 ? productOrder[index - 1] : null;
+    const nextId = index < productOrder.length - 1 ? productOrder[index + 1] : null;
+    const relatedSource = Array.isArray(product.related) ? product.related : [];
+    const related = relatedSource.filter((id) => productCatalog[id]).slice(0, 4);
+    const factSource = Array.isArray(product.facts) ? product.facts : [];
+    const dimensionSource = Array.isArray(product.dimensions) ? product.dimensions : [];
+
+    const factMarkup = factSource
+      .map(
+        ([label, value]) => `
+          <div class="product-fact">
+            <dt>${escapeHtml(label)}</dt>
+            <dd>${escapeHtml(value)}</dd>
+          </div>
+        `
+      )
+      .join("");
+
+    const objectViewMarkup = ["Front", "Side", "Top", "Detail"]
+      .map((caption) => buildImageCard(product.heroImage, `${product.title} ${caption}`, caption))
+      .join("");
+
+    const dimensionMarkup = dimensionSource
+      .map(
+        ([label, value]) => `
+          <div>
+            <dt>${escapeHtml(label)}</dt>
+            <dd>${escapeHtml(value)}</dd>
+          </div>
+        `
+      )
+      .join("");
+
+    const blueprintMarkup = ["Front View", "Side View", "Top View"]
+      .map(
+        (caption) => `
+          <article class="product-blueprint-card">
+            <div class="product-blueprint-figure">
+              <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} ${escapeHtml(caption)}" />
+            </div>
+            <span>${escapeHtml(caption)}</span>
+          </article>
+        `
+      )
+      .join("");
+
+    const editorialSources = [
+      product.heroImage,
+      productCatalog[related[0]]?.heroImage || product.heroImage,
+      productCatalog[related[1]]?.heroImage || product.heroImage,
+    ];
+
+    const editorialMarkup = editorialSources
+      .map(
+        (src, editorialIndex) => `
+          <article class="product-editorial-card">
+            <img src="${escapeHtml(src)}" alt="${escapeHtml(product.title)} editorial ${editorialIndex + 1}" />
+          </article>
+        `
+      )
+      .join("");
+
+    const relatedMarkup = related.map((id) => buildRelatedCard(id)).join("");
+
+    productDetailView.innerHTML = `
+      <div class="product-detail-simple">
+        <section class="product-simple-hero">
+          <div class="product-simple-copy">
+            <p class="product-detail-kicker">THORN COLLECTION</p>
+            <div class="product-simple-heading">
+              <div>
+                <p class="product-simple-index">${escapeHtml(product.subtitle || "")}</p>
+                <h1>${escapeHtml(product.title || "")}</h1>
+              </div>
+              <button class="product-back-link" type="button" data-product-back>Back to Shop</button>
+            </div>
+            <p class="product-simple-lead">${escapeHtml(product.lead || "")}</p>
+            <dl class="product-detail-facts">${factMarkup}</dl>
+          </div>
+          <div class="product-simple-hero-media">
+            <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title || "Product")}" />
+          </div>
+        </section>
+
+        <section class="product-simple-views">
+          <div class="product-simple-step">02</div>
+          <div class="product-object-grid">${objectViewMarkup}</div>
+        </section>
+
+        <section class="product-simple-detail">
+          <div class="product-simple-step">04</div>
+          <div class="product-simple-detail-media">
+            <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title || "Product")} detail view" />
+          </div>
+          <div class="product-simple-detail-copy">
+            <p class="product-section-label">${escapeHtml(product.detailTitle || "Detail")}</p>
+            <p>${escapeHtml(product.detailText || "")}</p>
+            <div class="product-simple-dimensions">
+              <div class="product-simple-dimension-copy">
+                <p class="product-section-label">Dimension</p>
+                <dl class="product-dimension-list">${dimensionMarkup}</dl>
+              </div>
+              <div class="product-simple-blueprints">${blueprintMarkup}</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="product-simple-editorials">
+          ${editorialMarkup}
+        </section>
+
+        <section class="product-simple-related">
+          <div class="product-simple-related-head">
+            <p class="product-section-label">Related Objects</p>
+          </div>
+          <div class="product-related-grid">${relatedMarkup}</div>
+        </section>
+
+        <section class="product-simple-nav">
+          <button class="product-nav-link" type="button" ${prevId ? `data-product-nav="${escapeHtml(prevId)}"` : "disabled"}>${escapeHtml(prevId ? `Previous: ${productCatalog[prevId].title}` : "")}</button>
+          <span class="product-nav-current">${escapeHtml(`${product.subtitle || ""} / THORN COLLECTION`)}</span>
+          <button class="product-nav-link product-nav-link--next" type="button" ${nextId ? `data-product-nav="${escapeHtml(nextId)}"` : "disabled"}>${escapeHtml(nextId ? `Next: ${productCatalog[nextId].title}` : "")}</button>
+        </section>
+      </div>
+    `;
+  } catch (error) {
+    console.error("Failed to render product detail:", error);
+    renderProductErrorState("Something interrupted the detail view. Please return to the shop and try again.");
+  }
 }
 
 const typingData = {
@@ -704,6 +742,7 @@ function finishMeasurement() {
 function retryMeasurement() {
   stopScan();
   labUnlocked = false;
+  localStorage.removeItem("sgLabUnlocked");
   syncLabAccess();
   resetTypingData();
   stressInput.value = "";
@@ -718,6 +757,7 @@ function retryMeasurement() {
 function enterLiveLab() {
   stopScan();
   labUnlocked = true;
+  localStorage.setItem("sgLabUnlocked", "true");
   syncLabAccess();
   showPage("lab");
   labPage?.classList.remove("shop-only");
@@ -741,14 +781,15 @@ function openShopPageSection(targetId) {
 function openProductPage(productId, sourceId) {
   stopScan();
   lastShopAnchor = sourceId || (labUnlocked ? "shop-intro" : "shop-only-total");
-  renderProductDetail(productId);
-  showPage("product");
+  const targetHref = productPageHrefMap[productId];
+  if (!targetHref) return;
+  window.location.href = targetHref;
 }
 
 function openProductPageFromElement(element) {
   if (!element) return;
   const title = element.querySelector("h3")?.textContent.trim().toLowerCase();
-  const productId = title ? productTitleMap[title] : null;
+  const productId = element.dataset.productId || (title ? productTitleMap[title] : null);
   if (!productId) return;
   const sourceSection = element.closest("section[id]")?.id || "shop-only-total";
   openProductPage(productId, sourceSection);
@@ -757,7 +798,7 @@ function openProductPageFromElement(element) {
 function bindProductCards() {
   productCards.forEach((card) => {
     const title = card.querySelector("h3")?.textContent.trim().toLowerCase();
-    const productId = title ? productTitleMap[title] : null;
+    const productId = card.dataset.productId || (title ? productTitleMap[title] : null);
     if (!productId) return;
 
     const sourceSection = card.closest("section[id]")?.id || "shop-only-total";
@@ -772,7 +813,7 @@ function bindProductCards() {
       "if(event.key==='Enter'||event.key===' '){event.preventDefault();window.__openProductPageFromElement && window.__openProductPageFromElement(this);}"
     );
 
-    const openCurrentProduct = () => openProductPage(productId, sourceSection);
+    const openCurrentProduct = () => openProductPage(card.dataset.productId, sourceSection);
     card.addEventListener("click", openCurrentProduct);
     card.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
@@ -863,4 +904,32 @@ productPage?.addEventListener("click", (event) => {
 
 renderProductDetail("thorn-mug");
 bindProductCards();
+
+(function applyEntryRoute() {
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get("page");
+
+  if (!page) return;
+
+  if (page === "shop") {
+    if (labUnlocked) openShopPageSection("shop-intro");
+    else openShopPageSection("shop-only-total");
+    return;
+  }
+
+  if (page === "about") {
+    if (labUnlocked) openShopPageSection("about-project");
+    else openShopPageSection("shop-only-about");
+    return;
+  }
+
+  if (page === "bag") {
+    openBagPage();
+    return;
+  }
+
+  if (page === "lab" && labUnlocked) {
+    enterLiveLab();
+  }
+})();
 
