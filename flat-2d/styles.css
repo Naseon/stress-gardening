@@ -1766,7 +1766,7 @@ canvas {
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding: 36px 18px 48px;
+  padding: 14px 10px 18px;
 }
 
 .shop-collection-visual img {
@@ -1819,16 +1819,16 @@ canvas {
   right: clamp(32px, 3vw, 46px);
 }
 
-.shop-collection-card__inner[data-product-id="thorn-mug"] { --visual-scale-w: 80%; --visual-scale-h: 72%; }
-.shop-collection-card__inner[data-product-id="thorn-mirror"] { --visual-scale-w: 84%; --visual-scale-h: 72%; }
-.shop-collection-card__inner[data-product-id="thorn-binder-clip"] { --visual-scale-w: 72%; --visual-scale-h: 68%; }
-.shop-collection-card__inner[data-product-id="thorn-pen"] { --visual-scale-w: 24%; --visual-scale-h: 78%; }
-.shop-collection-card__inner[data-product-id="thorn-incense-holder"] { --visual-scale-w: 28%; --visual-scale-h: 72%; --visual-shift-y: 4px; }
-.shop-collection-card__inner[data-product-id="thorn-massage-ball"] { --visual-scale-w: 74%; --visual-scale-h: 66%; }
-.shop-collection-card__inner[data-product-id="thorn-paper-clip"] { --visual-scale-w: 26%; --visual-scale-h: 74%; }
-.shop-collection-card__inner[data-product-id="thorn-ruler"] { --visual-scale-w: 80%; --visual-scale-h: 18%; }
-.shop-collection-card__inner[data-product-id="thorn-tray"] { --visual-scale-w: 88%; --visual-scale-h: 26%; --visual-shift-y: 6px; }
-.shop-collection-card__inner[data-product-id="thorn-vine-objet"] { --visual-scale-w: 76%; --visual-scale-h: 70%; }
+.shop-collection-card__inner[data-product-id="thorn-mug"] { --visual-scale-w: 92%; --visual-scale-h: 84%; }
+.shop-collection-card__inner[data-product-id="thorn-mirror"] { --visual-scale-w: 92%; --visual-scale-h: 84%; }
+.shop-collection-card__inner[data-product-id="thorn-binder-clip"] { --visual-scale-w: 84%; --visual-scale-h: 80%; }
+.shop-collection-card__inner[data-product-id="thorn-pen"] { --visual-scale-w: 36%; --visual-scale-h: 92%; }
+.shop-collection-card__inner[data-product-id="thorn-incense-holder"] { --visual-scale-w: 40%; --visual-scale-h: 88%; --visual-shift-y: 8px; }
+.shop-collection-card__inner[data-product-id="thorn-massage-ball"] { --visual-scale-w: 88%; --visual-scale-h: 82%; }
+.shop-collection-card__inner[data-product-id="thorn-paper-clip"] { --visual-scale-w: 34%; --visual-scale-h: 90%; }
+.shop-collection-card__inner[data-product-id="thorn-ruler"] { --visual-scale-w: 96%; --visual-scale-h: 28%; }
+.shop-collection-card__inner[data-product-id="thorn-tray"] { --visual-scale-w: 98%; --visual-scale-h: 36%; --visual-shift-y: 8px; }
+.shop-collection-card__inner[data-product-id="thorn-vine-objet"] { --visual-scale-w: 88%; --visual-scale-h: 82%; }
 
 .shop-catalog-section--secondary {
   padding-top: 0;
@@ -2490,24 +2490,24 @@ canvas {
 
   .shop-collection-visual {
     min-height: 0;
-    padding: 30px 10px 12px;
+    padding: 12px 8px 14px;
   }
 
   .shop-collection-card__inner[data-product-id="thorn-incense-holder"] {
-    --visual-scale-w: 26%;
-    --visual-scale-h: 74%;
+    --visual-scale-w: 36%;
+    --visual-scale-h: 86%;
     --visual-shift-y: 10px;
   }
 
   .shop-collection-card__inner[data-product-id="thorn-pen"] {
-    --visual-scale-w: 24%;
-    --visual-scale-h: 76%;
-    --visual-shift-y: 6px;
+    --visual-scale-w: 34%;
+    --visual-scale-h: 88%;
+    --visual-shift-y: 8px;
   }
 
   .shop-collection-card__inner[data-product-id="thorn-ruler"] {
-    --visual-scale-w: 78%;
-    --visual-scale-h: 18%;
+    --visual-scale-w: 92%;
+    --visual-scale-h: 24%;
     --visual-shift-y: 0;
   }
 
@@ -2720,7 +2720,7 @@ canvas {
   display: grid !important;
   place-items: center !important;
   overflow: hidden !important;
-  padding: 38px 16px 48px !important;
+  padding: 14px 8px 18px !important;
 }
 
 .shop-page .shop-collection-visual img {
