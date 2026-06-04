@@ -1362,55 +1362,84 @@ a {
 }
 
 .shop-intro-section {
-  min-height: calc(100vh - 60px);
-  display: grid;
-  place-items: center;
-  padding-inline: clamp(24px, 3vw, 48px);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.985), rgba(252, 252, 250, 0.96)),
-    #fff;
-  text-align: center;
+  min-height: auto;
+  display: block;
+  padding: clamp(14px, 1.6vw, 20px) 0 clamp(12px, 1.6vw, 18px);
+  background: #fff;
+  text-align: left;
 }
 
-.shop-intro-copy {
+.shop-collection-header {
   width: 100%;
-  max-width: 1760px;
-  display: grid;
-  justify-items: center;
-  gap: clamp(5px, 0.6vw, 8px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 clamp(32px, 3vw, 46px) 16px;
 }
 
-.shop-intro-copy h2 {
+.shop-collection-titleblock {
+  display: grid;
+  gap: 2px;
+}
+
+.shop-collection-kicker {
   margin: 0;
-  width: 100%;
-  white-space: nowrap;
-  font-size: clamp(40px, 5.9vw, 100px);
-  font-weight: 900;
-  line-height: 0.9;
-  letter-spacing: -0.095em;
+  font-size: clamp(12px, 1vw, 16px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.shop-collection-subtitle {
+  margin: 0;
+  color: rgba(17, 17, 17, 0.62);
+  font-size: clamp(9px, 0.72vw, 12px);
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.shop-collection-mark {
+  margin-top: 2px;
+  display: grid;
+  grid-template-columns: auto 8px auto;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  justify-items: center;
+  column-gap: 6px;
+  row-gap: 1px;
+  min-width: 32px;
+  color: rgba(17, 17, 17, 0.88);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.shop-collection-mark span {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+}
+
+.shop-collection-mark span:nth-child(1) { grid-column: 2; grid-row: 1; }
+.shop-collection-mark span:nth-child(2) { grid-column: 1; grid-row: 2; }
+.shop-collection-mark span:nth-child(3) { grid-column: 3; grid-row: 2; }
+.shop-collection-mark span:nth-child(4) { grid-column: 2; grid-row: 3; }
+.shop-collection-mark .shop-collection-mark__dot {
+  width: 6px;
+  height: 6px;
+  border: 1px solid rgba(17, 17, 17, 0.82);
+  border-radius: 999px;
 }
 
 .shop-intro-description {
-  margin: 5px 0 0;
-  max-width: 980px;
-  color: rgba(17, 17, 17, 0.74);
-  font-size: clamp(10px, 0.7vw, 12px);
-  font-weight: 400;
-  line-height: 1.6;
-  letter-spacing: -0.02em;
+  display: none;
 }
 
 .shop-intro-link {
-  margin-top: clamp(24px, 3vw, 36px);
-  color: rgba(17, 17, 17, 0.44);
-  font-size: clamp(16px, 1.18vw, 20px);
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: -0.02em;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 8px;
-  transition: color 0.18s ease;
+  display: none;
 }
 
 .shop-intro-link:hover {
@@ -1660,6 +1689,142 @@ canvas {
   padding-inline: 0;
   background: #ffffff;
 }
+
+.shop-catalog-section--collection {
+  padding-top: 0;
+  padding-bottom: 10px;
+}
+
+.shop-collection-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 clamp(32px, 3vw, 46px) 0;
+}
+
+.shop-collection-grid--ten {
+  grid-auto-rows: 1fr;
+}
+
+.shop-collection-card {
+  position: relative;
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.shop-collection-card__index {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  color: rgba(17, 17, 17, 0.78);
+}
+
+.shop-collection-card__inner {
+  position: relative;
+  flex: 1;
+  display: block;
+  width: 100%;
+  min-height: 100%;
+  padding: 0;
+  border: 0;
+  aspect-ratio: 0.88;
+  background: #fbfbf8;
+  box-shadow: none;
+  justify-self: stretch;
+  align-self: stretch;
+  overflow: hidden;
+  --visual-scale-w: 84%;
+  --visual-scale-h: 80%;
+  --visual-shift-y: 0px;
+}
+
+.shop-collection-card__inner.is-clickable {
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.shop-collection-card__inner.is-clickable:hover,
+.shop-collection-card__inner.is-clickable:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.1), 0 10px 18px rgba(17, 17, 16, 0.05);
+  background: #ffffff;
+}
+
+.shop-collection-visual {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 34px 14px 28px;
+}
+
+.shop-collection-visual img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: var(--visual-scale-w);
+  max-height: var(--visual-scale-h);
+  object-fit: contain;
+  transform: translateY(var(--visual-shift-y));
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 14px 16px rgba(17, 17, 16, 0.07));
+}
+
+.shop-collection-name {
+  margin: 0;
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  z-index: 3;
+  max-width: calc(100% - 28px);
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 1.25;
+  color: rgba(17, 17, 17, 0.9);
+}
+
+.shop-collection-footerline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 34px;
+  padding: 12px clamp(32px, 3vw, 46px) 2px;
+  color: rgba(17, 17, 17, 0.52);
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.shop-collection-footerline__center {
+  text-align: center;
+}
+
+.shop-collection-footerline__count {
+  position: absolute;
+  right: clamp(32px, 3vw, 46px);
+}
+
+.shop-collection-card__inner[data-product-id="thorn-mug"] { --visual-scale-w: 88%; --visual-scale-h: 84%; }
+.shop-collection-card__inner[data-product-id="thorn-mirror"] { --visual-scale-w: 84%; --visual-scale-h: 86%; }
+.shop-collection-card__inner[data-product-id="thorn-binder-clip"] { --visual-scale-w: 68%; --visual-scale-h: 68%; }
+.shop-collection-card__inner[data-product-id="thorn-pen"] { --visual-scale-w: 22%; --visual-scale-h: 86%; }
+.shop-collection-card__inner[data-product-id="thorn-incense-holder"] { --visual-scale-w: 30%; --visual-scale-h: 84%; --visual-shift-y: 8px; }
+.shop-collection-card__inner[data-product-id="thorn-massage-ball"] { --visual-scale-w: 76%; --visual-scale-h: 78%; }
+.shop-collection-card__inner[data-product-id="thorn-paper-clip"] { --visual-scale-w: 24%; --visual-scale-h: 80%; }
+.shop-collection-card__inner[data-product-id="thorn-ruler"] { --visual-scale-w: 82%; --visual-scale-h: 18%; }
+.shop-collection-card__inner[data-product-id="thorn-tray"] { --visual-scale-w: 98%; --visual-scale-h: 34%; --visual-shift-y: 8px; }
+.shop-collection-card__inner[data-product-id="thorn-vine-objet"] { --visual-scale-w: 72%; --visual-scale-h: 86%; }
 
 .shop-catalog-section--secondary {
   padding-top: 0;
@@ -2302,19 +2467,49 @@ canvas {
     min-height: calc(100svh - 60px);
   }
 
-  .shop-intro-copy h2 {
-    white-space: normal;
-    font-size: clamp(32px, 8vw, 56px);
+  .shop-collection-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-inline: 18px;
   }
 
-  .shop-intro-description {
-    font-size: 10px;
-    line-height: 1.7;
+  .shop-collection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding-inline: 18px;
   }
 
-  .shop-intro-link {
-    font-size: 15px;
-    text-underline-offset: 8px;
+  .shop-collection-card {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .shop-collection-visual {
+    min-height: 0;
+    padding: 30px 10px 12px;
+  }
+
+  .shop-collection-card__inner[data-product-id="thorn-incense-holder"] {
+    --visual-scale-w: 26%;
+    --visual-scale-h: 74%;
+    --visual-shift-y: 10px;
+  }
+
+  .shop-collection-card__inner[data-product-id="thorn-pen"] {
+    --visual-scale-w: 24%;
+    --visual-scale-h: 76%;
+    --visual-shift-y: 6px;
+  }
+
+  .shop-collection-card__inner[data-product-id="thorn-ruler"] {
+    --visual-scale-w: 78%;
+    --visual-scale-h: 18%;
+    --visual-shift-y: 0;
+  }
+
+  .shop-collection-footerline {
+    padding-inline: 18px;
+    font-size: 11px;
   }
 
   .shop-product-visual {
@@ -2405,5 +2600,13 @@ canvas {
   .product-nav-back {
     text-align: left;
     justify-self: start;
+  }
+
+  .shop-collection-kicker {
+    font-size: 20px;
+  }
+
+  .shop-collection-subtitle {
+    font-size: 13px;
   }
 }

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import deque
 from pathlib import Path
 
 import numpy as np
@@ -39,21 +40,48 @@ def border_color(rgb: np.ndarray) -> np.ndarray:
 
 def remove_white_background(rgba: np.ndarray) -> np.ndarray:
     rgb = rgba[:, :, :3].astype(np.float32)
-    alpha = rgba[:, :, 3].astype(np.float32)
+    alpha = rgba[:, :, 3].astype(np.uint8)
+    height, width = alpha.shape
 
     bg = border_color(rgb)
     dist = np.sqrt(((rgb - bg) ** 2).sum(axis=2))
     brightness = rgb.mean(axis=2)
+    spread = rgb.max(axis=2) - rgb.min(axis=2)
 
-    dist_weight = np.clip((52.0 - dist) / 32.0, 0.0, 1.0)
-    bright_weight = np.clip((brightness - 228.0) / 24.0, 0.0, 1.0)
-    removal = dist_weight * bright_weight
+    # Only remove pixels that look like the original bright backdrop and are
+    # connected to the image edge. This preserves metallic highlights inside
+    # the product while stripping the lingering white poster box.
+    candidate = ((brightness >= 222.0) & (dist <= 42.0) & (spread <= 26.0)) | (alpha == 0)
+    visited = np.zeros((height, width), dtype=bool)
+    queue: deque[tuple[int, int]] = deque()
 
-    hard_bg = (brightness > 245.0) & (dist < 28.0)
-    removal = np.where(hard_bg, 1.0, removal)
+    def enqueue(x: int, y: int) -> None:
+        if not visited[y, x] and candidate[y, x]:
+            visited[y, x] = True
+            queue.append((x, y))
 
-    alpha = alpha * (1.0 - removal)
-    rgba[:, :, 3] = np.clip(alpha, 0, 255).astype(np.uint8)
+    for x in range(width):
+        enqueue(x, 0)
+        enqueue(x, height - 1)
+    for y in range(height):
+        enqueue(0, y)
+        enqueue(width - 1, y)
+
+    while queue:
+        x, y = queue.popleft()
+        for nx, ny in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if 0 <= nx < width and 0 <= ny < height and not visited[ny, nx] and candidate[ny, nx]:
+                visited[ny, nx] = True
+                queue.append((nx, ny))
+
+    rgba[visited, 3] = 0
+
+    # Soften the immediate edge fringe to avoid hard cut halos around the
+    # products once they sit on a pure white card.
+    fringe = (~visited) & (brightness >= 232.0) & (spread <= 28.0)
+    fringe_alpha = rgba[:, :, 3].astype(np.float32)
+    fringe_alpha[fringe] *= np.clip((245.0 - brightness[fringe]) / 24.0, 0.18, 1.0)
+    rgba[:, :, 3] = np.clip(fringe_alpha, 0, 255).astype(np.uint8)
     return rgba
 
 
