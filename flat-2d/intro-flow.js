@@ -15,7 +15,7 @@ const shopPage = document.getElementById("shopPage");
 const productPage = document.getElementById("productPage");
 const bagPage = document.getElementById("bagPage");
 const liveLabSection = document.getElementById("gardening-lab");
-const productCards = document.querySelectorAll(".shop-archive-poster-inner");
+const productCards = document.querySelectorAll(".shop-collection-card__inner.is-clickable");
 const productBackButtons = document.querySelectorAll("[data-product-back]");
 const productDetailView = document.getElementById("productDetailView");
 const pdCollectionLabel = document.getElementById("pdCollectionLabel");
@@ -866,7 +866,7 @@ topbarPageLinks.forEach((link) => {
 });
 
 document.addEventListener("click", (event) => {
-  const card = event.target.closest(".shop-archive-poster-inner");
+  const card = event.target.closest(".shop-collection-card__inner.is-clickable");
   if (!card || !document.body.contains(card)) return;
   const isInsideProductPage = card.closest("#productPage");
   if (isInsideProductPage) return;
@@ -875,7 +875,7 @@ document.addEventListener("click", (event) => {
 
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Enter" && event.key !== " ") return;
-  const card = event.target.closest(".shop-archive-poster-inner");
+  const card = event.target.closest(".shop-collection-card__inner.is-clickable");
   if (!card || !document.body.contains(card)) return;
   const isInsideProductPage = card.closest("#productPage");
   if (isInsideProductPage) return;

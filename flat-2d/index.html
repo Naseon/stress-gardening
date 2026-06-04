@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stress Gardening | Live Lab Edition</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260604-shop-collection-v2" />
   </head>
   <body>
     <main class="app-shell">
@@ -28,7 +28,7 @@
                 A hybrid stress analysis lab for measuring tension, recording the day, and translating
                 that state into a collectible specimen ritual.
               </p>
-              <button class="hero-cta hero-cta-fill" id="btnBegin" type="button">측정 시작하기</button>
+              <button class="hero-cta hero-cta-fill" id="btnBegin" type="button">痢≪젙 ?쒖옉?섍린</button>
             </div>
           </div>
 
@@ -51,7 +51,7 @@
                       <span class="dot"></span>
                       <span class="live-label">Live Scanning...</span>
                     </div>
-                    <div class="time-elapsed" id="timeElapsed">경과 시간: 0s</div>
+                    <div class="time-elapsed" id="timeElapsed">寃쎄낵 ?쒓컙: 0s</div>
                   </div>
                 </div>
               </div>
@@ -59,12 +59,12 @@
               <div class="scan-right">
                 <div class="typing-area">
                   <div class="question-box">
-                    <p>오늘 하루는 어땠나요? 가장 스트레스를 받았던 일은 무엇이었나요?</p>
+                    <p>?ㅻ뒛 ?섎（???대븷?섏슂? 媛???ㅽ듃?덉뒪瑜?諛쏆븯???쇱? 臾댁뾿?댁뿀?섏슂?</p>
                   </div>
-                  <textarea id="stressInput" placeholder="이곳에 자유롭게 마음을 기록해 주세요..."></textarea>
-                  <div class="char-count"><span id="currentChar">0</span> / 300자 권장</div>
+                  <textarea id="stressInput" placeholder="?닿납???먯쑀濡?쾶 留덉쓬??湲곕줉??二쇱꽭??.."></textarea>
+                  <div class="char-count"><span id="currentChar">0</span> / 300??沅뚯옣</div>
                 </div>
-                <button class="hero-cta hero-cta-fill btn-finish" id="btnFinish" type="button">이제 모든 스트레스를 정리하고 싶어</button>
+                <button class="hero-cta hero-cta-fill btn-finish" id="btnFinish" type="button">?댁젣 紐⑤뱺 ?ㅽ듃?덉뒪瑜??뺣━?섍퀬 ?띠뼱</button>
               </div>
             </div>
           </div>
@@ -80,8 +80,8 @@
                 <div class="rd"><div class="rd-label">Stress Index</div><div class="rd-val" id="resTotal">--</div></div>
               </div>
               <div class="result-actions">
-                <button class="hero-cta hero-cta-fill" id="btnEnterLab" type="button" onclick="window.__stressLabEnter && window.__stressLabEnter()">Live Lab으로 이동</button>
-                <button class="hero-cta" id="btnRetry" type="button">새로 측정하기</button>
+                <button class="hero-cta hero-cta-fill" id="btnEnterLab" type="button" onclick="window.__stressLabEnter && window.__stressLabEnter()">Live Lab?쇰줈 ?대룞</button>
+                <button class="hero-cta" id="btnRetry" type="button">?덈줈 痢≪젙?섍린</button>
               </div>
             </div>
           </div>
@@ -144,351 +144,94 @@
 
         <section class="shop-flow shop-flow--full" id="shop-full-flow">
           <section class="shop-intro-section" id="shop-intro">
-            <div class="shop-intro-copy">
-              <h2>Stress Gardening</h2>
-              <p class="shop-intro-description">
-                측정된 스트레스의 정도가 높을 수록 가시 덩굴은 더 많이 자라나고 더 복잡하게 얽혀있습니다.
-                <br />
-                Stress Vine에 따라 달라지는 가시 덩굴을 정리할 시간을 가져보세요.
-              </p>
-              <a class="shop-intro-link" href="#recommend-shop">스트레스 레벨에 맞는 추천 아이템 보기</a>
+            <div class="shop-collection-header">
+              <div class="shop-collection-titleblock">
+                <p class="shop-collection-kicker">THORN COLLECTION</p>
+                <p class="shop-collection-subtitle">Objects that hold. Details that last.</p>
+              </div>
+              <div class="shop-collection-mark" aria-hidden="true">
+                <span>S</span>
+                <span class="shop-collection-mark__dot"></span>
+                <span>O</span>
+                <span class="shop-collection-mark__dot"></span>
+                <span>2</span>
+              </div>
             </div>
-          </section>
-
-          <section class="shop-catalog-section" id="recommend-shop">
-            <div class="shop-catalog-grid shop-catalog-grid--archive">
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN MUG -</strong>
-                  <span>FEATURED</span>
+            <div class="shop-collection-grid shop-collection-grid--ten">
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">01</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-mug">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_mug_03.png" alt="Thorn Mug product" /></div>
+                  <p class="shop-collection-name">Thorn Mug</p>
                 </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Mug.</h3>
-                      <p>Stress Gardening Lab Project SG-01</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_mug_03.png" alt="Thorn Mug product reference" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 01</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
               </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN VINE OBJET -</strong>
-                  <span>FEATURED</span>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">02</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-mirror">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_mirror_03.png" alt="Thorn Mirror product" /></div>
+                  <p class="shop-collection-name">Thorn Mirror</p>
                 </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Vine Objet.</h3>
-                      <p>Stress Gardening Lab Project SG-02</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_vine_objet_03.png" alt="Thorn vine objet specimen" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 02</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
               </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN MIRROR -</strong>
-                  <span>FEATURED</span>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">03</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-binder-clip">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_binder_clip_03.png" alt="Thorn Binder Clip product" /></div>
+                  <p class="shop-collection-name">Thorn Binder Clip</p>
                 </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Mirror.</h3>
-                      <p>Stress Gardening Lab Project SG-03</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_mirror_03.png" alt="Thorn mirror product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 03</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
               </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN TRAY -</strong>
-                  <span>FEATURED</span>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">04</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-pen">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_pen_03.png" alt="Thorn Pen product" /></div>
+                  <p class="shop-collection-name">Thorn Pen</p>
                 </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Tray.</h3>
-                      <p>Stress Gardening Lab Project SG-04</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_tray_03.png" alt="Thorn tray product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 04</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">05</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-incense-holder">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_incense_holder_03.png" alt="Thorn Incense Holder product" /></div>
+                  <p class="shop-collection-name">Thorn Incense Holder</p>
                 </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">06</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-massage-ball">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_massage_ball_03.png" alt="Thorn Massage Ball product" /></div>
+                  <p class="shop-collection-name">Thorn Massage Ball</p>
+                </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">07</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-paper-clip">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_paper_clip_03.png" alt="Thorn Paper Clip product" /></div>
+                  <p class="shop-collection-name">Thorn Paper Clip</p>
+                </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">08</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-ruler">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_ruler_03.png" alt="Thorn Ruler product" /></div>
+                  <p class="shop-collection-name">Thorn Ruler</p>
+                </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">09</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-tray">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_tray_03.png" alt="Thorn Tray product" /></div>
+                  <p class="shop-collection-name">Thorn Tray</p>
+                </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">10</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-vine-objet">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_vine_objet_03.png" alt="Thorn Vine Objet product" /></div>
+                  <p class="shop-collection-name">Thorn Vine Objet</p>
+                </div>
               </article>
             </div>
-            <div class="shop-archive-bottomline">
-              <span>STRESS GARDENING LABORATORY<br />SEOUL, KOR</span>
-              <span>SIMULATED GOODS ONLY</span>
-              <span>NOT FOR PURCHASE</span>
-              <span>EXPERIMENTAL PROJECT</span>
-              <span>&copy; STRESS GARDENING LAB</span>
-            </div>
-          </section>
-
-          <section class="shop-catalog-section shop-catalog-section--secondary" id="total-shop">
-            <div class="shop-catalog-grid shop-catalog-grid--archive shop-catalog-grid--ten">
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN MUG -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Mug.</h3>
-                      <p>Stress Gardening Lab Project SG-01</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_mug_03.png" alt="Thorn mug product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 01</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN INCENSE HOLDER -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Incense Holder.</h3>
-                      <p>Stress Gardening Lab Project SG-02</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_incense_holder_03.png" alt="Thorn incense holder product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 02</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN PEN -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Pen.</h3>
-                      <p>Stress Gardening Lab Project SG-03</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_pen_03.png" alt="Thorn pen product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 03</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN RULER -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Ruler.</h3>
-                      <p>Stress Gardening Lab Project SG-04</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_ruler_03.png" alt="Thorn ruler product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 04</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN MASSAGE BALL -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Massage Ball.</h3>
-                      <p>Stress Gardening Lab Project SG-05</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_massage_ball_03.png" alt="Thorn massage ball product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 05</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN BINDER CLIP -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Binder Clip.</h3>
-                      <p>Stress Gardening Lab Project SG-06</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_binder_clip_03.png" alt="Thorn binder clip product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 06</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN PAPER CLIP -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Paper Clip.</h3>
-                      <p>Stress Gardening Lab Project SG-07</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_paper_clip_03.png" alt="Thorn paper clip product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 07</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN TRAY -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Tray.</h3>
-                      <p>Stress Gardening Lab Project SG-08</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_tray_03.png" alt="Thorn tray product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 08</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN MIRROR -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Mirror.</h3>
-                      <p>Stress Gardening Lab Project SG-09</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_mirror_03.png" alt="Thorn mirror product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 09</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN VINE OBJET -</strong>
-                  <span>ONE SIZE</span>
-                </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Vine Objet.</h3>
-                      <p>Stress Gardening Lab Project SG-10</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_vine_objet_03.png" alt="Thorn vine objet product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 10</span>
-                      <span class="shop-archive-mark">SG</span>
-                    </div>
-                  </div>
-                </div>
-                <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-              </article>
+            <div class="shop-collection-footerline">
+              <span class="shop-collection-footerline__center">&copy; POINTTWOFIVE · SECOND</span>
+              <span class="shop-collection-footerline__count">10 / 10</span>
             </div>
           </section>
 
@@ -525,245 +268,97 @@
         </section>
 
         <section class="shop-flow shop-flow--preview" id="shop-preview-flow">
-        <section class="shop-catalog-section shop-catalog-section--secondary" id="shop-only-total">
-          <div class="shop-catalog-grid shop-catalog-grid--archive shop-catalog-grid--ten">
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN MUG -</strong>
-                <span>ONE SIZE</span>
+          <section class="shop-catalog-section shop-catalog-section--collection shop-catalog-section--preview" id="shop-only-total">
+            <div class="shop-collection-header">
+              <div class="shop-collection-titleblock">
+                <p class="shop-collection-kicker">THORN COLLECTION</p>
+                <p class="shop-collection-subtitle">Objects that hold. Details that last.</p>
               </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Mug.</h3>
-                    <p>Stress Gardening Lab Project SG-01</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_mug_03.png" alt="Thorn Mug product reference" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 01</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              <div class="shop-collection-mark" aria-hidden="true">
+                <span>S</span>
+                <span class="shop-collection-mark__dot"></span>
+                <span>O</span>
+                <span class="shop-collection-mark__dot"></span>
+                <span>2</span>
+              </div>
+            </div>
+            <div class="shop-collection-grid shop-collection-grid--ten">
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">01</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-mug">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_mug_03.png" alt="Thorn Mug product" /></div>
+                  <p class="shop-collection-name">Thorn Mug</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-              <article class="shop-archive-column">
-                <div class="shop-archive-meta">
-                  <strong>THORN INCENSE HOLDER -</strong>
-                  <span>ONE SIZE</span>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">02</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-mirror">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_mirror_03.png" alt="Thorn Mirror product" /></div>
+                  <p class="shop-collection-name">Thorn Mirror</p>
                 </div>
-                <div class="shop-archive-poster">
-                  <div class="shop-archive-poster-inner">
-                    <div class="shop-archive-copy">
-                      <h3>Thorn Incense Holder.</h3>
-                      <p>Stress Gardening Lab Project SG-02</p>
-                    </div>
-                    <div class="shop-archive-visual">
-                      <img src="./assets/thorn_incense_holder_03.png" alt="Thorn incense holder product" />
-                    </div>
-                    <div class="shop-archive-footer">
-                      <span>SG 02</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">03</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-binder-clip">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_binder_clip_03.png" alt="Thorn Binder Clip product" /></div>
+                  <p class="shop-collection-name">Thorn Binder Clip</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN PEN -</strong>
-                <span>ONE SIZE</span>
-              </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Pen.</h3>
-                    <p>Stress Gardening Lab Project SG-03</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_pen_03.png" alt="Thorn pen product" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 03</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">04</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-pen">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_pen_03.png" alt="Thorn Pen product" /></div>
+                  <p class="shop-collection-name">Thorn Pen</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN RULER -</strong>
-                <span>ONE SIZE</span>
-              </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Ruler.</h3>
-                    <p>Stress Gardening Lab Project SG-04</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_ruler_03.png" alt="Thorn ruler product" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 04</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">05</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-incense-holder">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_incense_holder_03.png" alt="Thorn Incense Holder product" /></div>
+                  <p class="shop-collection-name">Thorn Incense Holder</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN MASSAGE BALL -</strong>
-                <span>ONE SIZE</span>
-              </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Massage Ball.</h3>
-                    <p>Stress Gardening Lab Project SG-05</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_massage_ball_03.png" alt="Thorn massage ball product" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 05</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">06</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-massage-ball">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_massage_ball_03.png" alt="Thorn Massage Ball product" /></div>
+                  <p class="shop-collection-name">Thorn Massage Ball</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN BINDER CLIP -</strong>
-                <span>ONE SIZE</span>
-              </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Binder Clip.</h3>
-                    <p>Stress Gardening Lab Project SG-06</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_binder_clip_03.png" alt="Thorn binder clip product" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 06</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">07</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-paper-clip">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_paper_clip_03.png" alt="Thorn Paper Clip product" /></div>
+                  <p class="shop-collection-name">Thorn Paper Clip</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN PAPER CLIP -</strong>
-                <span>ONE SIZE</span>
-              </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Paper Clip.</h3>
-                    <p>Stress Gardening Lab Project SG-07</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_paper_clip_03.png" alt="Thorn paper clip product" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 07</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">08</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-ruler">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_ruler_03.png" alt="Thorn Ruler product" /></div>
+                  <p class="shop-collection-name">Thorn Ruler</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN TRAY -</strong>
-                <span>ONE SIZE</span>
-              </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Tray.</h3>
-                    <p>Stress Gardening Lab Project SG-08</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_tray_03.png" alt="Thorn tray product" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 08</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">09</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-tray">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_tray_03.png" alt="Thorn Tray product" /></div>
+                  <p class="shop-collection-name">Thorn Tray</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN MIRROR -</strong>
-                <span>ONE SIZE</span>
-              </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Mirror.</h3>
-                    <p>Stress Gardening Lab Project SG-09</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_mirror_03.png" alt="Thorn mirror product" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 09</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
+              </article>
+              <article class="shop-collection-card">
+                <span class="shop-collection-card__index">10</span>
+                <div class="shop-collection-card__inner is-clickable" data-product-id="thorn-vine-objet">
+                  <div class="shop-collection-visual"><img src="./assets/thorn_vine_objet_03.png" alt="Thorn Vine Objet product" /></div>
+                  <p class="shop-collection-name">Thorn Vine Objet</p>
                 </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-
-            <article class="shop-archive-column">
-              <div class="shop-archive-meta">
-                <strong>THORN VINE OBJET -</strong>
-                <span>ONE SIZE</span>
-              </div>
-              <div class="shop-archive-poster">
-                <div class="shop-archive-poster-inner">
-                  <div class="shop-archive-copy">
-                    <h3>Thorn Vine Objet.</h3>
-                    <p>Stress Gardening Lab Project SG-10</p>
-                  </div>
-                  <div class="shop-archive-visual">
-                    <img src="./assets/thorn_vine_objet_03.png" alt="Thorn vine objet product" />
-                  </div>
-                  <div class="shop-archive-footer">
-                    <span>SG 10</span>
-                    <span class="shop-archive-mark">SG</span>
-                  </div>
-                </div>
-              </div>
-              <p class="shop-archive-note">SIMULATED GOODS ONLY<br />NOT FOR PURCHASE</p>
-            </article>
-          </div>
-          <div class="shop-archive-bottomline">
-            <span>STRESS GARDENING LABORATORY<br />SEOUL, KOR</span>
-            <span>SIMULATED GOODS ONLY</span>
-            <span>NOT FOR PURCHASE</span>
-            <span>EXPERIMENTAL PROJECT</span>
-            <span>&copy; STRESS GARDENING LAB</span>
-          </div>
+              </article>
+            </div>
+            <div class="shop-collection-footerline">
+              <span class="shop-collection-footerline__center">&copy; POINTTWOFIVE · SECOND</span>
+              <span class="shop-collection-footerline__count">10 / 10</span>
+            </div>
+          </section>
         </section>
 
         <section class="about-project-section" id="shop-only-about">
@@ -791,6 +386,23 @@
             </article>
           </div>
         </section>
+      </div>
+
+      <div class="product-page page-screen" id="productPage" hidden>
+        <nav class="topbar" aria-label="Product navigation">
+          <img src="./assets/Group 29.png" alt="Stress Gardening top bar" class="topbar__image" />
+          <a class="topbar__link topbar__link--brand" id="productHomeButton" href="#" aria-label="Stress Gardening" data-nav-home="true"></a>
+          <a class="topbar__link topbar__link--shop" href="#shop-only-total" aria-label="Shop" data-nav-route="shop"></a>
+          <a class="topbar__link topbar__link--bag" href="#bag-page" aria-label="Bag" data-nav-page="bag"></a>
+          <a class="topbar__link topbar__link--about" href="#shop-only-about" aria-label="About Project" data-nav-route="about"></a>
+        </nav>
+
+        <section class="product-detail is-active" id="productDetailView">
+          <section class="product-detail-empty-state">
+            <p class="product-detail-empty-state__eyebrow">THORN COLLECTION</p>
+            <h1>Select a Product</h1>
+            <p class="product-detail-empty-state__copy">Choose an object from the shop to open its detail page.</p>
+          </section>
         </section>
       </div>
 
@@ -818,11 +430,11 @@
               <p class="bag-status">Purchase Unavailable</p>
               <span class="bag-divider" aria-hidden="true"></span>
               <p class="bag-message">
-                현재 이 페이지의 굿즈는 실제 구매가 불가능한 전시용 아카이브입니다.
+                ?꾩옱 ???섏씠吏??援우쫰???ㅼ젣 援щℓ媛 遺덇??ν븳 ?꾩떆???꾩뭅?대툕?낅땲??
                 <br />
-                Stress Gardening의 표본과 오브제는 프로젝트 감상을 위한
+                Stress Gardening???쒕낯怨??ㅻ툕?쒕뒗 ?꾨줈?앺듃 媛먯긽???꾪븳
                 <br />
-                가상 컬렉션으로만 제공됩니다.
+                媛??而щ젆?섏쑝濡쒕쭔 ?쒓났?⑸땲??
               </p>
               <div class="bag-tag">SIMULATED GOODS ONLY&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;NOT FOR PURCHASE</div>
             </div>
@@ -839,7 +451,7 @@
               <p>SEOUL, KOR</p>
             </div>
             <div class="bag-footer-meta">
-              <p>© STRESS GARDENING LAB</p>
+              <p>짤 STRESS GARDENING LAB</p>
               <p>ARCHIVE ONLY</p>
               <span class="bag-footer-marks" aria-hidden="true"></span>
             </div>
@@ -849,7 +461,8 @@
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="./app.js"></script>
-    <script src="./intro-flow.js"></script>
+    <script src="./app.js?v=20260604-shop-collection-v2"></script>
+    <script src="./intro-flow.js?v=20260604-shop-collection-v2"></script>
   </body>
 </html>
+
