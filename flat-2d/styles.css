@@ -1524,6 +1524,11 @@ a {
   --lab-action-bottom: clamp(18px, 2vw, 28px);
 }
 
+.canvas-shell-lab::before {
+  content: none;
+  display: none;
+}
+
 canvas {
   position: absolute;
   inset: 0;
