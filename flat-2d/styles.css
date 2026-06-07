@@ -181,13 +181,13 @@ a {
 }
 
 .product-detail-frame {
-  border-top: 1px solid rgba(23, 23, 21, 0.18);
+  border-top: 0;
 }
 
 .product-detail-section {
   display: grid;
   grid-template-columns: 72px minmax(0, 0.72fr) minmax(0, 1.28fr);
-  border-bottom: 1px solid rgba(23, 23, 21, 0.14);
+  border-bottom: 0;
   min-height: 230px;
 }
 
@@ -196,7 +196,6 @@ a {
 }
 
 .product-detail-step {
-  border-right: 1px solid rgba(23, 23, 21, 0.14);
   padding: 26px 18px;
   font-size: 12px;
   font-weight: 700;
@@ -221,7 +220,6 @@ a {
   display: grid;
   align-content: start;
   gap: 18px;
-  border-right: 1px solid rgba(23, 23, 21, 0.14);
 }
 
 .product-detail-heading-row {
@@ -312,7 +310,7 @@ a {
 }
 
 .product-detail-hero-media {
-  min-height: 520px;
+  min-height: 920px;
 }
 
 .product-detail-hero-media img,
@@ -328,8 +326,8 @@ a {
 }
 
 .product-detail-hero-media img {
-  max-width: min(92%, 760px);
-  max-height: 420px;
+  max-width: min(100%, 1520px);
+  max-height: 840px;
   filter: drop-shadow(0 18px 24px rgba(17, 17, 16, 0.1));
 }
 
@@ -352,7 +350,6 @@ a {
   min-height: 180px;
   padding: 14px;
   background: #ffffff;
-  border: 1px solid rgba(23, 23, 21, 0.12);
 }
 
 .product-object-figure--composite {
@@ -387,7 +384,6 @@ a {
   display: grid;
   align-content: center;
   gap: 18px;
-  border-right: 1px solid rgba(23, 23, 21, 0.14);
 }
 
 .product-detail-concept-media,
@@ -411,13 +407,11 @@ a {
 .product-story-tile {
   min-height: 220px;
   padding: 12px;
-  border: 1px solid rgba(23, 23, 21, 0.1);
   background: #ffffff;
 }
 
 .product-detail-media-panel--close {
   min-height: 260px;
-  border-right: 1px solid rgba(23, 23, 21, 0.14);
 }
 
 .product-detail-media-panel--close img {
