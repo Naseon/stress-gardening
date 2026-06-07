@@ -9,7 +9,7 @@
 
   :root {
     --ink: #1a1a1a; --sub: #888882; --line: #e2e2de;
-    --nav-h: 48px; --radius: 18px;
+    --nav-h: clamp(48px, 3.15vw, 60px); --radius: 18px;
   }
 
   html, body { width: 100%; height: 100%; }
@@ -19,28 +19,52 @@
   }
 
   /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
-    display: flex; align-items: stretch; background: #fff;
-    border-bottom: 1px solid #1a1a1a; z-index: 100;
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-h);
+    overflow: hidden;
+    background: #fff;
+    z-index: 100;
   }
-  .nav-brand {
-    display: flex; align-items: center; padding-left: 1.7%;
-    font-weight: 700; font-size: 14px; letter-spacing: -0.01em; flex: 0 0 19%;
-    border-right: 1px solid #1a1a1a; text-decoration: none; color: var(--ink);
-    cursor: pointer;
+  .topbar__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    pointer-events: none;
+    user-select: none;
   }
-  .nav-spacer { flex: 1; }
-  .nav-links { display: flex; align-items: stretch; }
-  .nav-links a {
-    display: flex; align-items: center; justify-content: center;
-    text-decoration: none; color: var(--ink); font-weight: 700; font-size: 14px;
-    border-left: 1px solid #1a1a1a; transition: background 0.2s;
+  .topbar__link {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: block;
+    color: inherit;
+    z-index: 2;
   }
-  .nav-links a:nth-child(1) { width: 10.2vw; }
-  .nav-links a:nth-child(2) { width: 10.9vw; }
-  .nav-links a:nth-child(3) { width: 13.5vw; }
-  .nav-links a:hover { background: #f2f2f0; }
+  .topbar__link--brand {
+    left: 0;
+    width: 19.0995%;
+    border-right: 1px solid rgba(23, 23, 21, 0.18);
+  }
+  .topbar__link--shop {
+    left: 19.0995%;
+    width: 57.6993%;
+  }
+  .topbar__link--bag {
+    left: 76.7988%;
+    width: 8.3138%;
+    border-left: 1px solid rgba(23, 23, 21, 0.18);
+    border-right: 1px solid rgba(23, 23, 21, 0.18);
+  }
+  .topbar__link--about {
+    left: 85.1126%;
+    width: 14.8874%;
+  }
 
   /* ── shared lab background ── */
   .lab-bg {
@@ -250,16 +274,9 @@
   .result-actions .btn-shop { background: #111; color: #fff; }
   .result-actions .btn-shop:hover { background: #000; }
 
-  /* nav stays light on the gridded result page */
-  body.result-mode nav { background: #fff; border-bottom: 1px solid #1a1a1a; }
-  body.result-mode .nav-brand { color: #111; border-right-color: #1a1a1a; }
-  body.result-mode .nav-links a { color: #111; border-left-color: #1a1a1a; }
-  body.result-mode .nav-links a:hover { background: #f2f2f0; }
   body.result-mode .lab-bg { display: none; }
 
   @media (max-width: 900px) {
-    .nav-brand { flex: 0 0 46%; font-size: 12px; padding-left: 16px; }
-    .nav-links a:nth-child(1), .nav-links a:nth-child(2), .nav-links a:nth-child(3) { width: auto; padding: 0 14px; font-size: 11px; }
     .hero-vine { height: 52vh; bottom: 8vh; }
     .hero-type { width: 96%; }
     .cam-grid { flex-direction: column; gap: 26px; }
@@ -289,14 +306,12 @@
 </head>
 <body>
 
-<nav>
-  <a class="nav-brand" id="brandHome" href="#">Stress Gardening</a>
-  <div class="nav-spacer"></div>
-  <div class="nav-links">
-    <a href="#" id="navShop">SHOP</a>
-    <a href="#" id="navBag">BAG (0)</a>
-    <a href="#" id="navAbout">About Project</a>
-  </div>
+<nav class="topbar" aria-label="Site navigation">
+  <img src="./assets/Group 29.png" alt="Stress Gardening top bar" class="topbar__image" />
+  <a class="topbar__link topbar__link--brand" id="brandHome" href="#" aria-label="Stress Gardening"></a>
+  <a class="topbar__link topbar__link--shop" id="navShop" href="#" aria-label="Shop"></a>
+  <a class="topbar__link topbar__link--bag" id="navBag" href="#" aria-label="Bag"></a>
+  <a class="topbar__link topbar__link--about" id="navAbout" href="#" aria-label="About Project"></a>
 </nav>
 
 <!-- shared background -->
