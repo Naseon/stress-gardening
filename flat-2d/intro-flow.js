@@ -134,7 +134,7 @@ const productCatalog = {
     ],
     concept: [
       "A compact spiked dome grounds the incense stick in a way that feels ceremonial rather than decorative.",
-      "Its scale stays quiet while the form keeps the project?셲 controlled discomfort intact."
+      "Its scale stays quiet while the form keeps the project's controlled discomfort intact."
     ],
     detailTitle: "Object Base Detail",
     detailText: "The dome holds dense thorn spacing around a soft metallic body, balancing calm fragrance with tactile alertness.",
@@ -189,7 +189,7 @@ const productCatalog = {
       "The object suggests that measuring can also be a form of scrutiny."
     ],
     detailTitle: "Edge Detail",
-    detailText: "Sharp side spikes run along the ruler?셲 edge while engraved numbers preserve its technical clarity.",
+    detailText: "Sharp side spikes run along the ruler's edge while engraved numbers preserve its technical clarity.",
     materials: ["Etched steel", "Precision markings", "Matte sheen"],
     dimensions: [
       ["Length", "100 mm"],
@@ -341,7 +341,7 @@ const productCatalog = {
       ["Use", "Display Object"],
     ],
     concept: [
-      "The vine objet abstracts the project?셲 core form into a looping self-supporting knot.",
+      "The vine objet abstracts the project's core form into a looping self-supporting knot.",
       "It carries the most direct relation to the live lab growth system."
     ],
     detailTitle: "Loop Detail",
@@ -652,7 +652,7 @@ function bindTyping() {
 
 function tickScan() {
   const elapsed = Math.floor((performance.now() - scanStart) / 1000);
-  timeElapsed.textContent = `寃쎄낵 ?쒓컙: ${elapsed}s`;
+  timeElapsed.textContent = `경과 시간: ${elapsed}s`;
   rafId = requestAnimationFrame(tickScan);
 }
 
@@ -667,16 +667,16 @@ function stopScan() {
 
 function comfortMessage(text, stressScore) {
   if (text.trim().length < 10) {
-    return "痢≪젙 ?곗씠?곌? 吏㏃븘 湲곕낯 ?꾨줈 硫붿떆吏瑜?蹂댁뿬以? ?좎떆 硫덉텛怨??명씉??怨좊Ⅴ???쒓컙???꾩슂??蹂댁엫.";
+    return "측정 데이터가 짧아 기본 위로 메시지를 보여줌. 잠시 멈추고 호흡을 고르는 시간이 필요해 보임.";
   }
 
   if (stressScore >= 90) {
-    return "?꾩＜ ?믪? 湲댁옣 ?곹깭濡?蹂댁엫. 吏湲덉? 寃곌낵瑜??닿껐?섎젮 ?섍린蹂대떎 媛먭컖??泥쒖쿇??吏꾩젙?쒗궎???쇱씠 ??以묒슂??蹂댁엫.";
+    return "아주 높은 긴장 상태로 보임. 지금은 결과를 해결하려 하기보다 감각을 천천히 진정시키는 일이 더 중요해 보임.";
   }
   if (stressScore >= 82) {
-    return "?쇰줈? 湲댁옣??苑??꾩쟻???곹깭?? ?ㅻ뒛? ?ㅼ뒪濡쒕? ?ㅺ렇移섍린蹂대떎 ?묒? ?뺣━遺???대낫湲?諛붾엺.";
+    return "피로와 긴장이 꽤 누적된 상태임. 오늘은 스스로를 다그치기보다 작은 정리부터 해보길 바람.";
   }
-  return "?쇰줈媛 ?볦뿬 ?덉?留??꾩쭅 ?뚮났???ъ?媛 異⑸텇??蹂댁엫. 吏湲덉쓽 留덉쓬??媛蹂띻쾶 ?댁＜???쒓컙??瑗?梨숆린湲?諛붾엺.";
+  return "피로가 쌓여 있지만 아직 회복할 여지가 충분해 보임. 지금의 마음을 가볍게 해주는 시간을 꼭 챙기길 바람.";
 }
 
 function showResult(duration) {
@@ -713,7 +713,7 @@ async function beginMeasurement() {
   showPage("intro");
 
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    window.alert("?꾩옱 釉뚮씪?곗??먯꽌??移대찓??湲곕뒫??吏?먰븯吏 ?딆쓬.");
+    window.alert("현재 브라우저에서는 카메라 기능을 지원하지 않음.");
     return;
   }
 
@@ -729,7 +729,7 @@ async function beginMeasurement() {
     scanStart = performance.now();
     tickScan();
   } catch (error) {
-    window.alert("移대찓??沅뚰븳???덉슜?댁빞 痢≪젙???쒖옉??");
+    window.alert("카메라 권한을 허용해야 측정이 시작됨.");
   }
 }
 
@@ -749,7 +749,7 @@ function retryMeasurement() {
   currentChar.textContent = "0";
   currentChar.style.color = "var(--muted)";
   btnFinish.style.display = "none";
-  timeElapsed.textContent = "寃쎄낵 ?쒓컙: 0s";
+  timeElapsed.textContent = "경과 시간: 0s";
   showPage("intro");
   goTo("screenIntro");
 }
