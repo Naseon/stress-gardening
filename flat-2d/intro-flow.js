@@ -1,4 +1,48 @@
-﻿const screens = document.querySelectorAll(".screen");
+﻿// 네비게이션 템플릿을 각 페이지 섹션에 복제
+(function stampNavs() {
+  const tpl = document.getElementById("topbar-tpl");
+  if (!tpl) return;
+  document.querySelectorAll(".page-screen").forEach((page) => {
+    page.insertBefore(tpl.content.cloneNode(true), page.firstChild);
+  });
+  document.querySelector("#introPage .topbar")?.classList.add("intro-nav");
+})();
+
+// PRODUCT_CATALOG 데이터로 쇼핑 그리드 렌더링 (HTML 2중 관리 제거)
+(function renderShopGrids() {
+  if (!Array.isArray(PRODUCT_CATALOG)) return;
+  const total = PRODUCT_CATALOG.length;
+  const html = PRODUCT_CATALOG.map((p, i) => {
+    const idx = String(i + 1).padStart(2, "0");
+    return `<article class="shop-collection-card">
+  <span class="shop-collection-card__index">${idx}</span>
+  <div class="shop-collection-card__inner is-clickable" data-product-id="${p.id}">
+    <div class="shop-collection-visual"><img src="${p.image}" alt="${p.name} product" /></div>
+    <p class="shop-collection-name">${p.name}</p>
+  </div>
+</article>`;
+  }).join("\n");
+
+  const fullGrid = document.getElementById("shop-grid-full");
+  const previewGrid = document.getElementById("shop-grid-preview");
+  if (fullGrid) fullGrid.innerHTML = html;
+  if (previewGrid) previewGrid.innerHTML = html;
+
+  const countLabel = `${total} / ${total}`;
+  const fullCount = document.getElementById("shop-count-full");
+  const previewCount = document.getElementById("shop-count-preview");
+  if (fullCount) fullCount.textContent = countLabel;
+  if (previewCount) previewCount.textContent = countLabel;
+})();
+
+// #about-project 내용을 #shop-only-about에 복제 (About HTML 2중 관리 제거)
+(function mirrorAboutSection() {
+  const src = document.getElementById("about-project");
+  const dst = document.getElementById("shop-only-about");
+  if (src && dst) dst.innerHTML = src.innerHTML;
+})();
+
+const screens = document.querySelectorAll(".screen");
 const mainBg = document.getElementById("mainBg");
 const btnBegin = document.getElementById("btnBegin");
 const btnFinish = document.getElementById("btnFinish");
@@ -598,6 +642,7 @@ function showPage(pageName) {
   if (bagPage) {
     bagPage.hidden = !showBag;
     bagPage.classList.toggle("is-active", showBag);
+    bagPage.querySelector(".topbar")?.classList.toggle("topbar--bag-active", showBag);
   }
   window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
