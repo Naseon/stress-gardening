@@ -2624,6 +2624,11 @@ canvas {
   padding-bottom: 0 !important;
 }
 
+.shop-page .shop-intro-section,
+.shop-page .shop-catalog-section--preview {
+  padding-top: clamp(54px, 5vw, 92px) !important;
+}
+
 .shop-page .shop-collection-header {
   width: min(1450px, calc(100% - 44px)) !important;
   margin: 0 auto 22px !important;
