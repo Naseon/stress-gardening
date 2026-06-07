@@ -29,9 +29,9 @@ const PRODUCT_PAGES = {
     ],
     detailImage: "./assets/thorn_mug_03.png",
     editorials: [
-      "./assets/thorn_mug_03.png",
-      "./assets/thorn_tray_03.png",
-      "./assets/thorn_pen_03.png",
+      "./assets/thorn_mug_editorial_01.png",
+      "./assets/thorn_mug_editorial_02.png",
+      "./assets/thorn_mug_editorial_03.png",
     ],
   },
   "thorn-incense-holder": {
@@ -493,7 +493,7 @@ function renderPage(productId, level) {
           </div>
         </section>
 
-        <section class="product-section pd-editorials">
+        <section class="product-section pd-editorials${productId === "thorn-mug" ? " pd-editorials--fullbleed" : ""}">
           <div class="pd-editorials-index">06</div>
           <div class="pd-editorial-grid">${renderEditorials(product.editorials, product.title)}</div>
         </section>
