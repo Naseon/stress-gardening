@@ -26,7 +26,7 @@
         cardCount++;
         cards.push(`<article class="shop-collection-card">
   <span class="shop-collection-card__index">Lv.${lv.level}</span>
-  <div class="shop-collection-card__inner is-clickable" data-product-id="${p.id}">
+  <div class="shop-collection-card__inner is-clickable" data-product-id="${p.id}" data-level="${lv.level}">
     <div class="shop-collection-visual"><img src="${lv.image}" alt="${p.name} Level ${lv.level}" /></div>
     <p class="shop-collection-name">${p.name}</p>
   </div>
@@ -846,12 +846,12 @@ function openShopPageSection(targetId) {
   });
 }
 
-function openProductPage(productId, sourceId) {
+function openProductPage(productId, sourceId, level) {
   stopScan();
   lastShopAnchor = sourceId || (labUnlocked ? "shop-intro" : "shop-only-total");
   const targetHref = productPageHrefMap[productId];
   if (!targetHref) return;
-  window.location.href = targetHref;
+  window.location.href = level ? `${targetHref}?level=${level}` : targetHref;
 }
 
 function openProductPageFromElement(element) {
@@ -859,8 +859,9 @@ function openProductPageFromElement(element) {
   const title = element.querySelector("h3")?.textContent.trim().toLowerCase();
   const productId = element.dataset.productId || (title ? productTitleMap[title] : null);
   if (!productId) return;
+  const level = element.dataset.level || null;
   const sourceSection = element.closest("section[id]")?.id || "shop-only-total";
-  openProductPage(productId, sourceSection);
+  openProductPage(productId, sourceSection, level);
 }
 
 function bindProductCards() {
@@ -881,7 +882,7 @@ function bindProductCards() {
       "if(event.key==='Enter'||event.key===' '){event.preventDefault();window.__openProductPageFromElement && window.__openProductPageFromElement(this);}"
     );
 
-    const openCurrentProduct = () => openProductPage(card.dataset.productId, sourceSection);
+    const openCurrentProduct = () => openProductPage(card.dataset.productId, sourceSection, card.dataset.level || null);
     card.addEventListener("click", openCurrentProduct);
     card.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {

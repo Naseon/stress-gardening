@@ -415,7 +415,7 @@ function renderEditorials(images, title) {
     .join("");
 }
 
-function renderPage(productId) {
+function renderPage(productId, level) {
   const product = PRODUCT_PAGES[productId];
   if (!product) return;
 
@@ -423,7 +423,21 @@ function renderPage(productId) {
   const previousId = currentIndex > 0 ? productOrder[currentIndex - 1] : null;
   const nextId = currentIndex < productOrder.length - 1 ? productOrder[currentIndex + 1] : null;
 
-  document.title = `${product.title} / Stress Gardening`;
+  // 레벨이 지정된 경우 해당 레벨 이미지 사용 (파일명 규칙: {id의 -를 _로}_lv{N}.png)
+  const assetPrefix = productId.replace(/-/g, "_");
+  const levelImage = (level >= 1 && level <= 4)
+    ? `./assets/${assetPrefix}_lv${level}.png`
+    : null;
+  const heroImage = levelImage || product.heroImage;
+  const levelLabel = level ? `Lv.${level}` : null;
+
+  // 레벨별 뷰 이미지: 레벨 이미지가 있으면 4장 모두 해당 이미지로
+  const views = levelImage
+    ? [["Front", levelImage], ["Side", levelImage], ["Top", levelImage], ["Detail", levelImage]]
+    : product.views;
+
+  const titleSuffix = levelLabel ? ` — ${levelLabel}` : "";
+  document.title = `${product.title}${titleSuffix} / Stress Gardening`;
 
   const mount = document.getElementById("productDetailApp");
   if (!mount) return;
@@ -436,24 +450,24 @@ function renderPage(productId) {
           <div class="pd-hero-copy">
             <div class="pd-collection">THORN COLLECTION</div>
             <h1 class="pd-title">${escapeHtml(product.title)}</h1>
-            <div class="pd-subtitle">${escapeHtml(product.subtitle)}</div>
+            <div class="pd-subtitle">${escapeHtml(levelLabel ? `${levelLabel} / ${product.subtitle}` : product.subtitle)}</div>
             <p class="pd-lead">${escapeHtml(product.lead)}</p>
             <div class="pd-facts">${renderFacts(product.facts)}</div>
           </div>
           <div class="pd-hero-visual">
-            <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} hero image" />
+            <img src="${escapeHtml(heroImage)}" alt="${escapeHtml(product.title)}${levelLabel ? ` ${levelLabel}` : ""} hero image" />
           </div>
         </section>
 
         <section class="product-section pd-views">
           <div class="pd-views-index">02</div>
-          ${renderViews(product.views)}
+          ${renderViews(views)}
         </section>
 
         <section class="product-section pd-detail">
           <div class="pd-detail-index">04</div>
           <div class="pd-detail-media">
-            <img src="${escapeHtml(product.detailImage)}" alt="${escapeHtml(product.title)} detail" />
+            <img src="${escapeHtml(levelImage || product.detailImage)}" alt="${escapeHtml(product.title)} detail" />
           </div>
           <div class="pd-detail-copy">
             <div class="pd-detail-text">
@@ -461,8 +475,8 @@ function renderPage(productId) {
               <p class="pd-detail-description">${escapeHtml(product.detailText)}</p>
             </div>
             <div class="pd-diagrams">
-              <div class="pd-dimension-list">${renderDimensions(product.dimensions, product.heroImage)}</div>
-              ${renderDiagramSet(product.heroImage, product.diagramImage)}
+              <div class="pd-dimension-list">${renderDimensions(product.dimensions, heroImage)}</div>
+              ${renderDiagramSet(heroImage, product.diagramImage)}
             </div>
           </div>
         </section>
@@ -485,4 +499,5 @@ function renderPage(productId) {
 }
 
 const productId = document.body.dataset.productId;
-renderPage(productId);
+const urlLevel = parseInt(new URLSearchParams(window.location.search).get("level"), 10) || null;
+renderPage(productId, urlLevel);
