@@ -184,6 +184,7 @@ bounceLight.position.set(-6, -10, 9);
 scene.add(bounceLight);
 
 const specimenGroup = new THREE.Group();
+specimenGroup.position.set(0, -1.15, 0);
 scene.add(specimenGroup);
 
 const vineGroup = new THREE.Group();
@@ -682,7 +683,7 @@ function addThorns(group, curve, vineRadius) {
     thorn.userData.isThorn = true;
     thorn.userData.removed = false;
     group.add(thorn);
-    thorns.push(thorn);
+    thorns.push({ mesh: thorn, t });
   }
 
   return thorns;
@@ -713,7 +714,7 @@ function addLeaves(group, curve, segmentIndex, segmentCount) {
     const roll = new THREE.Quaternion().setFromAxisAngle(dir, Math.random() * Math.PI * 2);
     leaf.quaternion.premultiply(roll);
     group.add(leaf);
-    leaves.push(leaf);
+    leaves.push({ mesh: leaf, t });
   }
 
   return leaves;
@@ -774,6 +775,8 @@ function buildSegment(fullCurve, segmentIndex, segmentCount, addFlower) {
   const startT = segmentIndex / segmentCount;
   const endT = (segmentIndex + 1) / segmentCount;
   const sampleCount = 20;
+  const tubularSegments = 18;
+  const radialSegments = 9;
   const points = [];
 
   for (let i = 0; i <= sampleCount; i += 1) {
@@ -785,7 +788,13 @@ function buildSegment(fullCurve, segmentIndex, segmentCount, addFlower) {
   const taperTip = Math.pow(1 - (segmentIndex + 1) / segmentCount, 0.62);
   const radiusBase = 0.11 * taperBase + 0.032;
   const radiusTip = 0.11 * taperTip + 0.032;
-  const tubeGeometry = makeTaperedTubeGeometry(subCurve, 18, 9, radiusBase, radiusTip);
+  const tubeGeometry = makeTaperedTubeGeometry(
+    subCurve,
+    tubularSegments,
+    radialSegments,
+    radiusBase,
+    radiusTip
+  );
   const totalIndexCount = tubeGeometry.index.count;
   tubeGeometry.setDrawRange(0, 0);
 
@@ -832,11 +841,15 @@ function buildSegment(fullCurve, segmentIndex, segmentCount, addFlower) {
     tube,
     tubeGeometry,
     totalIndexCount,
+    tubularSegments,
+    radialSegments,
+    indicesPerSection: radialSegments * 6,
     capMesh,
     thorns,
     leaves,
     flower,
     flowerScale,
+    cutProgress: 1,
     alive: true,
     grown: false,
     growStart: 0,
@@ -846,6 +859,35 @@ function buildSegment(fullCurve, segmentIndex, segmentCount, addFlower) {
     basePos: group.position.clone(),
     flowVel: new THREE.Vector3(),
   };
+}
+
+function getSegmentDrawCount(seg, progress) {
+  const clamped = Math.max(0.02, Math.min(1, progress));
+  const visibleSections = Math.max(1, Math.ceil(clamped * seg.tubularSegments));
+  return Math.min(seg.totalIndexCount, visibleSections * seg.indicesPerSection);
+}
+
+function applySegmentVisibility(seg, progress) {
+  const clamped = Math.max(0.02, Math.min(1, progress));
+  seg.cutProgress = clamped;
+  seg.tubeGeometry.setDrawRange(0, getSegmentDrawCount(seg, clamped));
+
+  seg.thorns.forEach(({ mesh, t }) => {
+    mesh.visible = !mesh.userData.removed && t <= clamped;
+  });
+
+  seg.leaves.forEach(({ mesh, t }) => {
+    mesh.visible = t <= clamped;
+  });
+
+  if (seg.capMesh) {
+    seg.capMesh.visible = seg.grown && clamped >= 0.999;
+  }
+
+  if (seg.flower) {
+    const flowerScale = clamped >= 0.999 && seg.grown ? seg.flowerScale : 0.001;
+    seg.flower.scale.setScalar(Math.max(0.001, flowerScale));
+  }
 }
 
 function buildAll() {
@@ -988,8 +1030,8 @@ function handlePluck(clientX, clientY) {
   vines.forEach((vine) => {
     vine.segs.forEach((seg) => {
       if (!seg.alive || !seg.grown) return;
-      seg.thorns.forEach((thorn) => {
-        if (!thorn.userData.removed) thorns.push(thorn);
+      seg.thorns.forEach(({ mesh }) => {
+        if (!mesh.userData.removed && mesh.visible) thorns.push(mesh);
       });
     });
   });
@@ -1025,9 +1067,18 @@ function handleCut(clientX, clientY) {
   const startSegmentIndex = hitTube.userData.segIdx;
   if (!vine) return;
 
-  const action = { type: "cut", segments: [] };
+  const action = { type: "cut", segments: [], clickedSegment: null };
+  const clickedSegment = vine.segs[startSegmentIndex];
+  if (!clickedSegment?.alive) return;
 
-  for (let i = startSegmentIndex; i < vine.segs.length; i += 1) {
+  const hitProgress = Math.max(0.04, Math.min(0.98, hits[0].uv?.x ?? 0.5));
+  action.clickedSegment = {
+    seg: clickedSegment,
+    cutProgress: clickedSegment.cutProgress,
+  };
+  applySegmentVisibility(clickedSegment, hitProgress);
+
+  for (let i = startSegmentIndex + 1; i < vine.segs.length; i += 1) {
     const seg = vine.segs[i];
     if (!seg.alive) continue;
 
@@ -1065,7 +1116,7 @@ function handleCut(clientX, clientY) {
     fallingSegments.push(seg);
   }
 
-  if (!action.segments.length) return;
+  if (!action.segments.length && !action.clickedSegment) return;
 
   history.push(action);
   playScissorsSound();
@@ -1092,6 +1143,10 @@ function undoLastAction() {
   }
 
   if (action.type === "cut") {
+    if (action.clickedSegment) {
+      applySegmentVisibility(action.clickedSegment.seg, action.clickedSegment.cutProgress);
+    }
+
     action.segments.forEach(({ seg, localPos, localQuat, localScale }) => {
       const fallingIndex = fallingSegments.indexOf(seg);
       if (fallingIndex >= 0) {
@@ -1142,23 +1197,25 @@ function updateGrowth(elapsed) {
 
       seg.grp.visible = true;
       const progress = Math.min(1, t);
-      seg.tubeGeometry.setDrawRange(0, Math.floor(progress * seg.totalIndexCount));
+      seg.tubeGeometry.setDrawRange(0, getSegmentDrawCount(seg, Math.min(progress, seg.cutProgress)));
 
       if (progress < 1) {
         complete = false;
       }
 
       if (seg.capMesh) {
-        seg.capMesh.visible = progress >= 1;
+        seg.capMesh.visible = progress >= 1 && seg.cutProgress >= 0.999;
       }
 
       if (seg.flower) {
         const flowerProgress = Math.max(0, (progress - 0.74) / 0.26);
-        seg.flower.scale.setScalar(Math.max(0.001, flowerProgress * seg.flowerScale));
+        const flowerScale = seg.cutProgress >= 0.999 ? flowerProgress * seg.flowerScale : 0.001;
+        seg.flower.scale.setScalar(Math.max(0.001, flowerScale));
       }
 
       if (progress >= 1) {
         seg.grown = true;
+        applySegmentVisibility(seg, seg.cutProgress);
       }
     });
   });
