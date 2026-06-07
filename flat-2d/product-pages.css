@@ -104,7 +104,7 @@ a {
   display: grid;
   grid-template-columns: 72px minmax(260px, 340px) minmax(0, 1fr);
   gap: 24px;
-  align-items: start;
+  align-items: center;
   padding: 28px 28px 0;
 }
 
@@ -115,7 +115,10 @@ a {
 }
 
 .pd-hero-copy {
-  padding-top: 8px;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .pd-collection {
@@ -165,17 +168,20 @@ a {
 }
 
 .pd-hero-visual {
-  min-height: 840px;
+  min-height: 420px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10px 20px 0;
+  overflow: visible;
 }
 
 .pd-hero-visual img {
-  width: 100%;
-  max-width: 1120px;
-  height: 840px;
+  width: auto;
+  max-width: min(136%, 860px);
+  height: 420px;
+  transform: scale(1.22);
+  transform-origin: center center;
   object-fit: contain;
 }
 
