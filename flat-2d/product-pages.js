@@ -18,7 +18,10 @@ const PRODUCT_PAGES = {
       ["Top", "./assets/thorn_mug_03.png"],
       ["Detail", "./assets/thorn_mug_03.png"],
     ],
-    viewsCompositeImage: "./assets/thorn_mug_views_level1_02.png",
+    viewsCompositeImages: {
+      1: "./assets/thorn_mug_views_level1_02.png",
+      2: "./assets/thorn_mug_views_level2_02.png",
+    },
     detailTitle: "THORN DETAIL",
     detailText:
       "The Thorn Mug keeps a domestic silhouette while evenly distributed spikes turn the act of holding into a slow, careful interaction.",
@@ -446,7 +449,7 @@ function renderPage(productId, level) {
   const views = levelImage
     ? [["Front", levelImage], ["Side", levelImage], ["Top", levelImage], ["Detail", levelImage]]
     : product.views;
-  const viewsCompositeImage = level === 1 ? product.viewsCompositeImage : null;
+  const viewsCompositeImage = product.viewsCompositeImages?.[level] || null;
 
   const titleSuffix = levelLabel ? ` — ${levelLabel}` : "";
   document.title = `${product.title}${titleSuffix} / Stress Gardening`;
