@@ -265,6 +265,15 @@ a {
   padding-bottom: var(--topbar-gap);
 }
 
+.pd-detail--hero-spaced .pd-detail-media {
+  overflow: hidden;
+}
+
+.pd-detail--hero-spaced .pd-detail-media img {
+  transform: scale(2);
+  transform-origin: center center;
+}
+
 .pd-detail-media {
   min-height: 420px;
   display: flex;
