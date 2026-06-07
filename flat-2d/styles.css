@@ -8,6 +8,7 @@
   --line: rgba(23, 23, 21, 0.12);
   --shadow: rgba(17, 17, 16, 0.12);
   --dark: #111111;
+  --topbar-gap: 85px;
 }
 
 * {
@@ -193,6 +194,7 @@ a {
 
 .product-detail-section--hero {
   min-height: 520px;
+  padding-block: var(--topbar-gap);
 }
 
 .product-detail-step {
@@ -2311,6 +2313,10 @@ canvas {
 }
 
 @media (max-width: 760px) {
+  :root {
+    --topbar-gap: 60px;
+  }
+
   .topbar {
     aspect-ratio: auto;
     min-height: 60px;
