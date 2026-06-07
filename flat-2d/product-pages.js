@@ -18,6 +18,7 @@ const PRODUCT_PAGES = {
       ["Top", "./assets/thorn_mug_03.png"],
       ["Detail", "./assets/thorn_mug_03.png"],
     ],
+    viewsCompositeImage: "./assets/thorn_mug_views_level1_02.png",
     detailTitle: "THORN DETAIL",
     detailText:
       "The Thorn Mug keeps a domestic silhouette while evenly distributed spikes turn the act of holding into a slow, careful interaction.",
@@ -356,7 +357,17 @@ function renderFacts(facts) {
     .join("");
 }
 
-function renderViews(views) {
+function renderViews(views, compositeImage, title) {
+  if (compositeImage) {
+    return `
+      <article class="pd-view-card pd-view-card--composite">
+        <div class="pd-view-image pd-view-image--composite">
+          <img src="${escapeHtml(compositeImage)}" alt="${escapeHtml(title)} front side top views" />
+        </div>
+      </article>
+    `;
+  }
+
   return views
     .map(
       ([label, src]) => `
@@ -435,6 +446,7 @@ function renderPage(productId, level) {
   const views = levelImage
     ? [["Front", levelImage], ["Side", levelImage], ["Top", levelImage], ["Detail", levelImage]]
     : product.views;
+  const viewsCompositeImage = level === 1 ? product.viewsCompositeImage : null;
 
   const titleSuffix = levelLabel ? ` — ${levelLabel}` : "";
   document.title = `${product.title}${titleSuffix} / Stress Gardening`;
@@ -461,7 +473,7 @@ function renderPage(productId, level) {
 
         <section class="product-section pd-views">
           <div class="pd-views-index">02</div>
-          ${renderViews(views)}
+          ${renderViews(views, viewsCompositeImage, product.title)}
         </section>
 
         <section class="product-section pd-detail">

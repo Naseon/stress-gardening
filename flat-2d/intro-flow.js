@@ -166,6 +166,7 @@ const productCatalog = {
     title: "Thorn Mug",
     subtitle: "01 / 10",
     heroImage: "./assets/thorn_mug_03.png",
+    viewsCompositeImage: "./assets/thorn_mug_views_level1_02.png",
     lead: "A familiar vessel translated into a quiet chrome tension.",
     facts: [
       ["Category", "Table Object"],
@@ -443,6 +444,16 @@ function buildImageCard(src, alt, caption) {
   `;
 }
 
+function buildCompositeImageCard(src, alt) {
+  return `
+    <article class="product-object-card product-object-card--composite">
+      <div class="product-object-figure product-object-figure--composite">
+        <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" />
+      </div>
+    </article>
+  `;
+}
+
 function buildRelatedCard(productId) {
   const product = productCatalog[productId];
   if (!product) return "";
@@ -496,9 +507,14 @@ function renderProductDetail(productId) {
       )
       .join("");
 
-    const objectViewMarkup = ["Front", "Side", "Top", "Detail"]
-      .map((caption) => buildImageCard(product.heroImage, `${product.title} ${caption}`, caption))
-      .join("");
+    const objectViewMarkup = product.viewsCompositeImage
+      ? buildCompositeImageCard(
+          product.viewsCompositeImage,
+          `${product.title} front side top views`
+        )
+      : ["Front", "Side", "Top", "Detail"]
+          .map((caption) => buildImageCard(product.heroImage, `${product.title} ${caption}`, caption))
+          .join("");
 
     const dimensionMarkup = dimensionSource
       .map(
