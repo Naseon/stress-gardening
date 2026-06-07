@@ -311,7 +311,7 @@
   <a class="topbar__link topbar__link--brand" id="brandHome" href="#" aria-label="Stress Gardening"></a>
   <a class="topbar__link topbar__link--shop" id="navShop" href="#" aria-label="Shop"></a>
   <a class="topbar__link topbar__link--bag" id="navBag" href="#" aria-label="Bag"></a>
-  <a class="topbar__link topbar__link--about" id="navAbout" href="#" aria-label="About Project"></a>
+  <a class="topbar__link topbar__link--about" id="navAbout" href="./about.html" target="_top" aria-label="About Project"></a>
 </nav>
 
 <!-- shared background -->
@@ -632,7 +632,11 @@
   });
   document.getElementById('navAbout').addEventListener('click', (event)=>{
     event.preventDefault();
-    routeParent('about');
+    if (window.top && window.top !== window) {
+      routeParent('about');
+      return;
+    }
+    window.location.href = './about.html';
   });
 
   const BACKEND_URL = "";

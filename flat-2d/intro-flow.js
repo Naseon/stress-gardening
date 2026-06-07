@@ -66,13 +66,6 @@ function versionAsset(src) {
   if (previewCount) previewCount.textContent = countLabel;
 })();
 
-// #about-project 내용을 #shop-only-about에 복제 (About HTML 2중 관리 제거)
-(function mirrorAboutSection() {
-  const src = document.getElementById("about-project");
-  const dst = document.getElementById("shop-only-about");
-  if (src && dst) dst.innerHTML = src.innerHTML;
-})();
-
 const screens = document.querySelectorAll(".screen");
 const mainBg = document.getElementById("mainBg");
 const btnBegin = document.getElementById("btnBegin");
@@ -1038,11 +1031,6 @@ topbarRouteLinks.forEach((link) => {
     if (route === "shop") {
       if (labUnlocked) openShopPageSection("shop-intro");
       else openShopPageSection("shop-only-total");
-      return;
-    }
-    if (route === "about") {
-      if (labUnlocked) openShopPageSection("about-project");
-      else openShopPageSection("shop-only-about");
     }
   });
 });
@@ -1083,8 +1071,7 @@ window.addEventListener("message", (event) => {
       return;
     }
     if (route === "about") {
-      if (labUnlocked) openShopPageSection("about-project");
-      else openShopPageSection("shop-only-about");
+      window.location.href = "./about.html";
       return;
     }
     if (route === "bag") {
@@ -1146,8 +1133,7 @@ bindProductCards();
   }
 
   if (page === "about") {
-    if (labUnlocked) openShopPageSection("about-project");
-    else openShopPageSection("shop-only-about");
+    window.location.replace("./about.html");
     return;
   }
 
