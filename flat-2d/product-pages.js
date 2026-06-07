@@ -40,6 +40,9 @@ const PRODUCT_PAGES = {
       "./assets/thorn_mug_editorial_02.png",
       "./assets/thorn_mug_editorial_03.png",
     ],
+    editorialAppendByLevel: {
+      1: ["./assets/thorn_mug_level1_package.png"],
+    },
   },
   "thorn-incense-holder": {
     code: "SG-02",
@@ -464,6 +467,10 @@ function renderPage(productId, level) {
   const detailImage = product.lockDetailImageAcrossLevels
     ? product.detailImage
     : (levelImage || product.detailImage);
+  const editorialImages = [
+    ...(product.editorials || []),
+    ...((level && product.editorialAppendByLevel?.[level]) || []),
+  ];
 
   const titleSuffix = levelLabel ? ` — ${levelLabel}` : "";
   document.title = `${product.title}${titleSuffix} / Stress Gardening`;
@@ -512,7 +519,7 @@ function renderPage(productId, level) {
 
         <section class="product-section pd-editorials${productId === "thorn-mug" ? " pd-editorials--fullbleed" : ""}">
           <div class="pd-editorials-index">06</div>
-          <div class="pd-editorial-grid">${renderEditorials(product.editorials, product.title)}</div>
+          <div class="pd-editorial-grid">${renderEditorials(editorialImages, product.title)}</div>
         </section>
 
         <section class="pd-footer-nav">
