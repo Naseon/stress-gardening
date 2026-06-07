@@ -11,13 +11,94 @@ const PRODUCT_CATALOG = [
       { level: 4, image: "./assets/thorn_mug_lv4.png" },
     ],
   },
-  { id: "thorn-mirror",         name: "Thorn Mirror",         image: "./assets/thorn_mirror_03.png" },
-  { id: "thorn-binder-clip",    name: "Thorn Binder Clip",    image: "./assets/thorn_binder_clip_03.png" },
-  { id: "thorn-pen",            name: "Thorn Pen",            image: "./assets/thorn_pen_03.png" },
-  { id: "thorn-incense-holder", name: "Thorn Incense Holder", image: "./assets/thorn_incense_holder_03.png" },
-  { id: "thorn-massage-ball",   name: "Thorn Massage Ball",   image: "./assets/thorn_massage_ball_03.png" },
-  { id: "thorn-paper-clip",     name: "Thorn Paper Clip",     image: "./assets/thorn_paper_clip_03.png" },
-  { id: "thorn-ruler",          name: "Thorn Ruler",          image: "./assets/thorn_ruler_03.png" },
-  { id: "thorn-tray",           name: "Thorn Tray",           image: "./assets/thorn_tray_03.png" },
-  { id: "thorn-vine-objet",     name: "Thorn Vine Objet",     image: "./assets/thorn_vine_objet_03.png" },
+  {
+    id: "thorn-mirror",
+    name: "Thorn Mirror",
+    levels: [
+      { level: 1, image: "./assets/thorn_mirror_lv1.png" },
+      { level: 2, image: "./assets/thorn_mirror_lv2.png" },
+      { level: 3, image: "./assets/thorn_mirror_lv3.png" },
+      { level: 4, image: "./assets/thorn_mirror_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-binder-clip",
+    name: "Thorn Binder Clip",
+    levels: [
+      { level: 1, image: "./assets/thorn_binder_clip_lv1.png" },
+      { level: 2, image: "./assets/thorn_binder_clip_lv2.png" },
+      { level: 3, image: "./assets/thorn_binder_clip_lv3.png" },
+      { level: 4, image: "./assets/thorn_binder_clip_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-pen",
+    name: "Thorn Pen",
+    levels: [
+      { level: 1, image: "./assets/thorn_pen_lv1.png" },
+      { level: 2, image: "./assets/thorn_pen_lv2.png" },
+      { level: 3, image: "./assets/thorn_pen_lv3.png" },
+      { level: 4, image: "./assets/thorn_pen_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-incense-holder",
+    name: "Thorn Incense Holder",
+    levels: [
+      { level: 1, image: "./assets/thorn_incense_holder_lv1.png" },
+      { level: 2, image: "./assets/thorn_incense_holder_lv2.png" },
+      { level: 3, image: "./assets/thorn_incense_holder_lv3.png" },
+      { level: 4, image: "./assets/thorn_incense_holder_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-massage-ball",
+    name: "Thorn Massage Ball",
+    levels: [
+      { level: 1, image: "./assets/thorn_massage_ball_lv1.png" },
+      { level: 2, image: "./assets/thorn_massage_ball_lv2.png" },
+      { level: 3, image: "./assets/thorn_massage_ball_lv3.png" },
+      { level: 4, image: "./assets/thorn_massage_ball_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-paper-clip",
+    name: "Thorn Paper Clip",
+    levels: [
+      { level: 1, image: "./assets/thorn_paper_clip_lv1.png" },
+      { level: 2, image: "./assets/thorn_paper_clip_lv2.png" },
+      { level: 3, image: "./assets/thorn_paper_clip_lv3.png" },
+      { level: 4, image: "./assets/thorn_paper_clip_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-ruler",
+    name: "Thorn Ruler",
+    levels: [
+      { level: 1, image: "./assets/thorn_ruler_lv1.png" },
+      { level: 2, image: "./assets/thorn_ruler_lv2.png" },
+      { level: 3, image: "./assets/thorn_ruler_lv3.png" },
+      { level: 4, image: "./assets/thorn_ruler_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-tray",
+    name: "Thorn Tray",
+    levels: [
+      { level: 1, image: "./assets/thorn_tray_lv1.png" },
+      { level: 2, image: "./assets/thorn_tray_lv2.png" },
+      { level: 3, image: "./assets/thorn_tray_lv3.png" },
+      { level: 4, image: "./assets/thorn_tray_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-vine-objet",
+    name: "Thorn Vine Objet",
+    levels: [
+      { level: 1, image: "./assets/thorn_vine_objet_lv1.png" },
+      { level: 2, image: "./assets/thorn_vine_objet_lv2.png" },
+      { level: 3, image: "./assets/thorn_vine_objet_lv3.png" },
+      { level: 4, image: "./assets/thorn_vine_objet_lv4.png" },
+    ],
+  },
 ];
