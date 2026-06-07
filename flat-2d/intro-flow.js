@@ -8,27 +8,50 @@
   document.querySelector("#introPage .topbar")?.classList.add("intro-nav");
 })();
 
-// PRODUCT_CATALOG 데이터로 쇼핑 그리드 렌더링 (HTML 2중 관리 제거)
+// PRODUCT_CATALOG 데이터로 쇼핑 그리드 렌더링
+// levels 배열이 있는 상품은 레벨별 카드 4장을, 없으면 단일 카드를 생성합니다.
 (function renderShopGrids() {
   if (!Array.isArray(PRODUCT_CATALOG)) return;
-  const total = PRODUCT_CATALOG.length;
-  const html = PRODUCT_CATALOG.map((p, i) => {
-    const idx = String(i + 1).padStart(2, "0");
-    return `<article class="shop-collection-card">
+
+  let productNum = 0;
+  let cardCount = 0;
+  const cards = [];
+
+  PRODUCT_CATALOG.forEach((p) => {
+    productNum++;
+    const idx = String(productNum).padStart(2, "0");
+
+    if (Array.isArray(p.levels)) {
+      p.levels.forEach((lv) => {
+        cardCount++;
+        cards.push(`<article class="shop-collection-card">
+  <span class="shop-collection-card__index">Lv.${lv.level}</span>
+  <div class="shop-collection-card__inner is-clickable" data-product-id="${p.id}">
+    <div class="shop-collection-visual"><img src="${lv.image}" alt="${p.name} Level ${lv.level}" /></div>
+    <p class="shop-collection-name">${p.name}</p>
+  </div>
+</article>`);
+      });
+    } else {
+      cardCount++;
+      cards.push(`<article class="shop-collection-card">
   <span class="shop-collection-card__index">${idx}</span>
   <div class="shop-collection-card__inner is-clickable" data-product-id="${p.id}">
     <div class="shop-collection-visual"><img src="${p.image}" alt="${p.name} product" /></div>
     <p class="shop-collection-name">${p.name}</p>
   </div>
-</article>`;
-  }).join("\n");
+</article>`);
+    }
+  });
+
+  const html = cards.join("\n");
 
   const fullGrid = document.getElementById("shop-grid-full");
   const previewGrid = document.getElementById("shop-grid-preview");
   if (fullGrid) fullGrid.innerHTML = html;
   if (previewGrid) previewGrid.innerHTML = html;
 
-  const countLabel = `${total} / ${total}`;
+  const countLabel = `${cardCount} / ${cardCount}`;
   const fullCount = document.getElementById("shop-count-full");
   const previewCount = document.getElementById("shop-count-preview");
   if (fullCount) fullCount.textContent = countLabel;

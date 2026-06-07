@@ -1705,7 +1705,7 @@ canvas {
   width: min(1450px, calc(100% - clamp(32px, 4vw, 72px)));
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   padding: 0;
 }
@@ -2676,7 +2676,7 @@ canvas {
   width: min(1450px, calc(100% - 44px)) !important;
   margin: 0 auto !important;
   display: grid !important;
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   gap: 12px !important;
   padding: 0 !important;
 }
@@ -2774,13 +2774,13 @@ canvas {
 
 @media (max-width: 1200px) {
   .shop-page .shop-collection-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
 
 @media (max-width: 900px) {
   .shop-page .shop-collection-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
 
