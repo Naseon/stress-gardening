@@ -95,6 +95,112 @@ a {
   object-fit: cover;
 }
 
+.about-tools {
+  width: min(1520px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 18px 0 64px;
+}
+
+.about-tools__inner {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid rgba(23, 23, 21, 0.18);
+}
+
+.tool-card {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.54fr) minmax(0, 1fr);
+  gap: 18px;
+  min-height: 540px;
+  padding: 22px 28px 12px;
+  border-right: 1px solid rgba(23, 23, 21, 0.18);
+}
+
+.tool-card:last-child {
+  border-right: 0;
+}
+
+.tool-card__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 100%;
+}
+
+.tool-card__index,
+.tool-card__action-label {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.tool-card__rule {
+  width: 24px;
+  height: 1px;
+  margin: 10px 0 12px;
+  background: rgba(17, 17, 17, 0.4);
+}
+
+.tool-card__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.tool-card__name {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: rgba(17, 17, 17, 0.78);
+}
+
+.tool-card__description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: rgba(17, 17, 17, 0.8);
+}
+
+.tool-card__action {
+  margin-top: auto;
+  display: grid;
+  gap: 4px;
+}
+
+.tool-card__action p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.tool-card__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.tool-card__visual img {
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.tool-card__visual--scissors img {
+  max-height: 430px;
+}
+
+.tool-card__visual--tweezer img {
+  max-height: 430px;
+}
+
+.tool-card__visual--comb img {
+  max-height: 430px;
+}
+
 .about-shell {
   width: min(1520px, calc(100% - 48px));
   margin: 0 auto;
@@ -174,5 +280,36 @@ a {
   .about-visual {
     order: 2;
     min-height: auto;
+  }
+
+  .about-tools {
+    width: min(100%, calc(100% - 24px));
+    padding-bottom: 32px;
+  }
+
+  .about-tools__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .tool-card {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 22px 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(23, 23, 21, 0.18);
+  }
+
+  .tool-card:last-child {
+    border-bottom: 0;
+  }
+
+  .tool-card__visual {
+    min-height: 260px;
+  }
+
+  .tool-card__visual--scissors img,
+  .tool-card__visual--tweezer img,
+  .tool-card__visual--comb img {
+    max-height: 320px;
   }
 }
