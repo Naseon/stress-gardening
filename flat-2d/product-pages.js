@@ -340,6 +340,13 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
+const PRODUCT_ASSET_VERSION = "20260608-bgfix-v1";
+
+function versionAsset(src) {
+  if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
+  return `${src}?v=${PRODUCT_ASSET_VERSION}`;
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -367,7 +374,7 @@ function renderViews(views, compositeImage, title) {
     return `
       <article class="pd-view-card pd-view-card--composite">
         <div class="pd-view-image pd-view-image--composite">
-          <img src="${escapeHtml(compositeImage)}" alt="${escapeHtml(title)} front side top views" />
+          <img src="${escapeHtml(versionAsset(compositeImage))}" alt="${escapeHtml(title)} front side top views" />
         </div>
       </article>
     `;
@@ -377,7 +384,7 @@ function renderViews(views, compositeImage, title) {
     .map(
       ([label, src]) => `
         <article class="pd-view-card">
-          <div class="pd-view-image"><img src="${escapeHtml(src)}" alt="${escapeHtml(label)} view" /></div>
+          <div class="pd-view-image"><img src="${escapeHtml(versionAsset(src))}" alt="${escapeHtml(label)} view" /></div>
           <div class="pd-view-label">${escapeHtml(label)}</div>
         </article>
       `
@@ -403,7 +410,7 @@ function renderDiagramSet(heroImage, diagramImage) {
   if (diagramImage) {
     return `
       <article class="pd-diagram-card pd-diagram-card--blueprint">
-        <div class="pd-diagram-visual"><img src="${escapeHtml(src)}" alt="blueprint schematic" /></div>
+        <div class="pd-diagram-visual"><img src="${escapeHtml(versionAsset(src))}" alt="blueprint schematic" /></div>
       </article>
     `;
   }
@@ -411,7 +418,7 @@ function renderDiagramSet(heroImage, diagramImage) {
     .map(
       (label) => `
         <article class="pd-diagram-card">
-          <div class="pd-diagram-visual"><img src="${escapeHtml(heroImage)}" alt="${escapeHtml(label)} schematic" /></div>
+          <div class="pd-diagram-visual"><img src="${escapeHtml(versionAsset(heroImage))}" alt="${escapeHtml(label)} schematic" /></div>
           <div class="pd-diagram-label">${escapeHtml(label)}</div>
         </article>
       `
@@ -424,7 +431,7 @@ function renderEditorials(images, title) {
     .map(
       (src, index) => `
         <figure class="pd-editorial-card">
-          <img src="${escapeHtml(src)}" alt="${escapeHtml(title)} editorial ${index + 1}" />
+          <img src="${escapeHtml(versionAsset(src))}" alt="${escapeHtml(title)} editorial ${index + 1}" />
         </figure>
       `
     )
@@ -472,7 +479,7 @@ function renderPage(productId, level) {
             <div class="pd-facts">${renderFacts(product.facts)}</div>
           </div>
           <div class="pd-hero-visual">
-            <img src="${escapeHtml(heroImage)}" alt="${escapeHtml(product.title)}${levelLabel ? ` ${levelLabel}` : ""} hero image" />
+            <img src="${escapeHtml(versionAsset(heroImage))}" alt="${escapeHtml(product.title)}${levelLabel ? ` ${levelLabel}` : ""} hero image" />
           </div>
         </section>
 
@@ -484,7 +491,7 @@ function renderPage(productId, level) {
         <section class="product-section pd-detail">
           <div class="pd-detail-index">04</div>
           <div class="pd-detail-media">
-            <img src="${escapeHtml(levelImage || product.detailImage)}" alt="${escapeHtml(product.title)} detail" />
+            <img src="${escapeHtml(versionAsset(levelImage || product.detailImage))}" alt="${escapeHtml(product.title)} detail" />
           </div>
           <div class="pd-detail-copy">
             <div class="pd-detail-text">

@@ -9,6 +9,13 @@
   document.querySelector("#introPage .topbar")?.classList.add("intro-nav");
 })();
 
+const PRODUCT_ASSET_VERSION = "20260608-bgfix-v1";
+
+function versionAsset(src) {
+  if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
+  return `${src}?v=${PRODUCT_ASSET_VERSION}`;
+}
+
 // PRODUCT_CATALOG 데이터로 쇼핑 그리드 렌더링
 // levels 배열이 있는 상품은 레벨별 카드 4장을, 없으면 단일 카드를 생성합니다.
 (function renderShopGrids() {
@@ -28,7 +35,7 @@
         cards.push(`<article class="shop-collection-card">
   <span class="shop-collection-card__index">Lv.${lv.level}</span>
   <div class="shop-collection-card__inner is-clickable" data-product-id="${p.id}" data-level="${lv.level}">
-    <div class="shop-collection-visual"><img src="${lv.image}" alt="${p.name} Level ${lv.level}" /></div>
+    <div class="shop-collection-visual"><img src="${versionAsset(lv.image)}" alt="${p.name} Level ${lv.level}" /></div>
     <p class="shop-collection-name">${p.name}</p>
   </div>
 </article>`);
@@ -38,7 +45,7 @@
       cards.push(`<article class="shop-collection-card">
   <span class="shop-collection-card__index">${idx}</span>
   <div class="shop-collection-card__inner is-clickable" data-product-id="${p.id}">
-    <div class="shop-collection-visual"><img src="${p.image}" alt="${p.name} product" /></div>
+    <div class="shop-collection-visual"><img src="${versionAsset(p.image)}" alt="${p.name} product" /></div>
     <p class="shop-collection-name">${p.name}</p>
   </div>
 </article>`);
@@ -448,7 +455,7 @@ function buildImageCard(src, alt, caption) {
   return `
     <article class="product-object-card">
       <div class="product-object-figure">
-        <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" />
+        <img src="${escapeHtml(versionAsset(src))}" alt="${escapeHtml(alt)}" />
       </div>
       <span class="product-object-caption">${escapeHtml(caption)}</span>
     </article>
@@ -459,7 +466,7 @@ function buildCompositeImageCard(src, alt) {
   return `
     <article class="product-object-card product-object-card--composite">
       <div class="product-object-figure product-object-figure--composite">
-        <img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" />
+        <img src="${escapeHtml(versionAsset(src))}" alt="${escapeHtml(alt)}" />
       </div>
     </article>
   `;
@@ -471,7 +478,7 @@ function buildRelatedCard(productId) {
   return `
     <button class="product-related-card" type="button" data-related-product="${escapeHtml(productId)}">
       <div class="product-related-card-media">
-        <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)}" />
+        <img src="${escapeHtml(versionAsset(product.heroImage))}" alt="${escapeHtml(product.title)}" />
       </div>
       <span class="product-related-card-title">${escapeHtml(product.title)}</span>
     </button>
@@ -543,7 +550,7 @@ function renderProductDetail(productId) {
         (caption) => `
           <article class="product-blueprint-card">
             <div class="product-blueprint-figure">
-              <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title)} ${escapeHtml(caption)}" />
+              <img src="${escapeHtml(versionAsset(product.heroImage))}" alt="${escapeHtml(product.title)} ${escapeHtml(caption)}" />
             </div>
             <span>${escapeHtml(caption)}</span>
           </article>
@@ -561,7 +568,7 @@ function renderProductDetail(productId) {
       .map(
         (src, editorialIndex) => `
           <article class="product-editorial-card">
-            <img src="${escapeHtml(src)}" alt="${escapeHtml(product.title)} editorial ${editorialIndex + 1}" />
+            <img src="${escapeHtml(versionAsset(src))}" alt="${escapeHtml(product.title)} editorial ${editorialIndex + 1}" />
           </article>
         `
       )
@@ -585,7 +592,7 @@ function renderProductDetail(productId) {
             <dl class="product-detail-facts">${factMarkup}</dl>
           </div>
           <div class="product-simple-hero-media">
-            <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title || "Product")}" />
+            <img src="${escapeHtml(versionAsset(product.heroImage))}" alt="${escapeHtml(product.title || "Product")}" />
           </div>
         </section>
 
@@ -597,7 +604,7 @@ function renderProductDetail(productId) {
         <section class="product-simple-detail">
           <div class="product-simple-step">04</div>
           <div class="product-simple-detail-media">
-            <img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.title || "Product")} detail view" />
+            <img src="${escapeHtml(versionAsset(product.heroImage))}" alt="${escapeHtml(product.title || "Product")} detail view" />
           </div>
           <div class="product-simple-detail-copy">
             <p class="product-section-label">${escapeHtml(product.detailTitle || "Detail")}</p>
