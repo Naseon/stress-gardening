@@ -21,6 +21,7 @@ const PRODUCT_PAGES = {
     viewsCompositeImages: {
       1: "./assets/thorn_mug_views_level1_02.png",
       2: "./assets/thorn_mug_views_level2_02.png",
+      3: "./assets/thorn_mug_views_level3_02.png",
     },
     detailTitle: "THORN DETAIL",
     detailText:
