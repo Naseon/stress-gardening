@@ -3,6 +3,7 @@
   const tpl = document.getElementById("topbar-tpl");
   if (!tpl) return;
   document.querySelectorAll(".page-screen").forEach((page) => {
+    if (page.id === "introPage") return;
     page.insertBefore(tpl.content.cloneNode(true), page.firstChild);
   });
   document.querySelector("#introPage .topbar")?.classList.add("intro-nav");
@@ -79,6 +80,7 @@ const topbarPageLinks = document.querySelectorAll(".topbar__link[data-nav-page]"
 const video = document.getElementById("video2");
 const cameraBox = document.getElementById("cameraBox");
 const introPage = document.getElementById("introPage");
+const analysisFrame = document.getElementById("analysisFrame");
 const labPage = document.getElementById("labPage");
 const shopPage = document.getElementById("shopPage");
 const productPage = document.getElementById("productPage");
@@ -653,6 +655,37 @@ function syncShopMode() {
   shopPage.classList.toggle("preview-mode", !labUnlocked);
 }
 
+function reloadAnalysisFrame() {
+  if (!analysisFrame) return;
+  const src = analysisFrame.dataset.src || analysisFrame.getAttribute("src");
+  if (src) {
+    analysisFrame.src = src;
+  }
+}
+
+function normalizeAnalysisPayload(payload = {}) {
+  const rawStressScore = Number(payload.stressScore ?? payload.score ?? 0) || 0;
+  const stressScore = rawStressScore > 0 ? Math.max(1, Math.min(100, Math.round(rawStressScore))) : 0;
+  const wpm = Math.max(0, Math.round(Number(payload.wpm ?? payload.typingSpeed ?? 0) || 0));
+  const errRate = Number(payload.errRate ?? payload.errorRate ?? 0) || 0;
+  const duration = Math.max(0, Math.round(Number(payload.duration ?? 0) || 0));
+
+  return {
+    stressScore,
+    wpm,
+    errRate: Number(errRate.toFixed(1)),
+    duration,
+  };
+}
+
+function storeAnalysisResult(payload) {
+  const result = normalizeAnalysisPayload(payload);
+  if (!result.stressScore) return result;
+  window.localStorage.setItem("stressAnalysisResult", JSON.stringify(result));
+  window.dispatchEvent(new Event("stress-analysis-updated"));
+  return result;
+}
+
 function goTo(id) {
   screens.forEach((screen) => screen.classList.remove("active"));
   document.getElementById(id)?.classList.add("active");
@@ -882,16 +915,19 @@ function retryMeasurement() {
   stopScan();
   labUnlocked = false;
   localStorage.removeItem("sgLabUnlocked");
+  localStorage.removeItem("stressAnalysisResult");
   syncLabAccess();
+  syncShopMode();
   resetTypingData();
-  stressInput.value = "";
+  if (stressInput) stressInput.value = "";
   updateSubmitState();
   if (timeElapsed) timeElapsed.textContent = "경과 시간: 0s";
   setCameraIdleState();
   if (comfortText) comfortText.textContent = "";
   if (scoreNum) scoreNum.textContent = "0";
   showPage("intro");
-  goTo("screenIntro");
+  if (document.getElementById("screenIntro")) goTo("screenIntro");
+  reloadAnalysisFrame();
 }
 
 function enterLiveLab() {
@@ -899,6 +935,7 @@ function enterLiveLab() {
   labUnlocked = true;
   localStorage.setItem("sgLabUnlocked", "true");
   syncLabAccess();
+  syncShopMode();
   showPage("lab");
   labPage?.classList.remove("shop-only");
 }
@@ -976,6 +1013,7 @@ window.__openProductPage = openProductPage;
 window.__openProductPageFromElement = openProductPageFromElement;
 
 syncLabAccess();
+syncShopMode();
 setCameraIdleState();
 updateSubmitState();
 
@@ -1007,6 +1045,45 @@ topbarPageLinks.forEach((link) => {
     const pageName = link.dataset.navPage;
     if (pageName === "bag") openBagPage();
   });
+});
+
+window.addEventListener("message", (event) => {
+  if (analysisFrame && event.source !== analysisFrame.contentWindow) return;
+
+  const data = event.data || {};
+  if (!data.type) return;
+
+  if (data.type === "sg-analysis-updated") {
+    storeAnalysisResult(data.payload);
+    return;
+  }
+
+  if (data.type === "sg-analysis-complete") {
+    storeAnalysisResult(data.payload);
+    enterLiveLab();
+    return;
+  }
+
+  if (data.type === "sg-analysis-route") {
+    const route = data.route;
+    if (route === "home") {
+      goHome();
+      return;
+    }
+    if (route === "shop") {
+      if (labUnlocked) openShopPageSection("shop-intro");
+      else openShopPageSection("shop-only-total");
+      return;
+    }
+    if (route === "about") {
+      if (labUnlocked) openShopPageSection("about-project");
+      else openShopPageSection("shop-only-about");
+      return;
+    }
+    if (route === "bag") {
+      openBagPage();
+    }
+  }
 });
 
 document.addEventListener("click", (event) => {

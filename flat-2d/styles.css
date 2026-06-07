@@ -1387,6 +1387,25 @@ a {
   color: #1a1a1a;
 }
 
+.analysis-shell--embed {
+  overflow: visible;
+}
+
+.analysis-embed {
+  position: relative;
+  min-height: 100vh;
+  background: #dcdcd8;
+}
+
+.analysis-embed__frame {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  border: 0;
+  background: #dcdcd8;
+}
+
 .analysis-shell .topbar.intro-nav {
   position: fixed;
   top: 0;
@@ -1852,6 +1871,11 @@ a {
 @media (max-width: 760px) {
   .analysis-shell {
     --analysis-nav-h: 60px;
+  }
+
+  .analysis-embed__frame {
+    height: 100vh;
+    min-height: 100vh;
   }
 
   .analysis-hero__inner {
