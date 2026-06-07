@@ -43,6 +43,7 @@ const PRODUCT_PAGES = {
     editorialAppendByLevel: {
       1: ["./assets/thorn_mug_level1_package.png"],
       2: ["./assets/thorn_mug_level2_package.png"],
+      3: ["./assets/thorn_mug_level3_package.png"],
     },
   },
   "thorn-incense-holder": {
