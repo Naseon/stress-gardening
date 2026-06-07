@@ -21,6 +21,115 @@ let targetRX = 0;
 let currentRY = 0;
 let currentRX = 0;
 let growStart = 0;
+let audioCtx = null;
+let lastCombSoundTime = 0;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    audioCtx = new Ctx();
+  }
+
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume().catch(() => {});
+  }
+
+  return audioCtx;
+}
+
+function playScissorsSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const highpass = ctx.createBiquadFilter();
+  const bandpass = ctx.createBiquadFilter();
+
+  oscillator.connect(highpass);
+  highpass.connect(bandpass);
+  bandpass.connect(gain);
+  gain.connect(ctx.destination);
+
+  highpass.type = "highpass";
+  highpass.frequency.value = 720;
+  bandpass.type = "bandpass";
+  bandpass.frequency.value = 2700;
+  bandpass.Q.value = 3.2;
+
+  oscillator.type = "sawtooth";
+  oscillator.frequency.setValueAtTime(1850, now);
+  oscillator.frequency.exponentialRampToValueAtTime(360, now + 0.08);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.linearRampToValueAtTime(0.04, now + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+
+  oscillator.start(now);
+  oscillator.stop(now + 0.12);
+}
+
+function playPickSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  const oscillator = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(980, now);
+  oscillator.frequency.exponentialRampToValueAtTime(180, now + 0.14);
+  oscillator.connect(gain);
+  gain.connect(ctx.destination);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.linearRampToValueAtTime(0.025, now + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.16);
+
+  oscillator.start(now);
+  oscillator.stop(now + 0.18);
+}
+
+function createNoiseBuffer(ctx, durationSeconds) {
+  const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * durationSeconds), ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) {
+    data[i] = (Math.random() * 2 - 1) * 0.45;
+  }
+  return buffer;
+}
+
+function playCombSound() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+  if (now - lastCombSoundTime < 0.42) return;
+  lastCombSoundTime = now;
+
+  const source = ctx.createBufferSource();
+  const bandpass = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+
+  source.buffer = createNoiseBuffer(ctx, 0.28);
+  bandpass.type = "bandpass";
+  bandpass.frequency.setValueAtTime(2100, now);
+  bandpass.Q.value = 0.9;
+
+  source.connect(bandpass);
+  bandpass.connect(gain);
+  gain.connect(ctx.destination);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.linearRampToValueAtTime(0.02, now + 0.04);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+
+  source.start(now);
+  source.stop(now + 0.3);
+}
 
 const renderer = new THREE.WebGLRenderer({
   canvas,
@@ -32,6 +141,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.setClearColor(0x000000, 0);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.NoToneMapping;
+renderer.outputEncoding = THREE.sRGBEncoding;
 
 const scene = new THREE.Scene();
 scene.background = null;
@@ -41,28 +152,36 @@ const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 140);
 camera.position.set(0, 1.0, 14);
 camera.lookAt(0, 1.2, 0);
 
-scene.add(new THREE.AmbientLight(0xffffff, 1.65));
+scene.add(new THREE.AmbientLight(0xffffff, 0.12));
 
-const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
-keyLight.position.set(6, 12, 7);
+const keyLight = new THREE.DirectionalLight(0xffffff, 0.72);
+keyLight.position.set(22, 8, 4);
 keyLight.castShadow = true;
 keyLight.shadow.mapSize.set(2048, 2048);
 keyLight.shadow.camera.near = 0.5;
-keyLight.shadow.camera.far = 60;
+keyLight.shadow.camera.far = 80;
 keyLight.shadow.camera.left = -16;
 keyLight.shadow.camera.right = 16;
 keyLight.shadow.camera.top = 16;
 keyLight.shadow.camera.bottom = -16;
-keyLight.shadow.bias = -0.00015;
+keyLight.shadow.bias = -0.00014;
 scene.add(keyLight);
 
-const fillLight = new THREE.DirectionalLight(0xdce5f5, 0.9);
-fillLight.position.set(-8, 5, -5);
+const fillLight = new THREE.DirectionalLight(0xd0d8ff, 0.22);
+fillLight.position.set(-12, 4, 8);
 scene.add(fillLight);
 
-const rimLight = new THREE.DirectionalLight(0xffffff, 0.55);
-rimLight.position.set(1, -6, -10);
+const rimLight = new THREE.DirectionalLight(0xffffff, 0.12);
+rimLight.position.set(4, -8, -14);
 scene.add(rimLight);
+
+const topLight = new THREE.DirectionalLight(0xffffff, 0.1);
+topLight.position.set(0, 26, 2);
+scene.add(topLight);
+
+const bounceLight = new THREE.DirectionalLight(0xe8e8e8, 0.08);
+bounceLight.position.set(-6, -10, 9);
+scene.add(bounceLight);
 
 const specimenGroup = new THREE.Group();
 scene.add(specimenGroup);
@@ -70,41 +189,44 @@ scene.add(specimenGroup);
 const vineGroup = new THREE.Group();
 specimenGroup.add(vineGroup);
 
-const stemMaterial = new THREE.MeshStandardMaterial({
-  color: 0xc7c5c2,
-  metalness: 0.92,
-  roughness: 0.18,
+const stemMaterial = new THREE.MeshPhongMaterial({
+  color: 0xc0c0c0,
+  specular: 0x888888,
+  shininess: 140,
 });
 
-const thornMaterial = new THREE.MeshStandardMaterial({
-  color: 0xb4b2af,
-  metalness: 0.94,
-  roughness: 0.16,
+const thornMaterial = new THREE.MeshPhongMaterial({
+  color: 0xb0b0b0,
+  specular: 0xaaaaaa,
+  shininess: 260,
 });
 
-const leafMaterial = new THREE.MeshStandardMaterial({
-  color: 0xbcbab7,
-  metalness: 0.9,
-  roughness: 0.2,
+const leafMaterial = new THREE.MeshPhongMaterial({
+  color: 0xb8b8b8,
+  specular: 0x777777,
+  shininess: 90,
   side: THREE.DoubleSide,
 });
 
 const crystalMaterial = new THREE.MeshPhysicalMaterial({
-  color: 0xdde7f5,
+  color: 0xb8d4f0,
   transparent: true,
-  opacity: 0.86,
-  transmission: 0.48,
-  thickness: 0.28,
-  roughness: 0.05,
-  metalness: 0.02,
-  ior: 1.7,
+  opacity: 0.88,
+  transmission: 0.55,
+  thickness: 0.75,
+  roughness: 0.02,
+  metalness: 0.04,
+  ior: 2.38,
+  clearcoat: 1,
+  clearcoatRoughness: 0,
 });
 
-const crystalGlowMaterial = new THREE.MeshBasicMaterial({
-  color: 0x9ebbe4,
+const crystalGlowMaterial = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  emissive: 0x6aa0ff,
+  emissiveIntensity: 2,
   transparent: true,
-  opacity: 0.22,
-  depthWrite: false,
+  opacity: 0.98,
 });
 
 const thornGeometry = new THREE.ConeGeometry(1, 1.2, 10, 4, true);
@@ -805,6 +927,7 @@ function applyCombFlow(clientX, clientY, deltaX, deltaY) {
 
   const hits = raycaster.intersectObjects(collectAliveTubes(), false);
   if (!hits.length) return;
+  playCombSound();
 
   const hitTube = hits[0].object;
   const hitVineIndex = hitTube.userData.vineIdx;
@@ -881,6 +1004,7 @@ function handlePluck(clientX, clientY) {
   thorn.userData.removed = true;
   thorn.visible = false;
   history.push({ type: "pluck", thorn });
+  playPickSound();
   updateStatus("Thorn removed");
 }
 
@@ -944,6 +1068,7 @@ function handleCut(clientX, clientY) {
   if (!action.segments.length) return;
 
   history.push(action);
+  playScissorsSound();
   updateStatus(`Vine clipped at ${Math.round(hitPoint.y * 10) / 10}`);
 }
 
@@ -1068,6 +1193,7 @@ toolButtons.forEach((button) => {
 });
 
 canvas.addEventListener("mousedown", (event) => {
+  getAudioContext();
   isPointerDown = true;
   isDragged = false;
   dragPX = event.clientX;
@@ -1104,6 +1230,7 @@ window.addEventListener("mouseup", (event) => {
 canvas.addEventListener(
   "touchstart",
   (event) => {
+    getAudioContext();
     const touch = event.touches[0];
     isPointerDown = true;
     isDragged = false;
@@ -1157,6 +1284,7 @@ resetViewButton?.addEventListener("click", resetView);
 saveButton?.addEventListener("click", saveSpecimen);
 window.addEventListener("stress-analysis-updated", buildAll);
 window.addEventListener("resize", resizeRenderer);
+window.addEventListener("pointerdown", () => getAudioContext(), { once: true });
 
 window.addEventListener("keydown", (event) => {
   if (event.key === "r" || event.key === "R") buildAll();
