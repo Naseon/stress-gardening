@@ -116,7 +116,7 @@ a {
 
 .about-description p {
   margin: 0;
-  font-size: clamp(14px, 1.1vw, 18px);
+  font-size: clamp(9px, 0.74vw, 12px);
   line-height: 1.75;
   color: var(--muted);
   letter-spacing: -0.01em;
