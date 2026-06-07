@@ -1750,8 +1750,8 @@ canvas {
   justify-self: stretch;
   align-self: stretch;
   overflow: hidden;
-  --visual-scale-w: 84%;
-  --visual-scale-h: 76%;
+  --visual-scale-w: 92%;
+  --visual-scale-h: 84%;
   --visual-shift-y: 0px;
 }
 
@@ -1776,10 +1776,8 @@ canvas {
 
 .shop-collection-visual img {
   display: block;
-  width: auto;
-  height: auto;
-  max-width: var(--visual-scale-w);
-  max-height: var(--visual-scale-h);
+  width: var(--visual-scale-w);
+  height: var(--visual-scale-h);
   object-fit: contain;
   transform: translateY(var(--visual-shift-y));
   mix-blend-mode: multiply;
@@ -1824,16 +1822,6 @@ canvas {
   right: clamp(32px, 3vw, 46px);
 }
 
-.shop-collection-card__inner[data-product-id="thorn-mug"] { --visual-scale-w: 92%; --visual-scale-h: 84%; }
-.shop-collection-card__inner[data-product-id="thorn-mirror"] { --visual-scale-w: 92%; --visual-scale-h: 84%; }
-.shop-collection-card__inner[data-product-id="thorn-binder-clip"] { --visual-scale-w: 84%; --visual-scale-h: 80%; }
-.shop-collection-card__inner[data-product-id="thorn-pen"] { --visual-scale-w: 36%; --visual-scale-h: 92%; }
-.shop-collection-card__inner[data-product-id="thorn-incense-holder"] { --visual-scale-w: 40%; --visual-scale-h: 88%; --visual-shift-y: 8px; }
-.shop-collection-card__inner[data-product-id="thorn-massage-ball"] { --visual-scale-w: 88%; --visual-scale-h: 82%; }
-.shop-collection-card__inner[data-product-id="thorn-paper-clip"] { --visual-scale-w: 34%; --visual-scale-h: 90%; }
-.shop-collection-card__inner[data-product-id="thorn-ruler"] { --visual-scale-w: 96%; --visual-scale-h: 28%; }
-.shop-collection-card__inner[data-product-id="thorn-tray"] { --visual-scale-w: 98%; --visual-scale-h: 36%; --visual-shift-y: 8px; }
-.shop-collection-card__inner[data-product-id="thorn-vine-objet"] { --visual-scale-w: 88%; --visual-scale-h: 82%; }
 
 .shop-catalog-section--secondary {
   padding-top: 0;
@@ -2498,23 +2486,6 @@ canvas {
     padding: 12px 8px 14px;
   }
 
-  .shop-collection-card__inner[data-product-id="thorn-incense-holder"] {
-    --visual-scale-w: 36%;
-    --visual-scale-h: 86%;
-    --visual-shift-y: 10px;
-  }
-
-  .shop-collection-card__inner[data-product-id="thorn-pen"] {
-    --visual-scale-w: 34%;
-    --visual-scale-h: 88%;
-    --visual-shift-y: 8px;
-  }
-
-  .shop-collection-card__inner[data-product-id="thorn-ruler"] {
-    --visual-scale-w: 92%;
-    --visual-scale-h: 24%;
-    --visual-shift-y: 0;
-  }
 
   .shop-collection-footerline {
     padding-inline: 18px;
@@ -2735,8 +2706,8 @@ canvas {
 
 .shop-page .shop-collection-visual img {
   display: block !important;
-  width: auto !important;
-  height: auto !important;
+  width: var(--visual-scale-w) !important;
+  height: var(--visual-scale-h) !important;
   object-fit: contain !important;
   mix-blend-mode: multiply !important;
   filter: drop-shadow(0 14px 16px rgba(17, 17, 16, 0.07)) !important;
