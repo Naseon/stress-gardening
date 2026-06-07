@@ -159,9 +159,15 @@ a {
 
 .tool-card__description {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.75;
+  font-size: 13px;
+  line-height: 1.55;
   color: rgba(17, 17, 17, 0.8);
+  word-break: keep-all;
+}
+
+.tool-card__line {
+  display: block;
+  white-space: nowrap;
 }
 
 .tool-card__action {
