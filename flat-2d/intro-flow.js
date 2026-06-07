@@ -68,6 +68,7 @@
 const screens = document.querySelectorAll(".screen");
 const mainBg = document.getElementById("mainBg");
 const btnBegin = document.getElementById("btnBegin");
+const btnStartCam = document.getElementById("btnStartCam");
 const btnFinish = document.getElementById("btnFinish");
 const btnRetry = document.getElementById("btnRetry");
 const btnEnterLab = document.getElementById("btnEnterLab");
@@ -76,6 +77,7 @@ const homeButtons = document.querySelectorAll(".topbar__link[data-nav-home='true
 const topbarRouteLinks = document.querySelectorAll(".topbar__link[data-nav-route]");
 const topbarPageLinks = document.querySelectorAll(".topbar__link[data-nav-page]");
 const video = document.getElementById("video2");
+const cameraBox = document.getElementById("cameraBox");
 const introPage = document.getElementById("introPage");
 const labPage = document.getElementById("labPage");
 const shopPage = document.getElementById("shopPage");
@@ -106,7 +108,13 @@ const pdStoryMedia = document.getElementById("pdStoryMedia");
 const pdNav = document.getElementById("pdNav");
 const stressInput = document.getElementById("stressInput");
 const currentChar = document.getElementById("currentChar");
+const countWrap = currentChar?.closest(".char-count") || null;
 const timeElapsed = document.getElementById("timeElapsed");
+const statusLine = document.getElementById("statusLine");
+const scanText = document.getElementById("scanText");
+const scanDot = document.querySelector(".analysis-live-indicator .dot");
+const comfortText = document.getElementById("comfortText");
+const scoreNum = document.getElementById("scoreNum");
 const resDesc = document.getElementById("resDesc");
 const resTime = document.getElementById("resTime");
 const resWPM = document.getElementById("resWPM");
@@ -116,6 +124,7 @@ let stream = null;
 let rafId = 0;
 let scanStart = 0;
 let typingBound = false;
+let typingStart = 0;
 let labUnlocked = localStorage.getItem("sgLabUnlocked") === "true";
 let lastShopAnchor = "shop-only-total";
 
@@ -699,20 +708,46 @@ function resetTypingData() {
   typingData.backspace = 0;
   typingData.total = 0;
   typingData.starts = {};
+  typingStart = 0;
+}
+
+function updateSubmitState() {
+  if (!stressInput || !btnFinish) return;
+  const len = stressInput.value.length;
+  const ready = len >= 50;
+  if (currentChar) currentChar.textContent = String(len);
+  countWrap?.classList.toggle("over", len > 0 && len < 100);
+  btnFinish.disabled = !ready;
+  btnFinish.classList.toggle("ready", ready);
+  btnFinish.textContent = ready ? "이제 모든 스트레스를 정리하고 싶어" : "Progressing";
+}
+
+function setCameraIdleState() {
+  cameraBox?.classList.remove("is-live");
+  scanDot?.classList.remove("live");
+  if (video) {
+    video.pause();
+    video.srcObject = null;
+  }
+  if (btnStartCam) {
+    btnStartCam.disabled = false;
+    btnStartCam.textContent = "카메라 시작";
+  }
+  if (scanText) scanText.textContent = "Live Scanning...";
+  if (statusLine) {
+    statusLine.textContent =
+      "표정과 텍스트를 함께 기록해 주세요. 카메라를 켠 뒤 충분히 입력하면 분석이 활성화됩니다.";
+  }
 }
 
 function bindTyping() {
   if (typingBound || !stressInput) return;
 
-  stressInput.addEventListener("input", () => {
-    const len = stressInput.value.length;
-    currentChar.textContent = String(len);
-    currentChar.style.color = len >= 300 ? "#2ecc71" : "var(--muted)";
-    btnFinish.style.display = len >= 10 ? "inline-flex" : "none";
-  });
+  stressInput.addEventListener("input", updateSubmitState);
 
   stressInput.addEventListener("keydown", (event) => {
     const now = performance.now();
+    if (!typingStart) typingStart = now;
     typingData.total += 1;
     if (event.key === "Backspace") typingData.backspace += 1;
     if (!typingData.starts[event.code]) typingData.starts[event.code] = now;
@@ -736,7 +771,7 @@ function bindTyping() {
 
 function tickScan() {
   const elapsed = Math.floor((performance.now() - scanStart) / 1000);
-  timeElapsed.textContent = `경과 시간: ${elapsed}s`;
+  if (timeElapsed) timeElapsed.textContent = `경과 시간: ${elapsed}s`;
   rafId = requestAnimationFrame(tickScan);
 }
 
@@ -747,6 +782,8 @@ function stopScan() {
     stream.getTracks().forEach((track) => track.stop());
     stream = null;
   }
+  scanStart = 0;
+  setCameraIdleState();
 }
 
 function comfortMessage(text, stressScore) {
@@ -786,30 +823,47 @@ function showResult(duration) {
 
   goTo("screenResult");
 
-  resTime.textContent = `${Math.round(duration)}s`;
-  resWPM.textContent = `${wpm} WPM`;
-  resErr.textContent = `${errRate.toFixed(1)}%`;
-  resTotal.textContent = `${stressScore}%`;
-  resDesc.textContent = comfortMessage(stressInput.value, stressScore);
+  const message = comfortMessage(stressInput.value, stressScore);
+  if (resTime) resTime.textContent = `${Math.round(duration)}s`;
+  if (resWPM) resWPM.textContent = `${wpm} WPM`;
+  if (resErr) resErr.textContent = `${errRate.toFixed(1)}%`;
+  if (resTotal) resTotal.textContent = `${stressScore}%`;
+  if (resDesc) resDesc.textContent = message;
+  if (comfortText) comfortText.textContent = message;
+  if (scoreNum) scoreNum.textContent = String(stressScore);
 }
 
-async function beginMeasurement() {
+function beginMeasurement() {
   showPage("intro");
+  goTo("screenScan");
+  bindTyping();
+  stressInput?.focus();
+  updateSubmitState();
+}
 
+async function startCameraMeasurement() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     window.alert("현재 브라우저에서는 카메라 기능을 지원하지 않음.");
     return;
   }
 
   try {
+    if (stream) return;
     stream = await navigator.mediaDevices.getUserMedia({
       video: { width: 640, height: 480 },
     });
     video.srcObject = stream;
     await video.play();
-    goTo("screenScan");
-    bindTyping();
-    stressInput.focus();
+    cameraBox?.classList.add("is-live");
+    scanDot?.classList.add("live");
+    if (btnStartCam) {
+      btnStartCam.disabled = true;
+      btnStartCam.textContent = "측정 중...";
+    }
+    if (statusLine) {
+      statusLine.textContent = "측정이 진행 중입니다. 충분한 시간 동안 입력해 오늘의 마음을 기록해 주세요.";
+    }
+    if (scanText) scanText.textContent = "Live Scanning...";
     scanStart = performance.now();
     tickScan();
   } catch (error) {
@@ -818,7 +872,8 @@ async function beginMeasurement() {
 }
 
 function finishMeasurement() {
-  const duration = (performance.now() - scanStart) / 1000;
+  const durationBase = scanStart || typingStart || performance.now();
+  const duration = Math.max(1, (performance.now() - durationBase) / 1000);
   stopScan();
   showResult(duration);
 }
@@ -830,10 +885,11 @@ function retryMeasurement() {
   syncLabAccess();
   resetTypingData();
   stressInput.value = "";
-  currentChar.textContent = "0";
-  currentChar.style.color = "var(--muted)";
-  btnFinish.style.display = "none";
-  timeElapsed.textContent = "경과 시간: 0s";
+  updateSubmitState();
+  if (timeElapsed) timeElapsed.textContent = "경과 시간: 0s";
+  setCameraIdleState();
+  if (comfortText) comfortText.textContent = "";
+  if (scoreNum) scoreNum.textContent = "0";
   showPage("intro");
   goTo("screenIntro");
 }
@@ -920,8 +976,11 @@ window.__openProductPage = openProductPage;
 window.__openProductPageFromElement = openProductPageFromElement;
 
 syncLabAccess();
+setCameraIdleState();
+updateSubmitState();
 
 btnBegin?.addEventListener("click", beginMeasurement);
+btnStartCam?.addEventListener("click", startCameraMeasurement);
 btnFinish?.addEventListener("click", finishMeasurement);
 btnRetry?.addEventListener("click", retryMeasurement);
 btnEnterLab?.addEventListener("click", enterLiveLab);

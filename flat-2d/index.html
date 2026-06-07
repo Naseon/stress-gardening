@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stress Gardening | Live Lab Edition</title>
-    <link rel="stylesheet" href="./styles.css?v=20260608-hero-spacing-v1" />
+    <link rel="stylesheet" href="./styles.css?v=20260608-analysis-page-v1" />
   </head>
   <body>
     <!-- 네비게이션 단일 정의 — JS가 각 페이지 섹션에 복제합니다 -->
@@ -19,74 +19,94 @@
     </template>
 
     <main class="app-shell">
-      <section class="hero-shell page-screen is-active" id="introPage">
-        <div class="hero-stage hybrid-stage">
-          <div class="intro-bg" id="mainBg"></div>
+      <section class="analysis-shell page-screen is-active" id="introPage">
+        <div class="analysis-backdrop" id="mainBg"></div>
 
-          <div class="screen active" id="screenIntro">
-            <div class="hero-copy">
-              <p class="eyebrow">Brand-Based Design Studio II</p>
+        <div class="screen analysis-screen analysis-hero active" id="screenIntro">
+          <div class="analysis-hero__inner">
+            <p class="analysis-hero__caption">
+              당신의 스트레스를 측정하고 기록한 뒤, 그것을 표본과 오브제로 번역하는 분석 실험입니다.
+              표정과 입력 텍스트를 함께 사용합니다.
+            </p>
+            <div class="analysis-hero__type">
+              <p>Stress Gardening</p>
               <h1>Stress Gardening.</h1>
-              <p class="description">
-                A hybrid stress analysis lab for measuring tension, recording the day, and translating
-                that state into a collectible specimen ritual.
+            </div>
+            <img src="./assets/lab-rose-full.png" alt="" class="analysis-hero__vine" />
+            <button class="analysis-cta analysis-cta--primary" id="btnBegin" type="button">
+              측정 시작하기
+              <span class="analysis-cta__arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="screen analysis-screen analysis-measure" id="screenScan">
+          <div class="analysis-measure__inner">
+            <div class="analysis-measure__toolbar">
+              <button class="analysis-camera-button" id="btnStartCam" type="button">카메라 시작</button>
+              <p class="analysis-measure__hint" id="statusLine">
+                표정과 텍스트를 함께 기록해 주세요. 카메라를 켠 뒤 충분히 입력하면 분석이 활성화됩니다.
               </p>
-              <button class="hero-cta hero-cta-fill" id="btnBegin" type="button">측정 시작하기</button>
             </div>
-          </div>
 
-          <div class="screen" id="screenScan">
-            <div class="scan-layout">
-              <div class="scan-left">
-                <div class="status-row">
-                  <div class="cam-wrap">
-                    <video id="video2" playsinline muted></video>
-                    <div class="scan-line-anim"></div>
-                    <div class="scan-corners">
-                      <div class="sc sc-tl"></div>
-                      <div class="sc sc-tr"></div>
-                      <div class="sc sc-bl"></div>
-                      <div class="sc sc-br"></div>
-                    </div>
+            <div class="analysis-measure__grid">
+              <div class="analysis-camera-column">
+                <div class="analysis-camera-box" id="cameraBox">
+                  <video id="video2" playsinline muted></video>
+                  <div class="scan-line-anim"></div>
+                  <div class="scan-corners">
+                    <div class="sc sc-tl"></div>
+                    <div class="sc sc-tr"></div>
+                    <div class="sc sc-bl"></div>
+                    <div class="sc sc-br"></div>
                   </div>
-                  <div class="live-indicator">
-                    <div class="live-left">
-                      <span class="dot"></span>
-                      <span class="live-label">Live Scanning...</span>
-                    </div>
-                    <div class="time-elapsed" id="timeElapsed">경과 시간: 0s</div>
+                </div>
+                <div class="analysis-camera-foot">
+                  <div class="analysis-live-indicator">
+                    <span class="dot"></span>
+                    <span class="live-label" id="scanText">Live Scanning...</span>
                   </div>
+                  <div class="time-elapsed" id="timeElapsed">경과 시간: 0s</div>
                 </div>
               </div>
 
-              <div class="scan-right">
-                <div class="typing-area">
-                  <div class="question-box">
-                    <p>오늘 하루는 어땠나요? 가장 스트레스를 받았던 일은 무엇이었나요?</p>
-                  </div>
+              <div class="analysis-entry-column">
+                <h2 class="analysis-question">오늘 하루는 어땠나요? 가장 스트레스를 받았던 일은 무엇이었나요?</h2>
+                <div class="analysis-entry-card">
                   <textarea id="stressInput" placeholder="이곳에 자유롭게 마음을 기록해 주세요..."></textarea>
-                  <div class="char-count"><span id="currentChar">0</span> / 300자 권장</div>
+                  <div class="char-count"><span id="currentChar">0</span> / 300자</div>
                 </div>
-                <button class="hero-cta hero-cta-fill btn-finish" id="btnFinish" type="button">이제 모든 스트레스를 정리하고 싶어</button>
               </div>
             </div>
           </div>
 
-          <div class="screen" id="screenResult">
-            <div class="result-wrap">
-              <h2 class="result-title">Analysis Result.</h2>
-              <p class="result-desc" id="resDesc"></p>
-              <div class="result-data">
-                <div class="rd"><div class="rd-label">Analysis Time</div><div class="rd-val" id="resTime">--</div></div>
-                <div class="rd"><div class="rd-label">Typing Speed</div><div class="rd-val" id="resWPM">--</div></div>
-                <div class="rd"><div class="rd-label">Error Rate</div><div class="rd-val" id="resErr">--</div></div>
-                <div class="rd"><div class="rd-label">Stress Index</div><div class="rd-val" id="resTotal">--</div></div>
-              </div>
-              <div class="result-actions">
-                <button class="hero-cta hero-cta-fill" id="btnEnterLab" type="button" onclick="window.__stressLabEnter && window.__stressLabEnter()">Live Lab으로 이동</button>
-                <button class="hero-cta" id="btnRetry" type="button">새로 측정하기</button>
-              </div>
+          <div class="analysis-submit-bar">
+            <button class="analysis-progress-button" id="btnFinish" type="button" disabled>Progressing</button>
+          </div>
+        </div>
+
+        <div class="screen analysis-screen analysis-result" id="screenResult">
+          <div class="analysis-result__inner">
+            <p class="analysis-result__comfort" id="comfortText"></p>
+            <div class="analysis-result__score">
+              <span class="analysis-result__label">Stress Vine</span>
+              <strong class="analysis-result__num" id="scoreNum">0</strong>
+              <span class="analysis-result__max">/100</span>
             </div>
+            <img src="./assets/lab-rose-full.png" alt="" class="analysis-result__rose" />
+
+            <div class="analysis-result__meta" hidden>
+              <span id="resDesc"></span>
+              <span id="resTime"></span>
+              <span id="resWPM"></span>
+              <span id="resErr"></span>
+              <span id="resTotal"></span>
+            </div>
+          </div>
+
+          <div class="analysis-result__actions">
+            <button class="analysis-result__button analysis-result__button--secondary" id="btnRetry" type="button">다시 측정하기</button>
+            <button class="analysis-result__button analysis-result__button--primary" id="btnEnterLab" type="button">Live Lab으로 이동</button>
           </div>
         </div>
       </section>
@@ -241,9 +261,9 @@
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="./products.js?v=20260608-hero-spacing-v1"></script>
-    <script src="./app.js?v=20260608-hero-spacing-v1"></script>
-    <script src="./intro-flow.js?v=20260608-hero-spacing-v1"></script>
+    <script src="./products.js?v=20260608-analysis-page-v1"></script>
+    <script src="./app.js?v=20260608-analysis-page-v1"></script>
+    <script src="./intro-flow.js?v=20260608-analysis-page-v1"></script>
   </body>
 </html>
 
