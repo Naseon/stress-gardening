@@ -207,7 +207,7 @@ a {
 .pd-view-card--composite {
   grid-column: 2 / -1;
   border-left: 0;
-  min-height: 320px;
+  min-height: 640px;
 }
 
 .pd-view-card:first-of-type {
@@ -225,7 +225,7 @@ a {
 }
 
 .pd-view-image--composite {
-  min-height: 320px;
+  min-height: 640px;
   padding: 12px 12px 0;
 }
 
@@ -236,7 +236,7 @@ a {
 }
 
 .pd-view-image--composite img {
-  height: 300px;
+  height: 600px;
 }
 
 .pd-view-label {
