@@ -32,7 +32,9 @@ const PRODUCT_PAGES = {
       ["Width", "85 mm"],
       ["Capacity", "350 ml"],
     ],
-    detailImage: "./assets/thorn_mug_03.png",
+    detailImage: "./assets/thorn_mug_detail_04.png",
+    lockDetailImageAcrossLevels: true,
+    detailSectionClass: "pd-detail--hero-spaced",
     editorials: [
       "./assets/thorn_mug_editorial_01.png",
       "./assets/thorn_mug_editorial_02.png",
@@ -459,6 +461,9 @@ function renderPage(productId, level) {
     ? [["Front", levelImage], ["Side", levelImage], ["Top", levelImage], ["Detail", levelImage]]
     : product.views;
   const viewsCompositeImage = product.viewsCompositeImages?.[level] || null;
+  const detailImage = product.lockDetailImageAcrossLevels
+    ? product.detailImage
+    : (levelImage || product.detailImage);
 
   const titleSuffix = levelLabel ? ` — ${levelLabel}` : "";
   document.title = `${product.title}${titleSuffix} / Stress Gardening`;
@@ -488,10 +493,10 @@ function renderPage(productId, level) {
           ${renderViews(views, viewsCompositeImage, product.title)}
         </section>
 
-        <section class="product-section pd-detail">
+        <section class="product-section pd-detail${product.detailSectionClass ? ` ${escapeHtml(product.detailSectionClass)}` : ""}">
           <div class="pd-detail-index">04</div>
           <div class="pd-detail-media">
-            <img src="${escapeHtml(versionAsset(levelImage || product.detailImage))}" alt="${escapeHtml(product.title)} detail" />
+            <img src="${escapeHtml(versionAsset(detailImage))}" alt="${escapeHtml(product.title)} detail" />
           </div>
           <div class="pd-detail-copy">
             <div class="pd-detail-text">

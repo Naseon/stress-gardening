@@ -260,6 +260,11 @@ a {
   padding: 0 28px;
 }
 
+.pd-detail--hero-spaced {
+  padding-top: var(--topbar-gap);
+  padding-bottom: var(--topbar-gap);
+}
+
 .pd-detail-media {
   min-height: 420px;
   display: flex;
