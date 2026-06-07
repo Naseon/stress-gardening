@@ -325,6 +325,16 @@ a {
   border-right: 0;
 }
 
+.pd-diagram-card--blueprint {
+  grid-column: span 3;
+  border-right: 0;
+}
+
+.pd-diagram-card--blueprint .pd-diagram-visual {
+  aspect-ratio: 3 / 1;
+  width: 100%;
+}
+
 .pd-diagram-visual {
   width: 100%;
   aspect-ratio: 1.15 / 1;

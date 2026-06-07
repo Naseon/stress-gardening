@@ -11,6 +11,7 @@ const PRODUCT_PAGES = {
       ["Finish", "Brushed Steel"],
     ],
     heroImage: "./assets/thorn_mug_03.png",
+    diagramImage: "./assets/thorn_mug_blueprint.png",
     views: [
       ["Front", "./assets/thorn_mug_03.png"],
       ["Side", "./assets/thorn_mug_03.png"],
@@ -381,7 +382,15 @@ function renderDimensions(dimensions, heroImage) {
     .join("");
 }
 
-function renderDiagramSet(heroImage) {
+function renderDiagramSet(heroImage, diagramImage) {
+  const src = diagramImage || heroImage;
+  if (diagramImage) {
+    return `
+      <article class="pd-diagram-card pd-diagram-card--blueprint">
+        <div class="pd-diagram-visual"><img src="${escapeHtml(src)}" alt="blueprint schematic" /></div>
+      </article>
+    `;
+  }
   return ["Front", "Side", "Top"]
     .map(
       (label) => `
@@ -453,7 +462,7 @@ function renderPage(productId) {
             </div>
             <div class="pd-diagrams">
               <div class="pd-dimension-list">${renderDimensions(product.dimensions, product.heroImage)}</div>
-              ${renderDiagramSet(product.heroImage)}
+              ${renderDiagramSet(product.heroImage, product.diagramImage)}
             </div>
           </div>
         </section>
