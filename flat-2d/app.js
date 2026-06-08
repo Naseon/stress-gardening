@@ -190,6 +190,15 @@ const bounceLight = new THREE.DirectionalLight(0xe8e8e8, 0.08);
 bounceLight.position.set(-6, -10, 9);
 scene.add(bounceLight);
 
+const shadowGround = new THREE.Mesh(
+  new THREE.PlaneGeometry(100, 100),
+  new THREE.ShadowMaterial({ opacity: 0.14 })
+);
+shadowGround.rotation.x = -Math.PI / 2;
+shadowGround.position.y = -2.7;
+shadowGround.receiveShadow = true;
+scene.add(shadowGround);
+
 const specimenGroup = new THREE.Group();
 specimenGroup.position.set(0, -1.15, 0);
 scene.add(specimenGroup);
