@@ -35,6 +35,7 @@ const PRODUCT_PAGES = {
     detailImage: "./assets/thorn_mug_detail_04.png",
     lockDetailImageAcrossLevels: true,
     detailSectionClass: "pd-detail--hero-spaced",
+    editorialsFullbleed: true,
     editorials: [
       "./assets/thorn_mug_editorial_01.png",
       "./assets/thorn_mug_editorial_02.png",
@@ -58,12 +59,19 @@ const PRODUCT_PAGES = {
       ["Finish", "Mirror + Matte"],
     ],
     heroImage: "./assets/thorn_incense_holder_03.png",
+    diagramImage: "./assets/thorn_incense_holder_lv1.png",
     views: [
       ["Front", "./assets/thorn_incense_holder_03.png"],
       ["Side", "./assets/thorn_incense_holder_03.png"],
       ["Top", "./assets/thorn_incense_holder_03.png"],
       ["Detail", "./assets/thorn_incense_holder_03.png"],
     ],
+    viewsCompositeImages: {
+      1: "./assets/thorn_incense_holder_lv1.png",
+      2: "./assets/thorn_incense_holder_lv2.png",
+      3: "./assets/thorn_incense_holder_lv3.png",
+      4: "./assets/thorn_incense_holder_lv4.png",
+    },
     detailTitle: "OBJECT DETAIL",
     detailText:
       "A compact spiked dome grounds the incense stick in place, balancing softness and alertness through material contrast and scale.",
@@ -73,11 +81,20 @@ const PRODUCT_PAGES = {
       ["Type", "Incense Holder"],
     ],
     detailImage: "./assets/thorn_incense_holder_03.png",
+    lockDetailImageAcrossLevels: true,
+    detailSectionClass: "pd-detail--hero-spaced",
+    editorialsFullbleed: true,
     editorials: [
       "./assets/thorn_incense_holder_03.png",
       "./assets/thorn_massage_ball_03.png",
       "./assets/thorn_tray_03.png",
     ],
+    editorialAppendByLevel: {
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+    },
   },
   "thorn-pen": {
     code: "SG-03",
@@ -190,12 +207,19 @@ const PRODUCT_PAGES = {
       ["Use", "Paper Hold"],
     ],
     heroImage: "./assets/thorn_binder_clip_03.png",
+    diagramImage: "./assets/thorn_binder_clip_lv1.png",
     views: [
       ["Front", "./assets/thorn_binder_clip_03.png"],
       ["Side", "./assets/thorn_binder_clip_03.png"],
       ["Top", "./assets/thorn_binder_clip_03.png"],
       ["Detail", "./assets/thorn_binder_clip_03.png"],
     ],
+    viewsCompositeImages: {
+      1: "./assets/thorn_binder_clip_lv1.png",
+      2: "./assets/thorn_binder_clip_lv2.png",
+      3: "./assets/thorn_binder_clip_lv3.png",
+      4: "./assets/thorn_binder_clip_lv4.png",
+    },
     detailTitle: "CLIP DETAIL",
     detailText:
       "The binder clip keeps its mechanical silhouette while introducing evenly spaced spikes across the body and handles.",
@@ -205,11 +229,20 @@ const PRODUCT_PAGES = {
       ["Type", "Binder Clip"],
     ],
     detailImage: "./assets/thorn_binder_clip_03.png",
+    lockDetailImageAcrossLevels: true,
+    detailSectionClass: "pd-detail--hero-spaced",
+    editorialsFullbleed: true,
     editorials: [
       "./assets/thorn_binder_clip_03.png",
       "./assets/thorn_paper_clip_03.png",
       "./assets/thorn_pen_03.png",
     ],
+    editorialAppendByLevel: {
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+    },
   },
   "thorn-paper-clip": {
     code: "SG-07",
@@ -223,12 +256,19 @@ const PRODUCT_PAGES = {
       ["Use", "Paper Fasten"],
     ],
     heroImage: "./assets/thorn_paper_clip_03.png",
+    diagramImage: "./assets/thorn_paper_clip_lv1.png",
     views: [
       ["Front", "./assets/thorn_paper_clip_03.png"],
       ["Side", "./assets/thorn_paper_clip_03.png"],
       ["Top", "./assets/thorn_paper_clip_03.png"],
       ["Detail", "./assets/thorn_paper_clip_03.png"],
     ],
+    viewsCompositeImages: {
+      1: "./assets/thorn_paper_clip_lv1.png",
+      2: "./assets/thorn_paper_clip_lv2.png",
+      3: "./assets/thorn_paper_clip_lv3.png",
+      4: "./assets/thorn_paper_clip_lv4.png",
+    },
     detailTitle: "WIRE DETAIL",
     detailText:
       "A familiar wire loop becomes slightly aggressive through small directional spikes, preserving function while disrupting ease.",
@@ -238,11 +278,20 @@ const PRODUCT_PAGES = {
       ["Type", "Paper Clip"],
     ],
     detailImage: "./assets/thorn_paper_clip_03.png",
+    lockDetailImageAcrossLevels: true,
+    detailSectionClass: "pd-detail--hero-spaced",
+    editorialsFullbleed: true,
     editorials: [
       "./assets/thorn_paper_clip_03.png",
       "./assets/thorn_binder_clip_03.png",
       "./assets/thorn_ruler_03.png",
     ],
+    editorialAppendByLevel: {
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+    },
   },
   "thorn-tray": {
     code: "SG-08",
@@ -533,7 +582,7 @@ function renderPage(productId, level) {
           </div>
         </section>
 
-        <section class="product-section pd-editorials${productId === "thorn-mug" ? " pd-editorials--fullbleed" : ""}">
+        <section class="product-section pd-editorials${product.editorialsFullbleed ? " pd-editorials--fullbleed" : ""}">
           <div class="pd-editorials-index">06</div>
           <div class="pd-editorial-grid">${renderEditorials(editorialImages, product.title)}</div>
         </section>
