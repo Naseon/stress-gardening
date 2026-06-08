@@ -13,11 +13,12 @@
 
 html {
   scroll-behavior: smooth;
+  background: #ffffff;
 }
 
 body.product-detail-page {
   margin: 0;
-  background: var(--bg);
+  background: #ffffff;
   color: var(--ink);
   font-family: Arial, Helvetica, sans-serif;
 }
