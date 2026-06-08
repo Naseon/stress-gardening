@@ -86,9 +86,10 @@ const PRODUCT_PAGES = {
     detailSectionClass: "pd-detail--hero-spaced",
     editorialsFullbleed: true,
     editorials: [
-      "./assets/thorn_incense_holder_03.png",
-      "./assets/thorn_massage_ball_03.png",
-      "./assets/thorn_tray_03.png",
+      "./assets/thorn_incense_holder_editorial_01.png",
+      "./assets/thorn_incense_holder_editorial_02.png",
+      "./assets/thorn_incense_holder_editorial_03.png",
+      "./assets/thorn_incense_holder_editorial_04.png",
     ],
     editorialAppendByLevel: {
       1: [],
@@ -397,7 +398,7 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
-const PRODUCT_ASSET_VERSION = "20260608-bgfix-v1";
+const PRODUCT_ASSET_VERSION = "20260608-editorial-v2";
 
 function versionAsset(src) {
   if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
