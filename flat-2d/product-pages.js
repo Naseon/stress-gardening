@@ -285,6 +285,7 @@ const PRODUCT_PAGES = {
     editorials: [
       "./assets/thorn_paper_clip_editorial_01.png",
       "./assets/thorn_paper_clip_editorial_02.png",
+      "./assets/thorn_paper_clip_editorial_04.png",
       "./assets/thorn_paper_clip_editorial_03.png",
     ],
     editorialAppendByLevel: {
@@ -397,7 +398,7 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
-const PRODUCT_ASSET_VERSION = "20260608-editorial-v1";
+const PRODUCT_ASSET_VERSION = "20260608-editorial-v2";
 
 function versionAsset(src) {
   if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
