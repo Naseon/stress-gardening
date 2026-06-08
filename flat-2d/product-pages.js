@@ -208,7 +208,7 @@ const PRODUCT_PAGES = {
       ["Use", "Paper Hold"],
     ],
     heroImage: "./assets/thorn_binder_clip_03.png",
-    diagramImage: "./assets/thorn_binder_clip_lv1.png",
+    diagramImage: "./assets/thorn_binder_clip_blueprint.png",
     views: [
       ["Front", "./assets/thorn_binder_clip_03.png"],
       ["Side", "./assets/thorn_binder_clip_03.png"],
@@ -216,20 +216,20 @@ const PRODUCT_PAGES = {
       ["Detail", "./assets/thorn_binder_clip_03.png"],
     ],
     viewsCompositeImages: {
-      1: "./assets/thorn_binder_clip_lv1.png",
-      2: "./assets/thorn_binder_clip_lv2.png",
-      3: "./assets/thorn_binder_clip_lv3.png",
-      4: "./assets/thorn_binder_clip_lv4.png",
+      1: "./assets/thorn_binder_clip_views_02.png",
+      2: "./assets/thorn_binder_clip_views_02.png",
+      3: "./assets/thorn_binder_clip_views_02.png",
+      4: "./assets/thorn_binder_clip_views_02.png",
     },
     detailTitle: "CLIP DETAIL",
     detailText:
       "The binder clip keeps its mechanical silhouette while introducing evenly spaced spikes across the body and handles.",
     dimensions: [
-      ["Width", "43 mm"],
-      ["Depth", "28 mm"],
+      ["Height", "65 mm"],
+      ["Width", "48 mm"],
       ["Type", "Binder Clip"],
     ],
-    detailImage: "./assets/thorn_binder_clip_03.png",
+    detailImage: "./assets/thorn_binder_clip_detail_04.png",
     lockDetailImageAcrossLevels: true,
     detailSectionClass: "pd-detail--hero-spaced",
     editorialsFullbleed: true,
@@ -397,7 +397,7 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
-const PRODUCT_ASSET_VERSION = "20260608-paperclip-v4";
+const PRODUCT_ASSET_VERSION = "20260608-binderclip-v5";
 
 function versionAsset(src) {
   if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
