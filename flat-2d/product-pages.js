@@ -536,7 +536,7 @@ function renderPage(productId, level) {
     ...(product.editorials || []),
     ...((level && product.editorialAppendByLevel?.[level]) || []),
   ];
-  const shouldRenderTailVideo = productId === "thorn-mug" && level >= 1 && level <= 4;
+  const shouldRenderTailVideo = false;
 
   const titleSuffix = levelLabel ? ` — ${levelLabel}` : "";
   document.title = `${product.title}${titleSuffix} / Stress Gardening`;
