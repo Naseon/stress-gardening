@@ -248,7 +248,7 @@ a {
 
 /* 02 뷰 합성 이미지 화이트톤 보정 — 배경을 페이지 흰색에 맞춤 */
 .pd-view-image--composite img.views-tone-fix {
-  filter: brightness(1.22) contrast(0.86) saturate(0.88);
+  filter: brightness(1.55) contrast(0.70) saturate(0.65);
 }
 
 .pd-view-label {
