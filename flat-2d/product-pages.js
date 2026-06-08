@@ -447,9 +447,12 @@ function renderEditorials(images, title) {
 
 function renderTailVideo() {
   return `
-    <section class="product-section pd-tail-video pd-tail-video--fullbleed">
+    <section class="product-section pd-tail-video-stack pd-tail-video--fullbleed">
       <video class="pd-tail-video__media" autoplay muted loop playsinline preload="auto">
         <source src="./assets/about_lab_video.mp4?v=20260608-about-video-v1" type="video/mp4" />
+      </video>
+      <video class="pd-tail-video__media" autoplay muted loop playsinline preload="auto">
+        <source src="./assets/thorn_mug_tail_video_02.mp4?v=20260608-mug-tail-video-02-v1" type="video/mp4" />
       </video>
     </section>
   `;
