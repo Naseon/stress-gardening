@@ -7,6 +7,8 @@ const undoButton = document.querySelector("#undoButton");
 const resetViewButton = document.querySelector("#resetViewButton");
 const saveButton = document.querySelector("#saveButton");
 const labStressValue = document.querySelector("#labStressValue");
+const zoomInButton = document.querySelector("#zoomInButton");
+const zoomOutButton = document.querySelector("#zoomOutButton");
 
 let currentTool = "comb";
 let currentPhase = "growing";
@@ -23,6 +25,11 @@ let currentRX = 0;
 let growStart = 0;
 let audioCtx = null;
 let lastCombSoundTime = 0;
+let zoomLevel = 1;
+
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 2.5;
+const ZOOM_STEP = 0.2;
 
 function getAudioContext() {
   if (!audioCtx) {
@@ -145,12 +152,12 @@ renderer.toneMapping = THREE.NoToneMapping;
 renderer.outputEncoding = THREE.sRGBEncoding;
 
 const scene = new THREE.Scene();
-scene.background = null;
-scene.fog = new THREE.FogExp2(0xffffff, 0.01);
+scene.background = new THREE.Color(0xffffff);
+scene.fog = new THREE.FogExp2(0xffffff, 0.008);
 
-const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 140);
-camera.position.set(0, 1.0, 14);
-camera.lookAt(0, 1.2, 0);
+const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 140);
+camera.position.set(0, 0.5, 14);
+camera.lookAt(0, -0.2, 0);
 
 scene.add(new THREE.AmbientLight(0xffffff, 0.12));
 
@@ -262,7 +269,7 @@ const ROOT_Y_OFFSET = CHALICE_TOP_Y + 2.16;
 
 const LEVEL_CFG = {
   1: {
-    camZ: 12.8,
+    camZ: 13.0,
     defs: [
       [0, 4.8, 2.8, 2.2, 1.5, 20, true],
       [90, 4.6, 3.0, 2.0, 1.4, 20, false],
@@ -275,7 +282,7 @@ const LEVEL_CFG = {
     ],
   },
   2: {
-    camZ: 14.2,
+    camZ: 14.5,
     defs: [
       [0, 5.0, 3.0, 2.2, 1.6, 24, true],
       [60, 4.8, 3.2, 2.0, 1.5, 24, false],
@@ -292,7 +299,7 @@ const LEVEL_CFG = {
     ],
   },
   3: {
-    camZ: 15.6,
+    camZ: 15.8,
     defs: [
       [0, 5.2, 3.0, 2.3, 1.7, 28, true],
       [45, 5.0, 3.2, 2.1, 1.6, 28, false],
@@ -313,28 +320,28 @@ const LEVEL_CFG = {
     ],
   },
   4: {
-    camZ: 18.4,
+    camZ: 17.2,
     defs: [
-      [10, 4.8, 4.2, 2.8, 2.1, 28, true],
-      [42, 5.2, 4.6, 2.6, 2.0, 26, false],
-      [76, 5.8, 4.1, 2.9, 2.2, 30, true],
-      [108, 5.0, 4.8, 2.5, 1.9, 26, false],
-      [142, 5.6, 4.0, 2.8, 2.1, 30, true],
-      [176, 4.9, 4.4, 2.5, 1.9, 26, false],
-      [212, 5.7, 4.2, 2.8, 2.1, 30, true],
-      [246, 5.1, 4.7, 2.6, 2.0, 26, false],
-      [282, 5.8, 4.1, 2.9, 2.2, 30, true],
-      [316, 5.0, 4.6, 2.5, 1.9, 26, false],
-      [348, 5.4, 4.0, 2.8, 2.1, 28, true],
-      [332, 4.8, 4.4, 2.4, 1.8, 24, false],
-      [62, 2.6, 8.2, 1.8, 3.8, 38, true],
-      [84, 3.0, 8.8, 1.6, 4.0, 40, true],
-      [102, 2.8, 7.6, 1.9, 3.6, 34, false],
-      [34, 2.4, 7.2, 1.5, 3.3, 30, true],
-      [242, 2.6, 8.2, 1.8, 3.8, 38, true],
-      [264, 3.0, 8.8, 1.6, 4.0, 40, true],
-      [282, 2.8, 7.6, 1.9, 3.6, 34, false],
-      [214, 2.4, 7.2, 1.5, 3.3, 30, true],
+      [0, 5.4, 3.0, 2.4, 1.8, 32, true],
+      [30, 5.2, 3.2, 2.2, 1.7, 28, false],
+      [60, 5.4, 3.0, 2.5, 1.8, 32, true],
+      [90, 5.2, 3.3, 2.3, 1.7, 28, false],
+      [120, 5.4, 3.0, 2.4, 1.8, 32, true],
+      [150, 5.2, 3.2, 2.2, 1.7, 28, false],
+      [180, 5.4, 3.0, 2.4, 1.8, 32, true],
+      [210, 5.2, 3.2, 2.2, 1.7, 28, false],
+      [240, 5.4, 3.0, 2.5, 1.8, 32, true],
+      [270, 5.2, 3.3, 2.3, 1.7, 28, false],
+      [300, 5.4, 3.0, 2.4, 1.8, 32, true],
+      [330, 5.2, 3.2, 2.2, 1.7, 28, false],
+      [75, 3.4, 6.2, 1.3, 3.0, 36, true],
+      [58, 3.1, 7.0, 1.1, 3.3, 32, true],
+      [92, 3.6, 5.8, 1.5, 2.8, 36, false],
+      [42, 2.9, 5.4, 1.2, 2.6, 28, true],
+      [255, 3.4, 6.2, 1.3, 3.0, 36, true],
+      [238, 3.1, 7.0, 1.1, 3.3, 32, true],
+      [272, 3.6, 5.8, 1.5, 2.8, 36, false],
+      [222, 2.9, 5.4, 1.2, 2.6, 28, true],
     ],
   },
 };
@@ -377,6 +384,17 @@ function resizeRenderer() {
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
+}
+
+function applyZoom() {
+  const cfg = LEVEL_CFG[currentLevel] || LEVEL_CFG[1];
+  camera.position.z = cfg.camZ / zoomLevel;
+  camera.updateProjectionMatrix();
+}
+
+function updateZoom(nextZoom) {
+  zoomLevel = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, nextZoom));
+  applyZoom();
 }
 
 function setMouseNDC(clientX, clientY) {
@@ -501,8 +519,8 @@ function clearVines() {
 
 function updateCameraForLevel(level) {
   const cfg = LEVEL_CFG[level] || LEVEL_CFG[1];
-  camera.position.set(0, 1.0, cfg.camZ);
-  camera.lookAt(0, 1.25, 0);
+  camera.position.set(0, 0.5, cfg.camZ / zoomLevel);
+  camera.lookAt(0, -0.2, 0);
 }
 
 function buildInstructionMessage(prefix) {
@@ -1248,6 +1266,24 @@ toolButtons.forEach((button) => {
     updateStatus("Tool switched");
   });
 });
+
+zoomInButton?.addEventListener("click", () => {
+  updateZoom(zoomLevel + ZOOM_STEP);
+});
+
+zoomOutButton?.addEventListener("click", () => {
+  updateZoom(zoomLevel - ZOOM_STEP);
+});
+
+canvas.addEventListener(
+  "wheel",
+  (event) => {
+    event.preventDefault();
+    const direction = event.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP;
+    updateZoom(zoomLevel + direction);
+  },
+  { passive: false }
+);
 
 canvas.addEventListener("mousedown", (event) => {
   getAudioContext();
