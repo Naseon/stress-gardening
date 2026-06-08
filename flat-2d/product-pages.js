@@ -257,7 +257,7 @@ const PRODUCT_PAGES = {
       ["Use", "Paper Fasten"],
     ],
     heroImage: "./assets/thorn_paper_clip_03.png",
-    diagramImage: "./assets/thorn_paper_clip_lv1.png",
+    diagramImage: "./assets/thorn_paper_clip_blueprint.png",
     views: [
       ["Front", "./assets/thorn_paper_clip_03.png"],
       ["Side", "./assets/thorn_paper_clip_03.png"],
@@ -265,20 +265,20 @@ const PRODUCT_PAGES = {
       ["Detail", "./assets/thorn_paper_clip_03.png"],
     ],
     viewsCompositeImages: {
-      1: "./assets/thorn_paper_clip_lv1.png",
-      2: "./assets/thorn_paper_clip_lv2.png",
-      3: "./assets/thorn_paper_clip_lv3.png",
-      4: "./assets/thorn_paper_clip_lv4.png",
+      1: "./assets/thorn_paper_clip_views_02.png",
+      2: "./assets/thorn_paper_clip_views_02.png",
+      3: "./assets/thorn_paper_clip_views_02.png",
+      4: "./assets/thorn_paper_clip_views_02.png",
     },
     detailTitle: "WIRE DETAIL",
     detailText:
       "A familiar wire loop becomes slightly aggressive through small directional spikes, preserving function while disrupting ease.",
     dimensions: [
-      ["Height", "52 mm"],
-      ["Width", "18 mm"],
+      ["Height", "65 mm"],
+      ["Width", "28 mm"],
       ["Type", "Paper Clip"],
     ],
-    detailImage: "./assets/thorn_paper_clip_03.png",
+    detailImage: "./assets/thorn_paper_clip_detail_04.png",
     lockDetailImageAcrossLevels: true,
     detailSectionClass: "pd-detail--hero-spaced",
     editorialsFullbleed: true,
@@ -397,7 +397,7 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
-const PRODUCT_ASSET_VERSION = "20260608-views02-v3";
+const PRODUCT_ASSET_VERSION = "20260608-paperclip-v4";
 
 function versionAsset(src) {
   if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
