@@ -396,6 +396,12 @@ a {
   object-fit: contain;
 }
 
+.pd-blueprint-image {
+  mix-blend-mode: multiply;
+  opacity: 0.985;
+  filter: brightness(0.995) contrast(1.02) saturate(0.92);
+}
+
 .pd-diagram-label {
   font-size: 11px;
   letter-spacing: 0.06em;
