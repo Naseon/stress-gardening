@@ -86,8 +86,8 @@ const PRODUCT_PAGES = {
     editorialsFullbleed: true,
     editorials: [
       "./assets/thorn_incense_holder_editorial_01.png",
-      "./assets/thorn_incense_holder_editorial_02.png",
       "./assets/thorn_incense_holder_editorial_03.png",
+      "./assets/thorn_incense_holder_editorial_05.png",
       "./assets/thorn_incense_holder_editorial_04.png",
     ],
     editorialAppendByLevel: {
@@ -398,7 +398,7 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
-const PRODUCT_ASSET_VERSION = "20260608-editorial-v3";
+const PRODUCT_ASSET_VERSION = "20260608-editorial-v4";
 
 function versionAsset(src) {
   if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
