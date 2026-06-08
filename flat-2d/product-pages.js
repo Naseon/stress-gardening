@@ -472,7 +472,7 @@ function renderDiagramSet(heroImage, diagramImage) {
   if (diagramImage) {
     return `
       <article class="pd-diagram-card pd-diagram-card--blueprint">
-        <div class="pd-diagram-visual"><img class="pd-cutout-image pd-blueprint-image" src="${escapeHtml(versionAsset(src))}" alt="blueprint schematic" /></div>
+        <div class="pd-diagram-visual"><img class="pd-blueprint-image" src="${escapeHtml(versionAsset(src))}" alt="blueprint schematic" /></div>
       </article>
     `;
   }
