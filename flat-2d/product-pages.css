@@ -103,13 +103,14 @@ a {
 
 .pd-hero {
   display: grid;
-  grid-template-columns: 72px minmax(260px, 340px) minmax(0, 1fr);
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
   gap: 24px;
   align-items: center;
   padding: var(--topbar-gap) 28px;
 }
 
 .pd-hero-index {
+  display: none;
   font-size: 34px;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -188,7 +189,7 @@ a {
 
 .pd-views {
   display: grid;
-  grid-template-columns: 72px repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0;
   align-items: stretch;
   padding: 0 28px 28px;
@@ -197,6 +198,7 @@ a {
 .pd-views-index,
 .pd-detail-index,
 .pd-editorials-index {
+  display: none;
   padding-top: 14px;
   font-size: 34px;
   line-height: 1;
@@ -261,7 +263,7 @@ a {
 
 .pd-detail {
   display: grid;
-  grid-template-columns: 72px minmax(320px, 44%) minmax(0, 1fr);
+  grid-template-columns: minmax(320px, 44%) minmax(0, 1fr);
   gap: 0;
   align-items: stretch;
   padding: 0 28px;
@@ -394,7 +396,7 @@ a {
 
 .pd-editorials {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 0;
   padding: 0 28px 28px;
 }
