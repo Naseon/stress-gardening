@@ -91,10 +91,10 @@ const PRODUCT_PAGES = {
       "./assets/thorn_incense_holder_editorial_04.png",
     ],
     editorialAppendByLevel: {
-      1: [],
-      2: [],
-      3: [],
-      4: [],
+      1: ["./assets/thorn_incense_holder_package_lv1.png"],
+      2: ["./assets/thorn_incense_holder_package_lv2.png"],
+      3: ["./assets/thorn_incense_holder_package_lv3.png"],
+      4: ["./assets/thorn_incense_holder_package_lv4.png"],
     },
   },
   "thorn-pen": {
@@ -398,7 +398,7 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
-const PRODUCT_ASSET_VERSION = "20260608-editorial-v2";
+const PRODUCT_ASSET_VERSION = "20260608-editorial-v3";
 
 function versionAsset(src) {
   if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
