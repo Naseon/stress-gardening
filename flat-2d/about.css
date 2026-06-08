@@ -272,6 +272,7 @@ a {
   width: min(100%, 1100px);
   height: auto;
   object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 @media (max-width: 1080px) {
