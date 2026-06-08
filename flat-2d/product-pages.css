@@ -440,6 +440,20 @@ a {
   object-fit: cover;
 }
 
+.pd-tail-video--fullbleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding: 0;
+}
+
+.pd-tail-video__media {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  background: #fff;
+}
+
 .pd-footer-nav {
   display: flex;
   justify-content: space-between;

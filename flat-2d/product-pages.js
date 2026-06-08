@@ -445,6 +445,16 @@ function renderEditorials(images, title) {
     .join("");
 }
 
+function renderTailVideo() {
+  return `
+    <section class="product-section pd-tail-video pd-tail-video--fullbleed">
+      <video class="pd-tail-video__media" autoplay muted loop playsinline preload="auto">
+        <source src="./assets/about_lab_video.mp4?v=20260608-about-video-v1" type="video/mp4" />
+      </video>
+    </section>
+  `;
+}
+
 function renderPage(productId, level) {
   const product = PRODUCT_PAGES[productId];
   if (!product) return;
@@ -473,6 +483,7 @@ function renderPage(productId, level) {
     ...(product.editorials || []),
     ...((level && product.editorialAppendByLevel?.[level]) || []),
   ];
+  const shouldRenderTailVideo = productId === "thorn-mug" && level >= 1 && level <= 4;
 
   const titleSuffix = levelLabel ? ` — ${levelLabel}` : "";
   document.title = `${product.title}${titleSuffix} / Stress Gardening`;
@@ -523,6 +534,8 @@ function renderPage(productId, level) {
           <div class="pd-editorials-index">06</div>
           <div class="pd-editorial-grid">${renderEditorials(editorialImages, product.title)}</div>
         </section>
+
+        ${shouldRenderTailVideo ? renderTailVideo() : ""}
 
         <section class="pd-footer-nav">
           <a class="pd-back-link" href="./index.html?page=shop">&larr; Back to Shop</a>
