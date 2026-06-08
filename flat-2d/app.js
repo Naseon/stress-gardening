@@ -200,7 +200,7 @@ shadowGround.receiveShadow = true;
 scene.add(shadowGround);
 
 const specimenGroup = new THREE.Group();
-specimenGroup.position.set(0, -1.15, 0);
+specimenGroup.position.set(0, -1.44, 0);
 scene.add(specimenGroup);
 
 const vineGroup = new THREE.Group();
