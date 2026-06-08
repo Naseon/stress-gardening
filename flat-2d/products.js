@@ -12,13 +12,23 @@ const PRODUCT_CATALOG = [
     ],
   },
   {
-    id: "thorn-mirror",
-    name: "Thorn Mirror",
+    id: "thorn-incense-holder",
+    name: "Thorn Incense Holder",
     levels: [
-      { level: 1, image: "./assets/thorn_mirror_lv1.png" },
-      { level: 2, image: "./assets/thorn_mirror_lv2.png" },
-      { level: 3, image: "./assets/thorn_mirror_lv3.png" },
-      { level: 4, image: "./assets/thorn_mirror_lv4.png" },
+      { level: 1, image: "./assets/thorn_incense_holder_lv1.png" },
+      { level: 2, image: "./assets/thorn_incense_holder_lv2.png" },
+      { level: 3, image: "./assets/thorn_incense_holder_lv3.png" },
+      { level: 4, image: "./assets/thorn_incense_holder_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-paper-clip",
+    name: "Thorn Paper Clip",
+    levels: [
+      { level: 1, image: "./assets/thorn_paper_clip_lv1.png" },
+      { level: 2, image: "./assets/thorn_paper_clip_lv2.png" },
+      { level: 3, image: "./assets/thorn_paper_clip_lv3.png" },
+      { level: 4, image: "./assets/thorn_paper_clip_lv4.png" },
     ],
   },
   {
@@ -42,13 +52,23 @@ const PRODUCT_CATALOG = [
     ],
   },
   {
-    id: "thorn-incense-holder",
-    name: "Thorn Incense Holder",
+    id: "thorn-ruler",
+    name: "Thorn Ruler",
     levels: [
-      { level: 1, image: "./assets/thorn_incense_holder_lv1.png" },
-      { level: 2, image: "./assets/thorn_incense_holder_lv2.png" },
-      { level: 3, image: "./assets/thorn_incense_holder_lv3.png" },
-      { level: 4, image: "./assets/thorn_incense_holder_lv4.png" },
+      { level: 1, image: "./assets/thorn_ruler_lv1.png" },
+      { level: 2, image: "./assets/thorn_ruler_lv2.png" },
+      { level: 3, image: "./assets/thorn_ruler_lv3.png" },
+      { level: 4, image: "./assets/thorn_ruler_lv4.png" },
+    ],
+  },
+  {
+    id: "thorn-mirror",
+    name: "Thorn Mirror",
+    levels: [
+      { level: 1, image: "./assets/thorn_mirror_lv1.png" },
+      { level: 2, image: "./assets/thorn_mirror_lv2.png" },
+      { level: 3, image: "./assets/thorn_mirror_lv3.png" },
+      { level: 4, image: "./assets/thorn_mirror_lv4.png" },
     ],
   },
   {
@@ -59,26 +79,6 @@ const PRODUCT_CATALOG = [
       { level: 2, image: "./assets/thorn_massage_ball_lv2.png" },
       { level: 3, image: "./assets/thorn_massage_ball_lv3.png" },
       { level: 4, image: "./assets/thorn_massage_ball_lv4.png" },
-    ],
-  },
-  {
-    id: "thorn-paper-clip",
-    name: "Thorn Paper Clip",
-    levels: [
-      { level: 1, image: "./assets/thorn_paper_clip_lv1.png" },
-      { level: 2, image: "./assets/thorn_paper_clip_lv2.png" },
-      { level: 3, image: "./assets/thorn_paper_clip_lv3.png" },
-      { level: 4, image: "./assets/thorn_paper_clip_lv4.png" },
-    ],
-  },
-  {
-    id: "thorn-ruler",
-    name: "Thorn Ruler",
-    levels: [
-      { level: 1, image: "./assets/thorn_ruler_lv1.png" },
-      { level: 2, image: "./assets/thorn_ruler_lv2.png" },
-      { level: 3, image: "./assets/thorn_ruler_lv3.png" },
-      { level: 4, image: "./assets/thorn_ruler_lv4.png" },
     ],
   },
   {
