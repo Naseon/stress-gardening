@@ -72,7 +72,6 @@ const PRODUCT_PAGES = {
       3: "./assets/thorn_incense_holder_views_02.png",
       4: "./assets/thorn_incense_holder_views_02.png",
     },
-    viewsCompositeToneFix: true,
     detailTitle: "OBJECT DETAIL",
     detailText:
       "A compact spiked dome grounds the incense stick in place, balancing softness and alertness through material contrast and scale.",
@@ -398,7 +397,7 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
-const PRODUCT_ASSET_VERSION = "20260608-editorial-v2";
+const PRODUCT_ASSET_VERSION = "20260608-views02-v3";
 
 function versionAsset(src) {
   if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
