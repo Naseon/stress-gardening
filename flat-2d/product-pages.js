@@ -234,9 +234,9 @@ const PRODUCT_PAGES = {
     detailSectionClass: "pd-detail--hero-spaced",
     editorialsFullbleed: true,
     editorials: [
-      "./assets/thorn_binder_clip_03.png",
-      "./assets/thorn_paper_clip_03.png",
-      "./assets/thorn_pen_03.png",
+      "./assets/thorn_binder_clip_editorial_01.png",
+      "./assets/thorn_binder_clip_editorial_02.png",
+      "./assets/thorn_binder_clip_editorial_03.png",
     ],
     editorialAppendByLevel: {
       1: [],
@@ -283,9 +283,9 @@ const PRODUCT_PAGES = {
     detailSectionClass: "pd-detail--hero-spaced",
     editorialsFullbleed: true,
     editorials: [
-      "./assets/thorn_paper_clip_03.png",
-      "./assets/thorn_binder_clip_03.png",
-      "./assets/thorn_ruler_03.png",
+      "./assets/thorn_paper_clip_editorial_01.png",
+      "./assets/thorn_paper_clip_editorial_02.png",
+      "./assets/thorn_paper_clip_editorial_03.png",
     ],
     editorialAppendByLevel: {
       1: [],
@@ -397,7 +397,7 @@ const PRODUCT_PAGES = {
 
 const productOrder = Object.keys(PRODUCT_PAGES);
 
-const PRODUCT_ASSET_VERSION = "20260608-binderclip-v5";
+const PRODUCT_ASSET_VERSION = "20260608-editorial-v1";
 
 function versionAsset(src) {
   if (!src || !src.startsWith("./assets/") || src.includes("?")) return src;
