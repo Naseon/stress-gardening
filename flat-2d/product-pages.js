@@ -59,7 +59,7 @@ const PRODUCT_PAGES = {
       ["Finish", "Mirror + Matte"],
     ],
     heroImage: "./assets/thorn_incense_holder_03.png",
-    diagramImage: "./assets/thorn_incense_holder_lv1.png",
+    diagramImage: "./assets/thorn_incense_holder_blueprint.png",
     views: [
       ["Front", "./assets/thorn_incense_holder_03.png"],
       ["Side", "./assets/thorn_incense_holder_03.png"],
@@ -67,11 +67,12 @@ const PRODUCT_PAGES = {
       ["Detail", "./assets/thorn_incense_holder_03.png"],
     ],
     viewsCompositeImages: {
-      1: "./assets/thorn_incense_holder_lv1.png",
-      2: "./assets/thorn_incense_holder_lv2.png",
-      3: "./assets/thorn_incense_holder_lv3.png",
-      4: "./assets/thorn_incense_holder_lv4.png",
+      1: "./assets/thorn_incense_holder_views_02.png",
+      2: "./assets/thorn_incense_holder_views_02.png",
+      3: "./assets/thorn_incense_holder_views_02.png",
+      4: "./assets/thorn_incense_holder_views_02.png",
     },
+    viewsCompositeToneFix: true,
     detailTitle: "OBJECT DETAIL",
     detailText:
       "A compact spiked dome grounds the incense stick in place, balancing softness and alertness through material contrast and scale.",
@@ -80,7 +81,7 @@ const PRODUCT_PAGES = {
       ["Width", "68 mm"],
       ["Type", "Incense Holder"],
     ],
-    detailImage: "./assets/thorn_incense_holder_03.png",
+    detailImage: "./assets/thorn_incense_holder_detail_04.png",
     lockDetailImageAcrossLevels: true,
     detailSectionClass: "pd-detail--hero-spaced",
     editorialsFullbleed: true,
@@ -425,12 +426,12 @@ function renderFacts(facts) {
     .join("");
 }
 
-function renderViews(views, compositeImage, title) {
+function renderViews(views, compositeImage, title, toneFix) {
   if (compositeImage) {
     return `
       <article class="pd-view-card pd-view-card--composite">
         <div class="pd-view-image pd-view-image--composite">
-          <img src="${escapeHtml(versionAsset(compositeImage))}" alt="${escapeHtml(title)} front side top views" />
+          <img src="${escapeHtml(versionAsset(compositeImage))}" alt="${escapeHtml(title)} front side top views"${toneFix ? ' class="views-tone-fix"' : ""} />
         </div>
       </article>
     `;
@@ -562,7 +563,7 @@ function renderPage(productId, level) {
 
         <section class="product-section pd-views">
           <div class="pd-views-index">02</div>
-          ${renderViews(views, viewsCompositeImage, product.title)}
+          ${renderViews(views, viewsCompositeImage, product.title, product.viewsCompositeToneFix)}
         </section>
 
         <section class="product-section pd-detail${product.detailSectionClass ? ` ${escapeHtml(product.detailSectionClass)}` : ""}">
