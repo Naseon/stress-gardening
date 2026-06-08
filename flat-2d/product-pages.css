@@ -1,6 +1,7 @@
 :root {
-  --bg: #ffffff;
-  --surface: #ffffff;
+  --bg: #e5e3e2;
+  --surface: #e5e3e2;
+  --product-cut-bg: #e5e3e2;
   --ink: #111111;
   --muted: #6f6f6a;
   --line: rgba(23, 23, 21, 0.12);
@@ -90,7 +91,7 @@ a {
 }
 
 .product-frame {
-  background: #fff;
+  background: var(--surface);
 }
 
 .product-section {
@@ -176,6 +177,8 @@ a {
   justify-content: center;
   padding: 10px 20px 0;
   overflow: visible;
+  background: var(--product-cut-bg);
+  isolation: isolate;
 }
 
 .pd-hero-visual img {
@@ -228,7 +231,8 @@ a {
   align-items: center;
   justify-content: center;
   padding: 18px;
-  background: #fff;
+  background: var(--product-cut-bg);
+  isolation: isolate;
 }
 
 .pd-view-image--composite {
@@ -289,6 +293,8 @@ a {
   align-items: center;
   justify-content: center;
   padding: 18px;
+  background: var(--product-cut-bg);
+  isolation: isolate;
 }
 
 .pd-detail-media img {
@@ -380,6 +386,8 @@ a {
   align-items: center;
   justify-content: center;
   padding: 16px;
+  background: var(--product-cut-bg);
+  isolation: isolate;
 }
 
 .pd-diagram-visual img {
@@ -413,6 +421,12 @@ a {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: var(--product-cut-bg);
+  isolation: isolate;
+}
+
+.pd-cutout-image {
+  mix-blend-mode: darken;
 }
 
 .pd-editorial-card img {
