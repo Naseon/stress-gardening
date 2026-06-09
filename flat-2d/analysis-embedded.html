@@ -648,7 +648,7 @@
     window.location.href = './about.html';
   });
 
-  const BACKEND_URL = "";
+  const GEMINI_API_KEY = "AIzaSyDKFIRjP1MKHeDkW1WkUYXuXsTQ9it-f-o";
 
   const heroSection = document.getElementById('heroSection');
   const measureSection = document.getElementById('measureSection');
@@ -718,24 +718,33 @@
     }, 22);
   }
 
-  // 백엔드에서 위로 문구 가져오기
+  // Gemini API로 위로 문구 생성
   async function fetchComfort(data){
-    if (!BACKEND_URL) return null;
+    if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") return null;
+    const prompt = `사용자가 오늘 겪은 스트레스를 이렇게 말했습니다: "${data.text || '(내용 없음'}"
+스트레스 점수: ${data.score}/100 (${getStage(data.score).label})
+
+이 사람에게 한국어로 진심 어린 위로 문구를 1~2문장으로 써주세요.
+사용자의 상황을 구체적으로 언급하되, 짧고 따뜻하게 써주세요.
+위로 문구만 출력하고 다른 설명은 하지 마세요.`;
     try {
-      const res = await fetch(BACKEND_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: data.text,
-          score: data.score,
-          level: getStage(data.score).label
-        })
-      });
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.8, maxOutputTokens: 150 }
+          })
+        }
+      );
       if (!res.ok) return null;
       const json = await res.json();
-      return (json && json.message) ? json.message : null;
+      const text = json?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+      return text || null;
     } catch(e){
-      console.warn('comfort fetch failed', e);
+      console.warn('Gemini fetch failed', e);
       return null;
     }
   }
