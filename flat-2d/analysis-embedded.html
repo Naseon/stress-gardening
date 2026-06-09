@@ -749,8 +749,12 @@
     }
   }
 
-  // 결과 화면 표시 (measure 스크립트에서 호출)
+  // 결과 화면 표시 (measure 스크립트에서 호출) — 이중 호출 방지 플래그
+  let _resultShowing = false;
   window.showResult = async function(data){
+    if (_resultShowing) return;   // 이미 실행 중이면 무시
+    _resultShowing = true;
+
     const payload = buildAnalysisPayload(data);
     window.localStorage.setItem('stressAnalysisResult', JSON.stringify(payload));
     notifyParent('sg-analysis-updated', { payload });
